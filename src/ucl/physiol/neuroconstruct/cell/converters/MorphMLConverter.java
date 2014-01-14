@@ -836,6 +836,7 @@ public class MorphMLConverter extends FormatImporter
                 }
 
                 Units condDensUnit = UnitConverter.conductanceDensityUnits[preferredExportUnits];
+                Units permeabilityUnit = UnitConverter.permeabilityUnits[preferredExportUnits];
                 
                 HashMap<String, SimpleXMLElement> ionSpeciesV2 = new HashMap<String, SimpleXMLElement>();
 
@@ -844,75 +845,79 @@ public class MorphMLConverter extends FormatImporter
                     ChannelMechanism chanMech = allUniformChanMechs.get(j);
 
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
+                    float condDens = -1, permeability = -1;
 
-                    float condDens = (float)UnitConverter.getConductanceDensity(chanMech.getDensity(),
-                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                        preferredExportUnits);
+                    MechParameter permPar = chanMech.getExtraParameter(BiophysicsConstants.PARAMETER_GHK_2);
 
-                    Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
+                    if (null != permPar) {
+                        permeability = (float) UnitConverter.getPermeability(permPar.getValue(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
+
+                    } else {
+                        condDens = (float) UnitConverter.getConductanceDensity(chanMech.getDensity(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
+                    }
+
+                    List<String> groups = cell.getGroupsWithChanMech(chanMech);
                     
 
-                    if (nml2)
-                    {
+                    if (nml2) {
                         String comment = null;
-                        
-                        for(String group: groups)
-                        {
+
+                        for (String group : groups) {
                             boolean addAtStartMembPropsElement = false;
                             boolean addAtEndMembPropsElement = false;
 
                             SimpleXMLElement mechElement = null;
-                            if (cm.isChannelMechanism()) 
-                            {
-                                
-                                mechElement =  new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
+                            if (cm.isChannelMechanism()) {
+
 
                                 addAtStartMembPropsElement = true;
-                                
-                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.COND_DENS_ATTR_V2,
-                                                                            condDens+" "+condDensUnit.getNeuroML2Symbol()));
+
+                                if (permeability > 0.0) {
+                                    mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_GHK_ELEMENT_V2);
+                                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PERMEABILITY_ATTR_V2,
+                                            permeability + " " + permeabilityUnit.getNeuroML2Symbol()));
+                                } else {
+                                    mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
+                                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.COND_DENS_ATTR_V2,
+                                            condDens + " " + condDensUnit.getNeuroML2Symbol()));
+
+                                }
 
                                 mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
-                                                                                chanMech.getName()+"_"+group));
+                                        chanMech.getName() + "_" + group));
 
                                 mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
-                                                                                chanMech.getName()));
-                            }
-                            else if (cm.isIonConcMechanism()) 
-                            {
-                                mechElement =  new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIES_ELEMENT_V2);
-                                
+                                        chanMech.getName()));
+                            } else if (cm.isIonConcMechanism()) {
+                                mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIES_ELEMENT_V2);
+
                                 addAtStartMembPropsElement = false;
                                 addAtEndMembPropsElement = false;
 
                                 intraCellPropsElement.addContent("\n\n                ");
 
                                 intraCellPropsElement.addChildElement(mechElement);
-                                
+
                             }
 
 
-
-                            if (!group.equals(Section.ALL))
+                            if (!group.equals(Section.ALL)) {
                                 mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
+                            }
 
                             boolean revPotSetInMP = false;
-                            for(MechParameter mp: chanMech.getExtraParameters())
-                            {
+                            for (MechParameter mp : chanMech.getExtraParameters()) {
 
                                 //SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
-                                boolean eOrErev = mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
-                                    mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2);
-                                try
-                                {
-                                    if (!eOrErev)
-                                    {
+                                boolean eOrErev = mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT)
+                                        || mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2);
+                                boolean ghk = mp.getName().equals(BiophysicsConstants.PARAMETER_GHK_2);
+                                try {
+                                    if (!eOrErev && !ghk) {
                                         mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e or erev!!"));
                                     }
-                                }
-                                catch (Exception e)
-                                {
-                                    GuiUtils.showErrorMessage(logger, "Problem when annotating chan mech: "+chanMech+", mechElement: "+mechElement, e, null);
+                                } catch (Exception e) {
+                                    GuiUtils.showErrorMessage(logger, "Problem when annotating chan mech: " + chanMech + ", mechElement: " + mechElement, e, null);
                                 }
 
                                 //pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
@@ -923,195 +928,134 @@ public class MorphMLConverter extends FormatImporter
 
                                 String attrName = mp.getName();
 
-                                if (eOrErev)
-                                {
+                                if (eOrErev) {
                                     revPotSetInMP = true;
-                                    val = (float)UnitConverter.getVoltage(val, UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                          preferredExportUnits);
+                                    val = (float) UnitConverter.getVoltage(val, UnitConverter.NEUROCONSTRUCT_UNITS,
+                                            preferredExportUnits);
 
-                                    if (preferredExportUnits==UnitConverter.GENESIS_SI_UNITS)
+                                    if (preferredExportUnits == UnitConverter.GENESIS_SI_UNITS) {
                                         unitSuffix = " V";
-                                    if (preferredExportUnits==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+                                    }
+                                    if (preferredExportUnits == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) {
                                         unitSuffix = " mV";
+                                    }
 
                                     attrName = BiophysicsConstants.PARAMETER_REV_POT_2;
                                 }
 
-
-                                mechElement.addAttribute(attrName, val+unitSuffix);
+                                if (!ghk) {
+                                    mechElement.addAttribute(attrName, val + unitSuffix);
+                                }
 
                                 //mechElement.add(pe);
 
                             }
 
 
-                            if (cm instanceof XMLCellMechanism)
-                            {
-                                XMLCellMechanism cmlCm = (XMLCellMechanism)cm;
+                            if (cm instanceof XMLCellMechanism) {
+                                XMLCellMechanism cmlCm = (XMLCellMechanism) cm;
 
                                 String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
 
-                                if (cmlCm.isChannelMechanism() && !cmlCm.isNeuroML2())
-                                {
-                                    String ionXpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.OHMIC_ION_ATTR;
-                                    logger.logComment("Trying to get now: "+ ionXpath);
-                                    String ion = cmlCm.getXMLDoc().getValueByXPath(ionXpath);
+                                if (cmlCm.isChannelMechanism()) {
+                                    if (!cmlCm.isNeuroML2()) {
+                                        String ionXpath = ChannelMLConstants.getCurrVoltRelXPath() + "/@" + ChannelMLConstants.OHMIC_ION_ATTR;
+                                        logger.logComment("Trying to get now: " + ionXpath);
+                                        String ion = cmlCm.getXMLDoc().getValueByXPath(ionXpath);
 
-                                    if (ion!=null){
-                                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2,
-                                                                                ion));
-                                    }
-                                    
-                                    String xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.FIXED_ION_REV_POT_ATTR;
-                                    String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
-
-                                    if (ion!=null && ion.equals("ca") && (val==null || val.equals("no")))
-                                    {
-                                        comment = "Reversal potential for "+ion+" in "+cmlCm.getInstanceName()+
-                                                                    " will be calculated by Nernst equation from internal & external calcium";
-                                        
-                                        mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
-                                        
-                                        addAtStartMembPropsElement = false;
-                                        addAtEndMembPropsElement = true;
-                                
-                                        /*
-                                        try
-                                        {
-                                            IonProperties ip = cell.getIonPropertiesForGroup("all").get(0);
-
-                                            float extConc = (float)UnitConverter.getConcentration(ip.getExternalConcentration(),
-                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                    preferredExportUnits);
-
-                                            float intConc = (float)UnitConverter.getConcentration(ip.getInternalConcentration(),
-                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                    preferredExportUnits);
-
-                                            mechElement.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
-                                            mechElement.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());
-
+                                        if (ion != null) {
+                                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2, ion));
+                                        } else {
+                                            ion = "non_specific";
                                         }
-                                        catch (Exception e)
-                                        {
-                                            throw new NeuroMLException("Problem exporting to NeuroML 2. Note that the cell mechanism: "+cmlCm+
-                                                    "\nspecifies that is does not have a fixed reversal potential for ca. In this case, the cell needs to"
-                                                    + "\nset its initial internal and external concentration of ca (view cell in 3D -> Edit Density Mechs -> Ion Properties)", e);
-                                        }*/
-                                    }
-                                    else
-                                    {
-                                        if (!revPotSetInMP)
-                                        {
-                                            xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                            val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
-                                            logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
+                                        String xpath = ChannelMLConstants.getCurrVoltRelXPath() + "/@" + ChannelMLConstants.FIXED_ION_REV_POT_ATTR;
+                                        String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
-                                            logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
+                                        if (ion.equals("ca") && (val == null || val.equals("no"))) {
+                                            if (null != chanMech.getExtraParameter(BiophysicsConstants.PARAMETER_GHK_2)){
+                                                comment = "Current for ion " + ion + " in " + cmlCm.getInstanceName()
+                                                        + " will be calculated using the GHK flux equation";
 
-                                            if (val==null || val.trim().length()==0)  // post v1.7.3 format
-                                            {
-                                                xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                                logger.logComment("Trying to get now: "+ xpath);
-                                                val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                                mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_GHK_ELEMENT_V2);
+                                                addAtStartMembPropsElement = false;
+                                                addAtEndMembPropsElement = true;
+                                            }
+                                            else{
+                                                comment = "Reversal potential for " + ion + " in " + cmlCm.getInstanceName()
+                                                        + " will be calculated by Nernst equation from internal & external calcium";
+
+                                                mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
+                                                addAtStartMembPropsElement = false;
+                                                addAtEndMembPropsElement = true;
                                             }
 
-                                            float revPot = Float.parseFloat(val);
+                                        } else {
+                                            if (!revPotSetInMP) {
+                                                xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() + "/@" + ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                                val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
-                                            logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
+                                                logger.logComment("Trying to get: " + xpath + " in " + cmlCm.getInstanceName() + ": " + val);
 
+                                                logger.logComment("Trying to get: " + cmlCm.getXMLDoc().getXPathLocations(true));
 
-                                            float revPotConv = (float)UnitConverter.getVoltage(revPot,
-                                                                                    UnitConverter.getUnitSystemIndex(units),
-                                                                                    preferredExportUnits);
+                                                if (val == null || val.trim().length() == 0) // post v1.7.3 format
+                                                {
+                                                    xpath = ChannelMLConstants.getCurrVoltRelXPath() + "/@" + ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                                    logger.logComment("Trying to get now: " + xpath);
+                                                    val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                                }
 
-                                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
-                                                                                        revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
+                                                float revPot = Float.parseFloat(val);
+
+                                                logger.logComment("Tried to get: " + xpath + " in " + cmlCm.getXMLFile(project) + ", found: " + revPot);
+
+                                                float revPotConv = (float) UnitConverter.getVoltage(revPot,
+                                                        UnitConverter.getUnitSystemIndex(units),
+                                                        preferredExportUnits);
+
+                                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
+                                                        revPotConv + " " + voltUnit.getNeuroML2Symbol() + ""));
+
+                                            }
                                         }
+                                    } else {
+                                        String xpath = NeuroMLConstants.ROOT_ELEMENT + "/" + BiophysicsConstants.ION_CHAN_ATTR_V2 + "/@" + BiophysicsConstants.SPECIES_ELEMENT_V2;
+                                        String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                        if (null == ion) {
+                                            ion = "non_specific";
+                                        }
+                                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2, ion));
 
-                                        
                                     }
-                                }
-                                else if (cm.isIonConcMechanism()) 
-                                {                                    
+                                } else if (cm.isIonConcMechanism()) {
+
                                     String xpath = ChannelMLConstants.getIonSpeciesNameXPath();
                                     String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
                                     //System.out.println("--- cmlCm: "+ cmlCm);
 
-                                    if (cmlCm.isNeuroML2())
-                                    {
-                                        xpath = NeuroMLConstants.ROOT_ELEMENT +"/"+ ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2 +"/@"+ ChannelMLConstants.ION_ATTR_V2;
+                                    if (cmlCm.isNeuroML2()) {
+                                        xpath = NeuroMLConstants.ROOT_ELEMENT + "/" + ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2 + "/@" + ChannelMLConstants.ION_ATTR_V2;
                                         ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
-                                        if (ion==null)
-                                        {
-                                            xpath = NeuroMLConstants.ROOT_ELEMENT +"/"+ ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2 +"/@"+ ChannelMLConstants.ION_ATTR_V2;
+                                        if (ion == null) {
+                                            xpath = NeuroMLConstants.ROOT_ELEMENT + "/" + ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2 + "/@" + ChannelMLConstants.ION_ATTR_V2;
                                             ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
                                         }
-                                        //System.out.println("--- xpath: "+ xpath);
-                                        //System.out.println("--- ion: "+ ion);
 
                                     }
 
                                     mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
-                                                                                ion));
+                                            ion));
 
                                     //TODO: Remove this as id should be sufficient!!
-                                    mechElement.addAttribute(new SimpleXMLAttribute("ion",
-                                                                                ion));
+                                    mechElement.addAttribute(new SimpleXMLAttribute("ion", ion));
 
                                     mechElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2,
-                                                                                cmlCm.getInstanceName()));
-                                
+                                            cmlCm.getInstanceName()));
+
                                     ionSpeciesV2.put(ion, mechElement);
 
-                                    /*
-                                    SimpleXMLElement concModelEl = new SimpleXMLElement(bioPrefix+ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2);
-                                    mechElement.addContent("\n                     ");
-                                    mechElement.addChildElement(concModelEl);
-                                    mechElement.addContent("\n                 ");
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.TYPE_ATTR_V2,
-                                                                                ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2));
-
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
-                                                                                cmlCm.getInstanceName()));
-                                    
-                                    
-                                    float restConc = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcDecPoolXPath()
-                                            +"/@"+ChannelMLConstants.ION_CONC_REST_CONC_ATTR));
-                                    
-                                    restConc = (float)UnitConverter.getConcentration(restConc,
-                                                                        UnitConverter.getUnitSystemIndex(units),
-                                                                        preferredExportUnits);
-                                    
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_REST_CONC_ATTR_V2,
-                                                                                restConc+" "+concUnits.getNeuroML2Symbol()));
-                                    
-                                    float decayConst = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcDecPoolXPath()
-                                            +"/@"+ChannelMLConstants.ION_CONC_DECAY_CONST_ATTR));
-                                    
-                                    decayConst = (float)UnitConverter.getTime(decayConst,
-                                                                        UnitConverter.getUnitSystemIndex(units),
-                                                                        preferredExportUnits);
-                                    
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_DECAY_CONST_ATTR_V2,
-                                                                               decayConst+" "+ timeUnits.getNeuroML2Symbol()));
-                                    
-                                    
-                                    float shellThickness = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcPoolVolXPath()
-                                            +"/@"+ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR));
-                                    
-                                    shellThickness = (float)UnitConverter.getLength(shellThickness,
-                                                                        UnitConverter.getUnitSystemIndex(units),
-                                                                        preferredExportUnits);
-                                    
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR_V2,
-                                                                               shellThickness+" "+ lengthUnits.getNeuroML2Symbol()));
-                                    */
-                                    
-                                    //xpath = ChannelMLConstants.getIonSpeciesNameXPath();
-                                    
                                 }
                             }
                             
@@ -1176,8 +1120,8 @@ public class MorphMLConverter extends FormatImporter
                         {
 
                             mechElement.addComment("Note: Calcium pools are not proper ion channels, thus this parameter does not represent a proper maximum conductance.\n" 
-						   +"The scaling factor for converting current into change in ion concentration should be\n" 
-						   + " determined from ChannelML file for the CaPool...");
+                           +"The scaling factor for converting current into change in ion concentration should be\n" 
+                           + " determined from ChannelML file for the CaPool...");
 
                         }
                         allParamGrps.add(gmaxParamElement);
@@ -1295,9 +1239,9 @@ public class MorphMLConverter extends FormatImporter
 
 
                                 revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
-                                                                                 (float)UnitConverter.getVoltage(revPot,
-                                                                        unitsUsedInt,
-                                                                        preferredExportUnits) + ""));
+                                        (float) UnitConverter.getVoltage(revPot,
+                                        unitsUsedInt,
+                                        preferredExportUnits) + ""));
 
                                 if (!revPotSetElsewhere)
                                 {

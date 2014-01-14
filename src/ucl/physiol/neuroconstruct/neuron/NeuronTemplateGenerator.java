@@ -1332,11 +1332,16 @@ public class NeuronTemplateGenerator
                                                                               
                         StringBuilder moreParams = new StringBuilder();
                         
-                        for (MechParameter mp: mps)
-                        {
-                            if(!mp.getName().equals("erev")) // will be checked for later...
+                        for (MechParameter mp : mps) {
+                            if (!mp.getName().equals("erev")) // will be checked for later...
                             {
-                                moreParams.append("\n    "+mp.getName()+"_"+nextChanMech.getName()+" = "+ mp.getValue());
+                                if (mp.getName().equals("GHK_permeability")) {
+                                    float permeability = (float) UnitConverter.getPermeability(mp.getValue(),
+                                            UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.NEURON_UNITS);
+                                    moreParams.append("\n    " + "permeability" + "_" + nextChanMech.getName() + " = " + permeability);
+                                } else {
+                                    moreParams.append("\n    " + mp.getName() + "_" + nextChanMech.getName() + " = " + mp.getValue());
+                                }
                             }
                         }
 

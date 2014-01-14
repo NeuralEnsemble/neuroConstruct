@@ -66,6 +66,7 @@ public class UnitConverter
 
     public static Units[] conductanceUnits = null;
     public static Units[] conductanceDensityUnits = null;
+    public static Units[] permeabilityUnits = null;
 
     public static Units[] specificAxialResistanceUnits = null;
     public static Units[] specificMembraneResistanceUnits = null;
@@ -248,6 +249,23 @@ public class UnitConverter
                           {new Unit(Prefix.MILLI, Units.SIEMENS, 1),
                           new Unit(Prefix.CENTI, Units.METER, -2)})};
 
+            permeabilityUnits = new Units[]
+                {new Units("neuroConstruct_permeability"
+                           , new Unit[]
+                           {new Unit(Prefix.NONE, Units.METER, 1),
+                           new Unit(Prefix.NONE, Units.SECOND, -1)}),
+                new Units("NEURON_permeability"
+                          , new Unit[]
+                           {new Unit(Prefix.CENTI, Units.METER, 1),
+                           new Unit(Prefix.NONE, Units.SECOND, -1)}),
+                new Units("GENESIS_SI_permeability"
+                          , new Unit[]
+                           {new Unit(Prefix.NONE, Units.METER, 1),
+                           new Unit(Prefix.NONE, Units.SECOND, -1)}),
+                new Units("GENESIS_PHY_permeability"
+                          , new Unit[]
+                           {new Unit(Prefix.NONE, Units.METER, 1),
+                           new Unit(Prefix.NONE, Units.SECOND, -1)})};
 
             specificAxialResistanceUnits = new Units[]
                 {new Units("neuroConstruct_specAxialResistance"
@@ -663,6 +681,13 @@ public class UnitConverter
     {
         Units oldUnits = conductanceDensityUnits[fromUnits];
         Units newUnits = conductanceDensityUnits[toUnits];
+        return convert(value, oldUnits, newUnits).getMagnitude();
+    }
+
+    public static double getPermeability(double value, int fromUnits, int toUnits)
+    {
+        Units oldUnits = permeabilityUnits[fromUnits];
+        Units newUnits = permeabilityUnits[toUnits];
         return convert(value, oldUnits, newUnits).getMagnitude();
     }
 

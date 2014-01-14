@@ -34,7 +34,7 @@ generatedGENESIS*
 simulations
 
 classes
-*.jar
+neuroConstruct*.jar
 *.bak
 *.*~
 
