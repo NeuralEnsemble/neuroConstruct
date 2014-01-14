@@ -330,6 +330,11 @@ public class MorphMLConverter extends FormatImporter
         }
         return success;
     }
+    
+    private static String getNML2SafeId(String id)
+    {
+        return id.replaceAll("\\[", "_").replaceAll("\\]", "_");
+    }
 
 
     public static SimpleXMLElement getCellXMLElement(Cell cell, Project project, NeuroMLLevel level, NeuroMLVersion version) throws NeuroMLException, CMLMechNotInitException, XMLMechanismException
@@ -402,8 +407,6 @@ public class MorphMLConverter extends FormatImporter
             }
 
 
-
-
             Vector allSegments = cell.getAllSegments();
             ArrayList<Section> allSections = cell.getAllSections();
 
@@ -422,8 +425,12 @@ public class MorphMLConverter extends FormatImporter
                 segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_ID_ATTR,
                                                                    nextSegment.getSegmentId() + ""));
 
+                String id = nextSegment.getSegmentName();
+                if (nml2)
+                    id = getNML2SafeId(id);
+                
                 segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_NAME_ATTR,
-                                                                   nextSegment.getSegmentName()));
+                                                                   id));
 
                 if (nextSegment.getParentSegment() != null)
                 {
@@ -547,8 +554,11 @@ public class MorphMLConverter extends FormatImporter
                 {
                     
                     SimpleXMLElement segGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEG_GROUP_V2);
+                    String id = nextSection.getSectionName();
+                    if (nml2)
+                        id = getNML2SafeId(id);
 
-                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, nextSection.getSectionName()));
+                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, id));
                     
                     segmentParentElement.addChildElement(segGroupElement);
 
@@ -665,20 +675,24 @@ public class MorphMLConverter extends FormatImporter
                 {
                     for(String group: sec.getGroups())
                     {
-                        if (!segGroupElsVaGroupNames.containsKey(group))
+                        String groupId = getNML2SafeId(group);
+                        if (!segGroupElsVaGroupNames.containsKey(groupId))
                         {
                             SimpleXMLElement segGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEG_GROUP_V2);
-                            segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, group));
-                            segGroupElsVaGroupNames.put(group, segGroupElement);
+                            
+                            segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, groupId));
+                            segGroupElsVaGroupNames.put(groupId, segGroupElement);
 
                             segmentParentElement.addChildElement(segGroupElement);
                             segmentParentElement.addContent("\n\n            "); // to make it more readable...
 
                         }
-                        SimpleXMLElement segGroupElement = segGroupElsVaGroupNames.get(group);
+                        SimpleXMLElement segGroupElement = segGroupElsVaGroupNames.get(groupId);
 
                         SimpleXMLElement includeElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.INCLUDE_V2);
-                        includeElement.addAttribute(MorphMLConstants.SEG_GROUP_V2, sec.getSectionName()+"");
+                        String id = getNML2SafeId(sec.getSectionName());
+                        
+                        includeElement.addAttribute(MorphMLConstants.SEG_GROUP_V2, id);
                         segGroupElement.addContent("\n                "); // to make it more readable...
                         segGroupElement.addChildElement(includeElement);
                     }
@@ -2123,6 +2137,7 @@ public class MorphMLConverter extends FormatImporter
            File f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
            f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+           f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)
