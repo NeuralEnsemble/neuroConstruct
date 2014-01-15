@@ -27,16 +27,26 @@
 package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Vector;
+import javax.xml.bind.JAXBException;
 import org.neuroml.export.Utils;
 import org.neuroml.model.Connection;
 import org.neuroml.model.Instance;
 import org.neuroml.model.Location;
 import org.neuroml.model.Network;
 import org.neuroml.model.NeuroMLDocument;
+import org.neuroml.model.Point3DWithDiam;
 import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
+import org.neuroml.model.SegmentParent;
 import org.neuroml.model.util.NeuroMLConverter;
+import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.Section;
+import ucl.physiol.neuroconstruct.cell.Segment;
+import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -106,6 +116,11 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     
     public void parse(File nml2File) throws NeuroMLException
     {
+        parse(nml2File, "");
+    }
+    
+    public void parse(File nml2File, String idPrefix) throws NeuroMLException
+    {
         try 
         {
             NeuroMLConverter neuromlConverter=new NeuroMLConverter();
@@ -113,69 +128,151 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             NeuroMLDocument neuroml = neuromlConverter.urlToNeuroML(nml2File.toURI().toURL());
 
             logger.logComment("Reading in NeuroML 2: "+ neuroml.getId(), true);
+            
+            
+            /// Cells
+            
+            for (org.neuroml.model.Cell nml2Cell: neuroml.getCell()) {
+                
+                String newCellId = idPrefix+nml2Cell.getId();
+                
+                if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
+                {
+                    throw new NeuroMLException("The project "+project.getProjectName() +" already contains a cell with ID "+ newCellId);
+                }
+                Cell nCcell = new Cell();
+                nCcell.setInstanceName(newCellId);
+                if (nml2Cell.getNotes()!=null)
+                    nCcell.setCellDescription(nml2Cell.getNotes());
+                
+                HashMap<Integer, Segment> segIdVsSegments = new HashMap<Integer, Segment>();
+                
+                for (org.neuroml.model.Segment nml2Segment: nml2Cell.getMorphology().getSegment())
+                {
+                    logger.logComment("Adding Segment: "+ nml2Segment.getId(), true);
+                    Point3DWithDiam dist = nml2Segment.getDistal();
+                    SegmentParent parent = nml2Segment.getParent();
+                    Point3DWithDiam prox = nml2Segment.getProximal();
+                    
+                    
+                    Section section = new Section();
+                    Segment nCsegment = new Segment();
+                    nCsegment.setSegmentId(nml2Segment.getId());
+                    nCsegment.setSegmentName(nml2Segment.getName());
+                    section.setSectionName("Section_"+nCsegment.getSegmentId());
+                    nCsegment.setSection(section);
+                    
+                    if (prox==null) 
+                    {
+                        Segment parentSeg = segIdVsSegments.get(parent.getSegment());
+                        section.setStartPointPositionX(parentSeg.getEndPointPositionX());
+                        section.setStartPointPositionY(parentSeg.getEndPointPositionY());
+                        section.setStartPointPositionZ(parentSeg.getEndPointPositionZ());
+                        section.setStartRadius(parentSeg.getRadius());
+                        
+                    }
+                    else {
+                        section.setStartPointPositionX((float)prox.getX());
+                        section.setStartPointPositionY((float)prox.getY());
+                        section.setStartPointPositionZ((float)prox.getZ());
+                        section.setStartRadius((float)prox.getDiameter()/2);
+                    }
+                    if (parent!=null) 
+                    {
+                        Segment parentSeg = segIdVsSegments.get(parent.getSegment());
+                        nCsegment.setParentSegment(parentSeg);
+                    }
+                    
+                    nCsegment.setEndPointPositionX((float)dist.getX());
+                    nCsegment.setEndPointPositionY((float)dist.getY());
+                    nCsegment.setEndPointPositionZ((float)dist.getZ());
+                    nCsegment.setRadius((float)dist.getDiameter()/2);
+                    
+                    segIdVsSegments.put(nml2Segment.getId(), nCsegment);
+                    
+                    //logger.logComment("AddedSegment: "+ nCsegment, true);
+                    
+                }
+                Vector<Segment> allSegments = new Vector<Segment>();
+                allSegments.addAll(segIdVsSegments.values());
+                nCcell.setAllSegments(allSegments);
+                
+                logger.logComment("Read in NeuroML 2 cell: "+ CellTopologyHelper.printDetails(nCcell, project), true);
+                
+            }
+            
+            
+            /// Networks
 
-            if (neuroml.getNetwork().size()!=1)
+            if (neuroml.getNetwork().size()>1)
             {
                 GuiUtils.showErrorMessage(logger, "Currently it is only possible to load a NeuroML file containing a single <network> element.\n"
                         + "There are "+neuroml.getNetwork().size()+" networks in the file: "+nml2File.getAbsolutePath(), null, null);
                 return;
             }
-
-            Network network = neuroml.getNetwork().get(0); // Only first network...
-
-            if (network.getType()!=null && network.getType().toString().equals(NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE)) {
-
-                float tempSI = Utils.getMagnitudeInSI(network.getTemperature());
-                float tempnC = Utils.getMagnitudeInSI(project.simulationParameters.getTemperature()+"degC");
-
-                if (Math.abs(tempSI-tempnC)>1e-6)
-                {
-                    GuiUtils.showWarningMessage(logger, "Note that the imported network file specifies a temperature of "+network.getTemperature()
-                            +", but the neuroConstruct project has a temperature setting of "+project.simulationParameters.getTemperature()+" deg C", null);
-
-                }
-            }
-
-            for (Population population: network.getPopulation())
+            else if (neuroml.getNetwork().size()==1) 
             {
-                for (Instance instance: population.getInstance()) 
-                {
-                    Location loc = instance.getLocation();
 
-                    logger.logComment("Adding instance "+instance.getId()+" at: "+ loc+" in "+population.getId());
-                    this.cellPos.addPosition(population.getId(), new PositionRecord(instance.getId().intValue(), loc.getX(), loc.getY(), loc.getZ()));
+                Network network = neuroml.getNetwork().get(0); // Only first network...
+
+                if (network.getType()!=null && network.getType().toString().equals(NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE)) {
+
+                    float tempSI = Utils.getMagnitudeInSI(network.getTemperature());
+                    float tempnC = Utils.getMagnitudeInSI(project.simulationParameters.getTemperature()+"degC");
+
+                    if (Math.abs(tempSI-tempnC)>1e-6)
+                    {
+                        GuiUtils.showWarningMessage(logger, "Note that the imported network file specifies a temperature of "+network.getTemperature()
+                                +", but the neuroConstruct project has a temperature setting of "+project.simulationParameters.getTemperature()+" deg C", null);
+
+                    }
                 }
-            }
-            for (Projection projection: network.getProjection())
-            {
-                String netConn = projection.getId();
-                String source = projection.getPresynapticPopulation();
-                String target = projection.getPostsynapticPopulation();
-                
-                //TODO: check source & target in cell grpups
-                
-                for (Connection conn: projection.getConnection())
+
+                for (Population population: network.getPopulation())
                 {
-                    int preSeg = conn.getPreSegmentId()!=null ? conn.getPreSegmentId() : 0;
-                    int postSeg = conn.getPostSegmentId()!=null ? conn.getPostSegmentId() : 0;
-                    
-                    float preFract = conn.getPreFractionAlong()!=null ? conn.getPreFractionAlong().floatValue() : 0.5f;
-                    float postFract = conn.getPostFractionAlong()!=null ? conn.getPostFractionAlong().floatValue() : 0.5f;
-                    
-                    this.netConns.addSynapticConnection(netConn, 
-                                                        GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
-                                                        parseForCellNumber(conn.getPreCellId()), 
-                                                        preSeg,
-                                                        preFract,
-                                                        parseForCellNumber(conn.getPostCellId()),
-                                                        postSeg,
-                                                        postFract,
-                                                        0,
-                                                        null);
+                    for (Instance instance: population.getInstance()) 
+                    {
+                        Location loc = instance.getLocation();
+
+                        logger.logComment("Adding instance "+instance.getId()+" at: "+ loc+" in "+population.getId());
+                        this.cellPos.addPosition(population.getId(), new PositionRecord(instance.getId().intValue(), loc.getX(), loc.getY(), loc.getZ()));
+                    }
+                }
+                for (Projection projection: network.getProjection())
+                {
+                    String netConn = projection.getId();
+                    String source = projection.getPresynapticPopulation();
+                    String target = projection.getPostsynapticPopulation();
+
+                    //TODO: check source & target in cell grpups
+
+                    for (Connection conn: projection.getConnection())
+                    {
+                        int preSeg = conn.getPreSegmentId()!=null ? conn.getPreSegmentId() : 0;
+                        int postSeg = conn.getPostSegmentId()!=null ? conn.getPostSegmentId() : 0;
+
+                        float preFract = conn.getPreFractionAlong()!=null ? conn.getPreFractionAlong().floatValue() : 0.5f;
+                        float postFract = conn.getPostFractionAlong()!=null ? conn.getPostFractionAlong().floatValue() : 0.5f;
+
+                        this.netConns.addSynapticConnection(netConn, 
+                                                            GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
+                                                            parseForCellNumber(conn.getPreCellId()), 
+                                                            preSeg,
+                                                            preFract,
+                                                            parseForCellNumber(conn.getPostCellId()),
+                                                            postSeg,
+                                                            postFract,
+                                                            0,
+                                                            null);
+                    }
                 }
             }
         }
-        catch(Exception e) {
+        catch(JAXBException e) {
+            throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
+        } catch (MalformedURLException e) {
+            throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
+        } catch (org.neuroml.model.util.NeuroMLException e) {
             throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
         }
         
@@ -200,26 +297,42 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
             File f = new File("testProjects/TestNetworkML/savedNetworks/test_nml2.xml");
             f = new File("testProjects/TestNetworkML/savedNetworks/nnn.nml");
-            f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/pythonScripts/CElegansConnectome.nml");
-
-            logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
             
-            ProjectManager pm = new ProjectManager(null, null);
-   
-            pm.setCurrentProject(testProj);
-            
-            
-            pm.doLoadNeuroML2Network(f, false);
-            
-            
-            while (pm.isGenerating())
+            boolean network = false;
+            if (network) 
             {
-                Thread.sleep(2);
-                System.out.println("Waiting...");
+                f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/pythonScripts/CElegansConnectome.nml");
+
+                logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
+
+                ProjectManager pm = new ProjectManager(null, null);
+
+                pm.setCurrentProject(testProj);
+
+
+                pm.doLoadNeuroML2Network(f, false);
+
+
+                while (pm.isGenerating())
+                {
+                    Thread.sleep(2);
+                    System.out.println("Waiting...");
+                }
+
+                System.out.println(testProj.generatedCellPositions.details());
+                System.out.println(testProj.generatedNetworkConnections.details());
             }
-            
-            System.out.println(testProj.generatedCellPositions.details());
-            System.out.println(testProj.generatedNetworkConnections.details());
+            else 
+            {
+                f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/generatedNeuroML2/ADAL.nml");
+                
+                logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
+
+
+                NeuroML2Reader nml2Reader = new NeuroML2Reader(testProj);
+
+                nml2Reader.parse(f, "New_");
+            }
             
 
         }

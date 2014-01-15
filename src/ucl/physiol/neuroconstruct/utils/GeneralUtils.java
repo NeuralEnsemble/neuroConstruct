@@ -26,15 +26,29 @@
 
 package ucl.physiol.neuroconstruct.utils;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
 
-import java.awt.*;
-import java.net.*;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import javax.swing.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import javax.swing.JOptionPane;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
@@ -409,32 +423,24 @@ public class GeneralUtils
         return files;
     }
 
-    class StringifiableComparator implements Comparator{
-
-        public int compare(Object o1, Object o2) {
-            return o1.toString().compareToIgnoreCase(o2.toString());
-        }
-        
-
-    }
 
 
 
-    public static AbstractList reorderAlphabetically(AbstractList list, boolean ascending)
+    public static <T> List<T> reorderAlphabetically(List<T> list, boolean ascending)
     {
         java.util.Collections.sort(list, new Comparator()
-                 {
+        {
                      public int compare(Object o1, Object o2)
-                     {
+            {
+
                            return o1.toString().compareToIgnoreCase(o2.toString());
-                     }        
+                        }
                  });
         if (!ascending)
             java.util.Collections.reverse(list);
         return list;
     }
 
-    
 
 
 
