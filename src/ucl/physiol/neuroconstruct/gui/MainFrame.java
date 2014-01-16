@@ -1925,7 +1925,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
       }
     });
     
-    jButtonMechanismUpdateMaps.setText("Update mappings");
+    jButtonMechanismUpdateMaps.setText("Update XSL mappings");
     
     jButtonMechanismUpdateMaps.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -14459,6 +14459,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         boolean cleanup = GuiUtils.showYesNoMessage(logger, "Would you like to also clean up any old XSL mapping files found which are not being used by the " +
                 "Cell Mechanism (e.g. from a previous version of NeuroML)?", this);
         
+        if (selectedRows.length == 0) {
+            boolean all = GuiUtils.showYesNoMessage(logger, "No Cell Mechanisms are selected. Update all Cell Mechanisms?", this);
+            if (!all) return;
+            selectedRows = new int[jTableMechanisms.getRowCount()];
+            for (int i =0;i<jTableMechanisms.getRowCount();i++){
+                selectedRows[i] = i;
+            }
+        }
         
         for (int row: selectedRows)
         {

@@ -169,6 +169,7 @@ standardGHProject 'MainenEtAl_PyramidalCell' 'cerebral_cortex/neocortical_pyrami
 standardGHProject 'RothmanEtAl_KoleEtAl_PyrCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'L5bPyrCellHayEtAl2011' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'LarkumEtAl2009' 'cerebral_cortex/neocortical_pyramidal_neuron'
+standardGHProject 'korngreen-pyramidal' 'cerebral_cortex/neocortical_pyramidal_neuron'
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
