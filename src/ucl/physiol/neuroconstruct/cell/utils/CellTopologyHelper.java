@@ -26,10 +26,19 @@
 
 package ucl.physiol.neuroconstruct.cell.utils;
 
-import java.io.*;
-import java.util.*;
-import javax.vecmath.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.j3D.*;
@@ -60,6 +69,33 @@ public class CellTopologyHelper
     public static final String CELL_IS_BIO_VALID = "Cell biophysical parameters are valid.";
 
     public static final String CELLS_ARE_IDENTICAL = "** Cells are identical **";
+
+    private static String getDisplayableString(String name, Float val, String symb, boolean html, List groups) {
+        return "    " + name + "          : " +
+               GeneralUtils.getTabbedString(val + " " + symb,
+                                            "b", html) +
+               " on " + GeneralUtils.getTabbedString(groups.toString(), "b", html) +
+               GeneralUtils.getEndLine(html);
+    }
+
+    private static <T> List<T> truncateIfLarger(List<T> orig, int l, boolean longFormat) {
+        List<T> truncated = new ArrayList<T>(l);
+        if (!longFormat && orig.size() > l) {
+            truncated = orig.subList(0, l);
+            return truncated;
+        } else {
+            return orig;
+        }
+
+    }
+
+    private static String andNMoreMsg(List list, int i) {
+        StringBuilder msg = new StringBuilder();
+        if(list.size() >= i){
+            msg.append("... and ").append(list.size() - i).append(" more.");
+        } 
+        return msg.toString();
+    }
 
     CachedSynLocInfo cachedPostSynLocInfo = null;
     CachedSynLocInfo cachedPreSynLocInfo = null;
@@ -2464,36 +2500,30 @@ public class CellTopologyHelper
                   + GeneralUtils.getTabbedString(initPot, "b", html) +GeneralUtils.getEndLine(html));
 
 
-        ArrayList<Float> specCaps = cell.getDefinedSpecCaps();
-        for (Float sc: specCaps)
+        List<Float> specCaps = cell.getDefinedSpecCaps();
+        for (Float sc: truncateIfLarger(specCaps,10, longFormat))
         {
             Vector groups = cell.getGroupsWithSpecCap(sc);
 
-            sb.append("    Specific Capacitance          : " +
-                      GeneralUtils.getTabbedString(sc + " " +capSymb
-                                                   ,
-                                                   "b", html) +
-                      " on " + GeneralUtils.getTabbedString(groups.toString(), "b", html) +
-                      GeneralUtils.getEndLine(html));
+            sb.append(getDisplayableString("Specific Capacitance", sc, capSymb, html, groups));
 
         }
+        sb.append(andNMoreMsg(specCaps, 10)).append(GeneralUtils.getEndLine(html));
+        
 
         String sarSymb = useFullSymbol ? UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
         	UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
 
 
-        ArrayList<Float> specAxReses = cell.getDefinedSpecAxResistances();
-        for (Float sar: specAxReses)
+        List<Float> specAxReses = cell.getDefinedSpecAxResistances();
+        for (Float sar: truncateIfLarger(specAxReses, 10, longFormat))
         {
-            Vector groups = cell.getGroupsWithSpecAxRes(sar);
+            List groups = cell.getGroupsWithSpecAxRes(sar);
 
-            sb.append("    Specific Axial Resistance     : " +
-                      GeneralUtils.getTabbedString(sar + " " +sarSymb,
-                                                   "b", html) +
-                      " on " + GeneralUtils.getTabbedString(groups.toString(), "b", html) +
-                      GeneralUtils.getEndLine(html));
+            sb.append(getDisplayableString("Specific Axial Resistance", sar, sarSymb, html, groups));
 
         }
+        sb.append(andNMoreMsg(specAxReses, 10)).append(GeneralUtils.getEndLine(html));
 
 
         String condDensSymb = useFullSymbol ? UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
@@ -2502,12 +2532,12 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
 
-        ArrayList<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
-        allChanMechs = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(allChanMechs, true);
-        for (int i = 0; i < allChanMechs.size(); i++)
+        List<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
+        allChanMechs = GeneralUtils.reorderAlphabetically(allChanMechs, true);
+        
+        for (ChannelMechanism chanMech : truncateIfLarger(allChanMechs, 10, longFormat))
         {
-            ChannelMechanism chanMech = allChanMechs.get(i);
-            Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
+            ArrayList<String> groups = new ArrayList(cell.getGroupsWithChanMech(chanMech));
             
             String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
             
@@ -2559,7 +2589,8 @@ public class CellTopologyHelper
             sb.append("    "+type+": "+GeneralUtils.getTabbedString(descCm, "b", html)
                       +" is present on groups: "+grpInfo+GeneralUtils.getEndLine(html));
         }
-        if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
+        sb.append(andNMoreMsg(allChanMechs, 10)).append(GeneralUtils.getEndLine(html));
+        //if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
         
         
         
@@ -3874,7 +3905,7 @@ public class CellTopologyHelper
             for (int i = 0; i < allChanMechsB.size(); i++)
             {
                 ChannelMechanism chanMech = allChanMechsB.get(i);
-                Vector<String> groupsB = cellB.getGroupsWithChanMech(chanMech);
+                List<String> groupsB = cellB.getGroupsWithChanMech(chanMech);
             
                 String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
             
@@ -3891,7 +3922,7 @@ public class CellTopologyHelper
             for (int i = 0; i < allChanMechsA.size(); i++)
             {
                 ChannelMechanism chanMech = allChanMechsA.get(i);
-                Vector<String> groupsA = cellA.getGroupsWithChanMech(chanMech);
+                List<String> groupsA = cellA.getGroupsWithChanMech(chanMech);
             
                 String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
             
