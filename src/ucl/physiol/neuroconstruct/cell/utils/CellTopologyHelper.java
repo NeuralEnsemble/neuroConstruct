@@ -40,6 +40,7 @@ import java.util.Vector;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -47,7 +48,6 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.compartment.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
-import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 
 /**
  * Helper class for dealing with cell topology (and other aspects, e.g. biophysiology).
@@ -89,11 +89,14 @@ public class CellTopologyHelper
 
     }
 
-    private static String andNMoreMsg(List list, int i, String type) {
+    private static String andNMoreMsg(List list, int i, String type, boolean longFormat) {
         StringBuilder msg = new StringBuilder();
-        if(list.size() >= i){
-            msg.append("... and ").append(list.size() - i).append(" more values for ").append(type).append(". See Full Cell Info for details");
+        if(list.size() >= i && !longFormat){
+            msg.append("... and ").append(list.size() - i).append(" more values for ").append(type).append(". See Full Cell Info for details.");
         } 
+        else{
+            msg.append("");
+        }
         return msg.toString();
     }
 
@@ -2502,15 +2505,14 @@ public class CellTopologyHelper
 
         List<Float> specCaps = cell.getDefinedSpecCaps();
         int truncatePassive = 20;
-        for (Float sc: truncateIfLarger(specCaps,truncatePassive, longFormat))
+        for (Float sc: truncateIfLarger(specCaps, truncatePassive, longFormat))
         {
             Vector groups = cell.getGroupsWithSpecCap(sc);
 
             sb.append(getDisplayableString("Specific Capacitance", sc, capSymb, html, groups));
 
         }
-        sb.append(andNMoreMsg(specCaps, truncatePassive, "specific capacitance")).append(GeneralUtils.getEndLine(html));
-        
+        sb.append(andNMoreMsg(specCaps, truncatePassive, "specific capacitance", longFormat)).append(GeneralUtils.getEndLine(html));
 
         String sarSymb = useFullSymbol ? UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
         	UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
@@ -2524,7 +2526,7 @@ public class CellTopologyHelper
             sb.append(getDisplayableString("Specific Axial Resistance", sar, sarSymb, html, groups));
 
         }
-        sb.append(andNMoreMsg(specAxReses, truncatePassive, "axial resistance")).append(GeneralUtils.getEndLine(html));
+        sb.append(andNMoreMsg(specAxReses, truncatePassive, "axial resistance", longFormat)).append(GeneralUtils.getEndLine(html));
 
 
         String condDensSymb = useFullSymbol ? UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
@@ -2535,8 +2537,8 @@ public class CellTopologyHelper
 
         List<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
         allChanMechs = GeneralUtils.reorderAlphabetically(allChanMechs, true);
-        int truncate = 100;
-        for (ChannelMechanism chanMech : truncateIfLarger(allChanMechs, truncate, longFormat))
+        int truncateMechs = 100;
+        for (ChannelMechanism chanMech : truncateIfLarger(allChanMechs, truncateMechs, longFormat))
         {
             ArrayList<String> groups = new ArrayList(cell.getGroupsWithChanMech(chanMech));
             
@@ -2590,7 +2592,7 @@ public class CellTopologyHelper
             sb.append("    "+type+": "+GeneralUtils.getTabbedString(descCm, "b", html)
                       +" is present on groups: "+grpInfo+GeneralUtils.getEndLine(html));
         }
-        sb.append(andNMoreMsg(allChanMechs, truncate, "ion channel densities")).append(GeneralUtils.getEndLine(html));
+        sb.append(andNMoreMsg(allChanMechs, truncateMechs, "ion channel densities", longFormat)).append(GeneralUtils.getEndLine(html));
         //if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
         
         
