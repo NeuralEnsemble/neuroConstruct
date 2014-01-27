@@ -1441,11 +1441,17 @@ public class NeuronTemplateGenerator
             response.append("        insert "+vm.getName()+" { "+vm.getParam().getName()+"_"+vm.getName()+" = 0 }\n");
 
             CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(vm.getName());
-            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+            String erevInfo;
+            try{
+                ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+                erevInfo = getErevInfo(pg.getGroup(), null, cmlMech);
 
-            String erevInfo = getErevInfo(pg.getGroup(), null, cmlMech);
-
-
+            }
+            catch (ClassCastException ex){
+                logger.logComment("Cannot extract Erev info from non-ChannelML mechanism");
+                erevInfo = "";
+            }
+            
             response.append(erevInfo);
             
             response.append("    }\n");
