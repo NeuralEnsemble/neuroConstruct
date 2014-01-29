@@ -1727,6 +1727,7 @@ public class NeuronTemplateGenerator
 
     private String getProcBiophysInhomo()
     {
+        float convFactor = (float) 1.0;
         logger.logComment("calling getProcBiophys");
         StringBuilder response = new StringBuilder();
         for(ParameterisedGroup pg: cell.getParameterisedGroups())
@@ -1734,9 +1735,6 @@ public class NeuronTemplateGenerator
             response.append("objref "+pg.getName()+" \n");
         }
         StringBuilder postProcs = new StringBuilder();
-        
-        float convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
-         
         response.append("proc biophys_inhomo() { \n");
         
         for(ParameterisedGroup pg: cell.getParameterisedGroups())
@@ -1753,6 +1751,16 @@ public class NeuronTemplateGenerator
             ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
             String procName=vm.getParam().getName()+"_"+vm.getName()+"_"+pg.getGroup()+"()";
             response.append("    "+procName+"\n");
+
+            //TODO: handle units properly... 
+            String pname = vm.getParam().getName();
+            if (pname.matches("gmax")){
+                convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
+            }
+            else if (pname.matches("permeability")){
+                convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.permeabilityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
+            }
+         
             
             postProcs.append("proc "+procName+" { local x, p, p0, p1"+"\n");
             postProcs.append("    "+pg.getName()+".update()\n");
