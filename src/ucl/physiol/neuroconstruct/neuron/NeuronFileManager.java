@@ -2830,8 +2830,10 @@ public class NeuronFileManager
                                     }
                                     else
                                     {
-                                        response.append("    { nrnpython(\"for i in range(len(h."+vectObj+"[int(h.cellNum)])): allData[i,columnIndex] = h."+vectObj+"[int(h.cellNum)].to_python()[i]\")}\n");
-                                        response.append("    {nrnpython(\"maxNumSpikes = max(maxNumSpikes, len(h."+vectObj+"[int(h.cellNum)]))\")}\n");
+                                        response.append("    { nrnpython(\"spikeArray = numpy.array(h."+vectObj+"[int(h.cellNum)])\")}\n");
+                                        response.append("    { nrnpython(\"numSpikes = spikeArray.size\")}\n");
+                                        response.append("    { nrnpython(\"allData[:numSpikes,columnIndex] = spikeArray\")}\n");
+                                        response.append("    { nrnpython(\"maxNumSpikes = max(maxNumSpikes, numSpikes)\")}\n");
                                     }
 
 
