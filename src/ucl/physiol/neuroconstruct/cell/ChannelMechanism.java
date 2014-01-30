@@ -44,7 +44,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 @SuppressWarnings("serial")
 
-public class ChannelMechanism implements Serializable, Comparable<ChannelMechanism>
+public class ChannelMechanism implements Serializable, Comparable<ChannelMechanism>, IMechanism
 {
     static final long serialVersionUID = -1884757566565532L;
     
@@ -143,7 +143,6 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
             
     }
     
-    @Override
     public int compareTo(ChannelMechanism otherMech)
     {
         return this.getName().compareTo(otherMech.getName());
@@ -194,6 +193,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         return info.toString();
     }
     
+    @Override
     public String getExtraParamsDesc()
     {
         StringBuffer info = new StringBuffer();
@@ -210,6 +210,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         }
         return info.toString();
     }
+    @Override
     public String getExtraParamsBracket()
     {
         StringBuffer info = new StringBuffer("(");
@@ -226,6 +227,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         return info.toString();
     }
     
+    @Override
     public void setExtraParam(String name, float value)
     {       
         if (extraParameters==null)
@@ -313,6 +315,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
     {
         return density;
     }
+    @Override
     public String getName()
     {
         return name;
@@ -321,11 +324,13 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
     {
         this.density = density;
     }
+    @Override
     public void setName(String name)
     {
         this.name = name;
     }
     
+    @Override
     public MechParameter getExtraParameter(String paramName)
     {
         if (extraParameters==null || extraParameters.size()==0)
@@ -342,6 +347,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
     }
         
     
+    @Override
     public ArrayList<MechParameter> getExtraParameters()
     {
         if (extraParameters==null)
@@ -349,6 +355,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         return this.extraParameters;
     }
     
+    @Override
     public void setExtraParameters(ArrayList<MechParameter> params)
     {
         this.extraParameters = params;

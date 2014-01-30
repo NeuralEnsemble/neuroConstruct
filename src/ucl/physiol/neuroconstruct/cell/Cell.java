@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.util.*;
 import java.io.*;
+import java.util.Map.Entry;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -287,7 +288,7 @@ public class Cell implements Serializable
         System.out.println("chanMechsVsGroups: "+chanMechsVsGroups);
         if (this.chanMechsVsGroups.size()>1)
             return false;
-        ChannelMechanism cm = this.getChanMechsForGroup(Section.ALL).get(0);
+        ChannelMechanism cm = (ChannelMechanism) this.getChanMechsForGroup(Section.ALL).get(0);
         System.out.println("cm: "+cm);
         System.out.println("this.getInstanceName(): "+this.getInstanceName());
 
@@ -1201,9 +1202,9 @@ public class Cell implements Serializable
     }
 
 
-    public ArrayList<ChannelMechanism> getChanMechsForGroup(String group)
+    public ArrayList<IMechanism> getChanMechsForGroup(String group)
     {
-        ArrayList<ChannelMechanism> chanMechs = new ArrayList<ChannelMechanism>();
+        ArrayList<IMechanism> chanMechs = new ArrayList<IMechanism>();
 
         Enumeration allChanMechs = chanMechsVsGroups.keys();
         while (allChanMechs.hasMoreElements())
@@ -1217,6 +1218,20 @@ public class Cell implements Serializable
         }
         return chanMechs;
     }
+
+    public ArrayList<IMechanism> getVarChanMechsForParamGroup(String group)
+    {
+        ArrayList<IMechanism> varChanMechs = new ArrayList<IMechanism>();
+
+        for (Entry<VariableMechanism, ParameterisedGroup> entry : varMechsVsParaGroups.entrySet()) {
+            VariableMechanism vm = entry.getKey();
+            ParameterisedGroup pg = entry.getValue();
+            if (pg.getName().equals(group))
+                    varChanMechs.add(vm);
+        }
+        return varChanMechs;
+    }
+    
 
     public Vector<String> getSynapsesForGroup(String group)
     {
@@ -1342,14 +1357,14 @@ public class Cell implements Serializable
 
 
 
-    public ArrayList<ChannelMechanism> getUniformChanMechsForSeg(Segment segment)
+    public ArrayList<IMechanism> getUniformChanMechsForSeg(Segment segment)
     {
         return getUniformChanMechsForSec(segment.getSection());
     }
 
-    public ArrayList<ChannelMechanism> getUniformChanMechsForSec(Section section)
+    public ArrayList<IMechanism> getUniformChanMechsForSec(Section section)
     {
-        ArrayList<ChannelMechanism> chanMechs = new ArrayList<ChannelMechanism>();
+        ArrayList<IMechanism> chanMechs = new ArrayList<IMechanism>();
 
         Vector groups = section.getGroups();
         for (int i = 0; i < groups.size(); i++)
@@ -2182,7 +2197,7 @@ public class Cell implements Serializable
 
         for (String nextGroup: groups)
         {
-            ArrayList<ChannelMechanism> allChanMechs = getChanMechsForGroup(nextGroup);
+            ArrayList<IMechanism> allChanMechs = getChanMechsForGroup(nextGroup);
 
             for (int k = 0; k < allChanMechs.size(); k++)
             {

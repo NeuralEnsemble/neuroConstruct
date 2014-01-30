@@ -542,17 +542,27 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             return;
         }
         
-        ChannelMechanism chanMech = null;
+        IMechanism chanMech = null;
         String sel = (String)selected[0];
         
         String groupName = sel.substring(0, sel.indexOf(" ")).trim();
         
-        ArrayList<ChannelMechanism> allChans = myCell.getChanMechsForGroup(groupName);
-        
-        for (int k = 0; k < allChans.size(); k++)
-        {
-            if (allChans.get(k).getName().equals(selectedMechanism))
-                chanMech = allChans.get(k);
+        ArrayList<IMechanism> allChans;
+       
+         
+        allChans = myCell.getChanMechsForGroup(groupName);
+        if (allChans.size() > 0){
+            for (int k = 0; k < allChans.size(); k++) {
+                if (allChans.get(k).getName().equals(selectedMechanism))
+                    chanMech = allChans.get(k);
+            }
+        }
+        else{
+            allChans = myCell.getVarChanMechsForParamGroup(groupName);
+            for (int k = 0; k < allChans.size(); k++) {
+                if (allChans.get(k).getName().equals(selectedMechanism))
+                    chanMech = allChans.get(k);
+            }
         }
 
         
@@ -638,7 +648,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         chanMech.setExtraParameters(newMps);
         
 
-        myCell.associateGroupWithChanMech(groupName, chanMech);
+        if (chanMech instanceof ChannelMechanism){
+            myCell.associateGroupWithChanMech(groupName, (ChannelMechanism) chanMech);
+        }
+
         
         
         this.jComboBoxMechNames.setSelectedIndex(0);
@@ -752,11 +765,11 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 else
                 {
                     ChannelMechanism chanMech = null;
-                    ArrayList<ChannelMechanism> allChans = myCell.getChanMechsForGroup(groupName);
+                    ArrayList<IMechanism> allChans = myCell.getChanMechsForGroup(groupName);
                     for (int k = 0; k < allChans.size(); k++)
                     {
                         if (allChans.get(k).getName().equals(selectedMechanism))
-                            chanMech = allChans.get(k);
+                            chanMech = (ChannelMechanism) allChans.get(k);
                     }
 
                     float newVal = this.getDensForGroup(selectedMechanism, chanMech.getDensity(), "(" + groupName + ")");
@@ -869,7 +882,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
                 else
                 {
-                    ArrayList<ChannelMechanism> allChanMechs = myCell.getChanMechsForGroup(nextGroup);
+                    ArrayList<IMechanism> allChanMechs = myCell.getChanMechsForGroup(nextGroup);
 
                     logger.logComment("Looking at group: " + nextGroup
                                       + " which has chans: " + allChanMechs);
@@ -878,7 +891,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
                     for (int k = 0; k < allChanMechs.size(); k++)
                     {
-                        ChannelMechanism nextChanMech = allChanMechs.get(k);
+                        ChannelMechanism nextChanMech = (ChannelMechanism) allChanMechs.get(k);
                         logger.logComment("Next chan mech = " + nextChanMech);
 
                         if (nextChanMech.getName().equals(selectedMechanism))

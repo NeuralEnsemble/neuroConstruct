@@ -28,8 +28,9 @@ package ucl.physiol.neuroconstruct.cell;
  
 
 import java.io.*;
-import java.util.*;
 import java.util.ArrayList;
+import ucl.physiol.neuroconstruct.utils.ClassLogger;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
  /**
@@ -43,14 +44,16 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
 
 @SuppressWarnings("serial")
 
-public class VariableMechanism implements Serializable
+public class VariableMechanism implements Serializable, IMechanism
 {
     private static final long serialVersionUID = -7566565188475532L;
+
+    private static transient ClassLogger logger = new ClassLogger("VariableMechanism");
     
     private String name = null;
-    
-    //private ArrayList<VariableParameter> params = new ArrayList<VariableParameter>();
     VariableParameter param = null;
+    private ArrayList<MechParameter> extraParameters = null;
+
     
     public VariableMechanism()
     {
@@ -60,6 +63,7 @@ public class VariableMechanism implements Serializable
     {
         this.name = name;
         this.param = param;
+        this.extraParameters = new ArrayList<MechParameter>();
     }
 
     public VariableParameter getParam()
@@ -75,8 +79,62 @@ public class VariableMechanism implements Serializable
     @Override
     public Object clone()
     {
-        VariableMechanism vm2 = new VariableMechanism(new String(name), (VariableParameter)param.clone());
+        VariableMechanism vm2 = new VariableMechanism(name, (VariableParameter)param.clone());
+        for (MechParameter mp : extraParameters) {
+            vm2.getExtraParameters().add((MechParameter) mp.clone());
+        }
         return vm2;
+    }
+     public String getExtraParamsDesc()
+    {
+        StringBuilder info = new StringBuilder();
+        
+           
+        if (extraParameters!=null)
+        {
+            ArrayList<MechParameter> mpa = (ArrayList<MechParameter>)GeneralUtils.reorderAlphabetically(extraParameters, true);
+            
+            for (MechParameter mp: mpa)
+            {
+                info.append(", ").append(mp.toString());
+            }
+        }
+        return info.toString();
+    }
+    public String getExtraParamsBracket()
+    {
+        StringBuilder info = new StringBuilder("(");
+           
+        if (extraParameters!=null)
+        {
+            for (int i=0;i<extraParameters.size();i++)
+            {
+                if (i!=0) info.append(", ");
+                info.append(extraParameters.get(i).toString());
+            }
+        }
+        info.append(")");
+        return info.toString();
+    }
+    
+    public void setExtraParam(String name, float value)
+    {       
+        if (extraParameters==null)
+            extraParameters = new ArrayList<MechParameter>();
+        
+        for (MechParameter mp: extraParameters)
+        {
+            if (mp.getName().equals(name))
+            {
+                logger.logComment("Updating current param: " + mp);
+                mp.setValue(value);
+                return;
+            }
+        } 
+        // if not found
+        MechParameter mp = new MechParameter(name, value);
+        logger.logComment("Adding new param: " + mp);
+        this.extraParameters.add(mp);
     }
     
     /*
@@ -145,6 +203,24 @@ public class VariableMechanism implements Serializable
         {
             return false;
         }
+
+        ArrayList<MechParameter> otherParams = other.getExtraParameters();
+        if (extraParameters != null) {
+            if (otherParams == null) {
+                return false;
+            }
+
+            if (otherParams.size() != extraParameters.size()) {
+                return false;
+            }
+
+            for (int i = 0; i < extraParameters.size(); i++) {
+                if (!otherParams.contains(extraParameters.get(i))) {
+                    return false;
+                }
+            }
+        }
+        
         return true;
     }
 
@@ -216,7 +292,30 @@ public class VariableMechanism implements Serializable
         }
 
     }
-    
+
+    public MechParameter getExtraParameter(String paramName) {
+        if (extraParameters == null || extraParameters.isEmpty()) {
+            return null;
+        }
+
+        for (MechParameter mp : extraParameters) {
+            if (mp.getName().equals(paramName)) {
+                return mp;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<MechParameter> getExtraParameters() {
+        if (extraParameters == null) {
+            extraParameters = new ArrayList<MechParameter>();
+        }
+        return this.extraParameters;
+    }
+
+    public void setExtraParameters(ArrayList<MechParameter> params) {
+        this.extraParameters = params;
+    }
 
 
 }
