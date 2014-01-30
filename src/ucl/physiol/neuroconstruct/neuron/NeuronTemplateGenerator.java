@@ -1779,6 +1779,7 @@ public class NeuronTemplateGenerator
 
         response.append("func H() { // Heaviside function, can be used to set gmax = 0 when x <100 etc.\n");
         response.append("    if ($1>=0) return 1\n");
+        response.append("    if ($1==0) return 0.5\n");
         response.append("    return 0\n");
         response.append("}\n\n");
         
