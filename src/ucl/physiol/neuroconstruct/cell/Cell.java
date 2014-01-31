@@ -1202,9 +1202,9 @@ public class Cell implements Serializable
     }
 
 
-    public ArrayList<IMechanism> getChanMechsForGroup(String group)
+    public ArrayList<ChannelMechanism> getChanMechsForGroup(String group)
     {
-        ArrayList<IMechanism> chanMechs = new ArrayList<IMechanism>();
+        ArrayList<ChannelMechanism> chanMechs = new ArrayList<ChannelMechanism>();
 
         Enumeration allChanMechs = chanMechsVsGroups.keys();
         while (allChanMechs.hasMoreElements())
@@ -1219,9 +1219,9 @@ public class Cell implements Serializable
         return chanMechs;
     }
 
-    public ArrayList<IMechanism> getVarChanMechsForParamGroup(String group)
+    public ArrayList<VariableMechanism> getVarChanMechsForParamGroup(String group)
     {
-        ArrayList<IMechanism> varChanMechs = new ArrayList<IMechanism>();
+        ArrayList<VariableMechanism> varChanMechs = new ArrayList<VariableMechanism>();
 
         for (Entry<VariableMechanism, ParameterisedGroup> entry : varMechsVsParaGroups.entrySet()) {
             VariableMechanism vm = entry.getKey();
@@ -1357,14 +1357,14 @@ public class Cell implements Serializable
 
 
 
-    public ArrayList<IMechanism> getUniformChanMechsForSeg(Segment segment)
+    public ArrayList<ChannelMechanism> getUniformChanMechsForSeg(Segment segment)
     {
         return getUniformChanMechsForSec(segment.getSection());
     }
 
-    public ArrayList<IMechanism> getUniformChanMechsForSec(Section section)
+    public ArrayList<ChannelMechanism> getUniformChanMechsForSec(Section section)
     {
-        ArrayList<IMechanism> chanMechs = new ArrayList<IMechanism>();
+        ArrayList<ChannelMechanism> chanMechs = new ArrayList<ChannelMechanism>();
 
         Vector groups = section.getGroups();
         for (int i = 0; i < groups.size(); i++)
@@ -2197,7 +2197,7 @@ public class Cell implements Serializable
 
         for (String nextGroup: groups)
         {
-            ArrayList<IMechanism> allChanMechs = getChanMechsForGroup(nextGroup);
+            ArrayList<ChannelMechanism> allChanMechs = getChanMechsForGroup(nextGroup);
 
             for (int k = 0; k < allChanMechs.size(); k++)
             {

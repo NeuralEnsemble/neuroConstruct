@@ -547,10 +547,11 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         
         String groupName = sel.substring(0, sel.indexOf(" ")).trim();
         
-        ArrayList<IMechanism> allChans;
+        ArrayList<ChannelMechanism> allChans;
+        ArrayList<VariableMechanism> allVarChans;
        
          
-        allChans = myCell.getChanMechsForGroup(groupName);
+        allChans =  myCell.getChanMechsForGroup(groupName);
         if (allChans.size() > 0){
             for (int k = 0; k < allChans.size(); k++) {
                 if (allChans.get(k).getName().equals(selectedMechanism))
@@ -558,10 +559,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             }
         }
         else{
-            allChans = myCell.getVarChanMechsForParamGroup(groupName);
-            for (int k = 0; k < allChans.size(); k++) {
-                if (allChans.get(k).getName().equals(selectedMechanism))
-                    chanMech = allChans.get(k);
+            allVarChans = myCell.getVarChanMechsForParamGroup(groupName);
+            for (int k = 0; k < allVarChans.size(); k++) {
+                if (allVarChans.get(k).getName().equals(selectedMechanism))
+                    chanMech = allVarChans.get(k);
             }
         }
 
@@ -765,7 +766,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 else
                 {
                     ChannelMechanism chanMech = null;
-                    ArrayList<IMechanism> allChans = myCell.getChanMechsForGroup(groupName);
+                    ArrayList<ChannelMechanism> allChans = myCell.getChanMechsForGroup(groupName);
                     for (int k = 0; k < allChans.size(); k++)
                     {
                         if (allChans.get(k).getName().equals(selectedMechanism))
@@ -882,7 +883,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
                 else
                 {
-                    ArrayList<IMechanism> allChanMechs = myCell.getChanMechsForGroup(nextGroup);
+                    ArrayList<ChannelMechanism> allChanMechs = myCell.getChanMechsForGroup(nextGroup);
 
                     logger.logComment("Looking at group: " + nextGroup
                                       + " which has chans: " + allChanMechs);
