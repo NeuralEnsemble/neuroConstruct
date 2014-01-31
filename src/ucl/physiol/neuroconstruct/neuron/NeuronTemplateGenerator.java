@@ -1438,7 +1438,16 @@ public class NeuronTemplateGenerator
             NeuronFileManager.addHocComment(response, "    Variable mechanism: "+ vm,false);
             NeuronFileManager.addHocComment(response, "    On parameter group: "+ pg,false);
             NeuronFileManager.addHocComment(response, "    Note, gmax, etc. will be set in biophys_inhomo()",false);
-            response.append("        insert "+vm.getName()+" { "+vm.getParam().getName()+"_"+vm.getName()+" = 0 }\n");
+            response.append("        insert "+vm.getName()+" { "+vm.getParam().getName()+"_"+vm.getName()+" = 0 \n");
+
+            ArrayList<MechParameter> mps = vm.getExtraParameters();
+            StringBuilder moreParams = new StringBuilder();
+            for (MechParameter mp : mps) {
+                moreParams.append("\t\t").append(mp.getName()).append("_").append(vm.getName()).append(" = ").append(mp.getValue()).append("\n");
+            }
+            response.append(moreParams.toString()).append("       }\n");
+            
+            
 
             CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(vm.getName());
             String erevInfo;
