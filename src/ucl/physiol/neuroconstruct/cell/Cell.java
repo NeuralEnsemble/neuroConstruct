@@ -1219,6 +1219,16 @@ public class Cell implements Serializable
         return chanMechs;
     }
 
+    public ParameterisedGroup getParamGroupByName(String name)
+    {
+        ParameterisedGroup group = null;
+        for (ParameterisedGroup pg : varMechsVsParaGroups.values()) {
+            if (pg.getName().equals(name))
+                group = pg;
+        }
+        return group;
+    }
+
     public ArrayList<VariableMechanism> getVarChanMechsForParamGroup(String group)
     {
         ArrayList<VariableMechanism> varChanMechs = new ArrayList<VariableMechanism>();
