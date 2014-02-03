@@ -79,9 +79,9 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
 
             ArrayList<DataSet> dataSets = Hdf5Utils.parseGroupForDatasets(g, plotToo);
 
-            StringBuffer summary = new StringBuffer("\n  Number of DataSets found in file: "+ hdf5File.getAbsolutePath()+": "+dataSets.size()+"\n\n  Select which to plot below.");
+            String summary = "\n  Number of DataSets found in file: "+ hdf5File.getAbsolutePath()+": "+dataSets.size()+"\n\n  Select which to plot below.";
             
-            this.jTextAreaMain.setText(summary.toString());
+            this.jTextAreaMain.setText(summary);
             
             this.jComboBox1.addItem(SELECT_INFO);
             
@@ -97,7 +97,8 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         catch(Exception e)
         {
             this.jTextAreaMain.setText("An error occured loading information from file: "+ hdf5File+"\n" +
-                "Information:\n\n"+e.getMessage());
+                "Information:\n\n"+e.toString());
+            e.printStackTrace();
         }
         
         
@@ -136,7 +137,7 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         @Override
         public String toString()
         {
-            return ds.getReference();
+            return ds.getReference()+" ("+ds.getDescription()+")";
         }
             
     }
@@ -326,7 +327,7 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 
-                File f = new File("../temp/ep0601aa.hdf5");
+                File f = new File("osb/showcase/neuroConstructShowcase/Ex8_PyNNDemo/pythonScripts/Results/NeuroMLTest_nest.h5");
                     
                     
                 HDF5ChooserDialog dialog = new HDF5ChooserDialog(new javax.swing.JFrame(), false, f);
