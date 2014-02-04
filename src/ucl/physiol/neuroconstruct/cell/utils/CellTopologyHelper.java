@@ -2612,9 +2612,10 @@ public class CellTopologyHelper
             }
 
 
-            sb.append("    Variable Mechanism: "+GeneralUtils.getTabbedString(mechString, "b", html)
-                +" with param: "+GeneralUtils.getTabbedString(vm.getParam().toString(), "b", html)
-                      +" is present on: "+GeneralUtils.getTabbedString(pg.getName(), "b", html)+GeneralUtils.getEndLine(html));
+            sb.append("    Variable Mechanism: " + GeneralUtils.getTabbedString(mechString, "b", html)
+                    + " with param: " + GeneralUtils.getTabbedString(vm.getParam().toString(), "b", html)
+                    + GeneralUtils.getTabbedString(vm.getExtraParamsDesc(), "b", html)
+                    + " is present on: " + GeneralUtils.getTabbedString(pg.getName(), "b", html) + GeneralUtils.getEndLine(html));
 
         }
         if (varMechsVsParaGroups.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));

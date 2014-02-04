@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.util.*;
 import java.io.*;
+import java.util.Map.Entry;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -287,7 +288,7 @@ public class Cell implements Serializable
         System.out.println("chanMechsVsGroups: "+chanMechsVsGroups);
         if (this.chanMechsVsGroups.size()>1)
             return false;
-        ChannelMechanism cm = this.getChanMechsForGroup(Section.ALL).get(0);
+        ChannelMechanism cm = (ChannelMechanism) this.getChanMechsForGroup(Section.ALL).get(0);
         System.out.println("cm: "+cm);
         System.out.println("this.getInstanceName(): "+this.getInstanceName());
 
@@ -1217,6 +1218,30 @@ public class Cell implements Serializable
         }
         return chanMechs;
     }
+
+    public ParameterisedGroup getParamGroupByName(String name)
+    {
+        ParameterisedGroup group = null;
+        for (ParameterisedGroup pg : varMechsVsParaGroups.values()) {
+            if (pg.getName().equals(name))
+                group = pg;
+        }
+        return group;
+    }
+
+    public ArrayList<VariableMechanism> getVarChanMechsForParamGroup(String group)
+    {
+        ArrayList<VariableMechanism> varChanMechs = new ArrayList<VariableMechanism>();
+
+        for (Entry<VariableMechanism, ParameterisedGroup> entry : varMechsVsParaGroups.entrySet()) {
+            VariableMechanism vm = entry.getKey();
+            ParameterisedGroup pg = entry.getValue();
+            if (pg.getName().equals(group))
+                    varChanMechs.add(vm);
+        }
+        return varChanMechs;
+    }
+    
 
     public Vector<String> getSynapsesForGroup(String group)
     {

@@ -1438,14 +1438,29 @@ public class NeuronTemplateGenerator
             NeuronFileManager.addHocComment(response, "    Variable mechanism: "+ vm,false);
             NeuronFileManager.addHocComment(response, "    On parameter group: "+ pg,false);
             NeuronFileManager.addHocComment(response, "    Note, gmax, etc. will be set in biophys_inhomo()",false);
-            response.append("        insert "+vm.getName()+" { "+vm.getParam().getName()+"_"+vm.getName()+" = 0 }\n");
+            response.append("        insert "+vm.getName()+" { "+vm.getParam().getName()+"_"+vm.getName()+" = 0 \n");
+
+            ArrayList<MechParameter> mps = vm.getExtraParameters();
+            StringBuilder moreParams = new StringBuilder();
+            for (MechParameter mp : mps) {
+                moreParams.append("\t\t").append(mp.getName()).append("_").append(vm.getName()).append(" = ").append(mp.getValue()).append("\n");
+            }
+            response.append(moreParams.toString()).append("       }\n");
+            
+            
 
             CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(vm.getName());
-            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+            String erevInfo;
+            try{
+                ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+                erevInfo = getErevInfo(pg.getGroup(), null, cmlMech);
 
-            String erevInfo = getErevInfo(pg.getGroup(), null, cmlMech);
-
-
+            }
+            catch (ClassCastException ex){
+                logger.logComment("Cannot extract Erev info from non-ChannelML mechanism");
+                erevInfo = "";
+            }
+            
             response.append(erevInfo);
             
             response.append("    }\n");
@@ -1721,6 +1736,7 @@ public class NeuronTemplateGenerator
 
     private String getProcBiophysInhomo()
     {
+        float convFactor = (float) 1.0;
         logger.logComment("calling getProcBiophys");
         StringBuilder response = new StringBuilder();
         for(ParameterisedGroup pg: cell.getParameterisedGroups())
@@ -1728,9 +1744,6 @@ public class NeuronTemplateGenerator
             response.append("objref "+pg.getName()+" \n");
         }
         StringBuilder postProcs = new StringBuilder();
-        
-        float convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
-         
         response.append("proc biophys_inhomo() { \n");
         
         for(ParameterisedGroup pg: cell.getParameterisedGroups())
@@ -1747,6 +1760,16 @@ public class NeuronTemplateGenerator
             ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
             String procName=vm.getParam().getName()+"_"+vm.getName()+"_"+pg.getGroup()+"()";
             response.append("    "+procName+"\n");
+
+            //TODO: handle units properly... 
+            String pname = vm.getParam().getName();
+            if (pname.matches("gmax")){
+                convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
+            }
+            else if (pname.matches("permeability")){
+                convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.permeabilityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
+            }
+         
             
             postProcs.append("proc "+procName+" { local x, p, p0, p1"+"\n");
             postProcs.append("    "+pg.getName()+".update()\n");
@@ -1765,6 +1788,7 @@ public class NeuronTemplateGenerator
 
         response.append("func H() { // Heaviside function, can be used to set gmax = 0 when x <100 etc.\n");
         response.append("    if ($1>=0) return 1\n");
+        response.append("    if ($1==0) return 0.5\n");
         response.append("    return 0\n");
         response.append("}\n\n");
         

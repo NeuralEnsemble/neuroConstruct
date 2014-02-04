@@ -471,6 +471,11 @@ public class UnitConverter
                            currentDensityUnits[NEUROCONSTRUCT_UNITS],
                            currentDensityUnits[toUnits]);
 
+        else if (nCunits.equals(permeabilityUnits[NEUROCONSTRUCT_UNITS]))
+            return convert(value,
+                           permeabilityUnits[NEUROCONSTRUCT_UNITS],
+                           permeabilityUnits[toUnits]);
+
 
         else if (nCunits.equals(currentUnits[NEUROCONSTRUCT_UNITS]))
             return convert(value,
