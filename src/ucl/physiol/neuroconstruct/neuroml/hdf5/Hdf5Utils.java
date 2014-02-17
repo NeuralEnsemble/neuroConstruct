@@ -355,8 +355,6 @@ public class Hdf5Utils
             info = info + "(??? Class: "+a.getValue().getClass()+")";
             value = a.getValue()+"";
         }
-        System.out.println("Attr: "+info);
-        System.out.println("val: "+value);
         
         if (p!=null) p.setProperty(a.getName(), value);
 
