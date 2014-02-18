@@ -1979,11 +1979,13 @@ public class MorphMLConverter extends FormatImporter
                 
                 allChanMechs = (ArrayList<String>)GeneralUtils.reorderAlphabetically(allChanMechs, true);
 
-                for(String chan: allChanMechs)
+                for(String chan: allChanMechs)                    
                 {
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chan);
                     SimpleXMLElement includeElement = new SimpleXMLElement(MorphMLConstants.INCLUDE_V2);
 
-                    includeElement.addAttribute(MorphMLConstants.HREF_V2, chan+ProjectStructure.neuroml2ChannelExtension+ProjectStructure.neuroml2Extension);
+                    String extra = cm.isChannelMechanism() ? ProjectStructure.neuroml2ChannelExtension : "";
+                    includeElement.addAttribute(MorphMLConstants.HREF_V2, chan+extra+ProjectStructure.neuroml2Extension);
 
                     rootElement.addChildElement(includeElement);
                     rootElement.addContent("\n\n    ");

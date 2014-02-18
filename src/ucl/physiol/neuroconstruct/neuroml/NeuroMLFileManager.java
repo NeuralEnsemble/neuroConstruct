@@ -608,7 +608,7 @@ public class NeuroMLFileManager
 
         File fileToGen = new File(generateDir, fileName);
 
-        boolean pynnCellsPresent = true;
+        boolean pynnCellsPresent = false;
 
         if (singleL3File)
         {
