@@ -28,7 +28,10 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.util.*;
+import org.lemsml.jlems.core.sim.Sim;
+import org.lemsml.jlems.core.type.Component;
 
+import org.neuroml.export.Utils;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -754,24 +757,22 @@ public class NeuroMLFileManager
                                 logger.logComment("copied: " + copied, false);
                             }
                             
-                            /*
-                             if (!pynnCellsPresent) {
-                             Sim sim = new Sim(nmlCm.getXMLFile(project));
-
-                             try
-                             {
-                             sim.readModel();
-                             Lems lems = sim.getLems();
-                             Component comp = lems.getComponent(cm.getInstanceName());
-                             if (comp.getComponentType().isOrExtends("pyNNCell"))
-                             pynnCellsPresent = true;
+                            
+                            if (!pynnCellsPresent) {
+                                try
+                                {
+                                    Sim sim = Utils.readNeuroMLFile(nmlCm.getXMLFile(project));
+                                    Component comp = sim.getLems().getComponent(cm.getInstanceName());
+                                    
+                                    if (comp.getComponentType().isOrExtends("basePyNNCell"))
+                                        pynnCellsPresent = true;
+                                }
+                                catch (Exception ce)
+                                {
+                                    throw new IOException("Problem reading LEMS description...", ce);
+                                    // Ignore, assume it's not a valid LEMS file...
+                                } 
                              }
-                             catch (ContentError ce)
-                             {
-                             throw new IOException("Problem reading LEMS description...", ce);
-                             // Ignore, assume it's not a valid LEMS file...
-                             }
-                             }*/
 
 
                         }
