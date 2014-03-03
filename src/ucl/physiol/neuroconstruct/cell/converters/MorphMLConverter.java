@@ -560,6 +560,14 @@ public class MorphMLConverter extends FormatImporter
 
                     segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, id));
                     
+                    // Indicates that it's a Section/cable
+                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                            NeuroMLConstants.NEUROML2_NEUROLEX_UNBRANCHED_NONOVERLAPPING_SEG_GROUP));
+                    segGroupElement.addComment("\nThis group contains an unbranched set of segments, and all of the segmentGroups marked with\n"
+                            + NeuroMLConstants.NEUROML2_NEUROLEX_ID+ " = "+NeuroMLConstants.NEUROML2_NEUROLEX_UNBRANCHED_NONOVERLAPPING_SEG_GROUP+""
+                            + " form a non-overlapping set of all of the segments. \nThese segmentGroups correspond to the 'cables' of NeuroML v1.8.1");
+                    
+                    
                     segmentParentElement.addChildElement(segGroupElement);
 
                     for (int p = 0; p < allSegments.size(); p++)
@@ -682,6 +690,23 @@ public class MorphMLConverter extends FormatImporter
                             
                             segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, groupId));
                             segGroupElsVaGroupNames.put(groupId, segGroupElement);
+                            
+                            if (group.equals(Section.SOMA_GROUP)) {
+                                segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                                    NeuroMLConstants.NEUROML2_NEUROLEX_SOMA_GROUP));
+                                segGroupElement.addComment("Soma group");
+                            }
+                            if (group.equals(Section.DENDRITIC_GROUP)) {
+                                segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                                    NeuroMLConstants.NEUROML2_NEUROLEX_DENDRITE_GROUP));
+                                segGroupElement.addComment("Dendrite group");
+                            }
+                            if (group.equals(Section.AXONAL_GROUP)) {
+                                segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                                    NeuroMLConstants.NEUROML2_NEUROLEX_AXON_GROUP));
+                                segGroupElement.addComment("Axon group");
+                            }
+                                
 
                             segmentParentElement.addChildElement(segGroupElement);
                             segmentParentElement.addContent("\n\n            "); // to make it more readable...
@@ -2140,6 +2165,8 @@ public class MorphMLConverter extends FormatImporter
            f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
            f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
            f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
+           f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+           
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)

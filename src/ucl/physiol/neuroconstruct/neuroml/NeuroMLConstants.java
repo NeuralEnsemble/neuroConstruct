@@ -196,6 +196,19 @@ public class NeuroMLConstants
     public static String NEUROML2_PYNN_EIF_COND_EXP = "EIF_cond_exp_isfa_ista";
     public static String NEUROML2_PYNN_EIF_CURR_ALPHA = "EIF_cond_alpha_isfa_ista";
     public static String NEUROML2_PYNN_HH_COND_EXP = "HH_cond_exp";
+    
+    public static String NEUROML2_NEUROLEX_ID = "neuroLexId";
+    
+    public static String NEUROML2_NEUROLEX_SOMA_GROUP = "GO:0043025";
+    public static String NEUROML2_NEUROLEX_DENDRITE_GROUP = "GO:0030425";
+    public static String NEUROML2_NEUROLEX_AXON_GROUP = "GO:0030424";
+    
+    /*
+    * This is an initial attempt to tag a subset of a cell's segment groups as 
+    * the non overlapping groups which correspond to the "cables" of MorphML
+    */
+    public static String NEUROML2_NEUROLEX_UNBRANCHED_NONOVERLAPPING_SEG_GROUP = "sao864921383";
+    
 
     
 

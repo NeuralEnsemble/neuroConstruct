@@ -34,6 +34,7 @@ import java.util.Vector;
 import javax.xml.bind.JAXBException;
 import org.neuroml.export.Utils;
 import org.neuroml.model.Connection;
+import org.neuroml.model.Include;
 import org.neuroml.model.Instance;
 import org.neuroml.model.Location;
 import org.neuroml.model.Network;
@@ -41,6 +42,7 @@ import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.Point3DWithDiam;
 import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
+import org.neuroml.model.SegmentGroup;
 import org.neuroml.model.SegmentParent;
 import org.neuroml.model.util.NeuroMLConverter;
 import ucl.physiol.neuroconstruct.cell.Cell;
@@ -197,6 +199,15 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 allSegments.addAll(segIdVsSegments.values());
                 nCcell.setAllSegments(allSegments);
                 
+                for (SegmentGroup segGroup: nml2Cell.getMorphology().getSegmentGroup())
+                {
+                    String grpName = segGroup.getId();
+                    
+                    for (Include inc: segGroup.getInclude()) {
+                        //inc.
+                    }
+                }
+                
                 logger.logComment("Read in NeuroML 2 cell: "+ CellTopologyHelper.printDetails(nCcell, project), true);
                 
             }
@@ -294,6 +305,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         {
             //Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),null);
             Project testProj = Project.loadProject(new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx"),null);
+            testProj = Project.loadProject(new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx"),null);
 
             File f = new File("testProjects/TestNetworkML/savedNetworks/test_nml2.xml");
             f = new File("testProjects/TestNetworkML/savedNetworks/nnn.nml");
@@ -324,7 +336,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             }
             else 
             {
-                f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/generatedNeuroML2/ADAL.nml");
+                f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/generatedNeuroML2/Granule_98.cell.nml");
                 
                 logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
 

@@ -93,7 +93,7 @@ public class MorphMLReaderTest {
             fail("Error loading: "+ projFile.getAbsolutePath());
         }
     }
-
+/*
     @Test public void testWriteAndReadLevel1() throws MorphologyException, SAXException, IOException
     {
         doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_1);
@@ -182,7 +182,7 @@ public class MorphMLReaderTest {
 
         }
         
-    }
+    }*/
 
 
     @Test public void testWriteNeuroML2() throws MorphologyException, SAXException, IOException
@@ -226,6 +226,9 @@ public class MorphMLReaderTest {
             System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
 
             assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2beta1Schema(morphFile));
+            
+            
+            
         }
     }
     
