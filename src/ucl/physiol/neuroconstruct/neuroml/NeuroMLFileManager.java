@@ -1538,6 +1538,16 @@ public class NeuroMLFileManager
         return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
 
     }
+    /*
+     * TODO: replace with function in org.neuroml.model!!
+     */
+    public static boolean validateAgainstNeuroML2beta2Schema(File nmlFile)
+    {
+        File schemaFile = GeneralProperties.getNeuroMLv2beta2SchemaFile();
+
+        return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
+
+    }
 
     /*
      * TODO: replace with function in org.neuroml1.model!!

@@ -560,12 +560,15 @@ public class MorphMLConverter extends FormatImporter
 
                     segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, id));
                     
+                    if (!version.isVersion2alpha())
+                    {
                     // Indicates that it's a Section/cable
                     segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
                             NeuroMLConstants.NEUROML2_NEUROLEX_UNBRANCHED_NONOVERLAPPING_SEG_GROUP));
                     segGroupElement.addComment("\nThis group contains an unbranched set of segments, and all of the segmentGroups marked with\n"
                             + NeuroMLConstants.NEUROML2_NEUROLEX_ID+ " = "+NeuroMLConstants.NEUROML2_NEUROLEX_UNBRANCHED_NONOVERLAPPING_SEG_GROUP+""
                             + " form a non-overlapping set of all of the segments. \nThese segmentGroups correspond to the 'cables' of NeuroML v1.8.1");
+                    }
                     
                     
                     segmentParentElement.addChildElement(segGroupElement);
@@ -691,20 +694,23 @@ public class MorphMLConverter extends FormatImporter
                             segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, groupId));
                             segGroupElsVaGroupNames.put(groupId, segGroupElement);
                             
-                            if (group.equals(Section.SOMA_GROUP)) {
-                                segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
-                                    NeuroMLConstants.NEUROML2_NEUROLEX_SOMA_GROUP));
-                                segGroupElement.addComment("Soma group");
-                            }
-                            if (group.equals(Section.DENDRITIC_GROUP)) {
-                                segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
-                                    NeuroMLConstants.NEUROML2_NEUROLEX_DENDRITE_GROUP));
-                                segGroupElement.addComment("Dendrite group");
-                            }
-                            if (group.equals(Section.AXONAL_GROUP)) {
-                                segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
-                                    NeuroMLConstants.NEUROML2_NEUROLEX_AXON_GROUP));
-                                segGroupElement.addComment("Axon group");
+                            if (!version.isVersion2alpha())
+                            {
+                                if (group.equals(Section.SOMA_GROUP)) {
+                                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                                        NeuroMLConstants.NEUROML2_NEUROLEX_SOMA_GROUP));
+                                    segGroupElement.addComment("Soma group");
+                                }
+                                if (group.equals(Section.DENDRITIC_GROUP)) {
+                                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                                        NeuroMLConstants.NEUROML2_NEUROLEX_DENDRITE_GROUP));
+                                    segGroupElement.addComment("Dendrite group");
+                                }
+                                if (group.equals(Section.AXONAL_GROUP)) {
+                                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, 
+                                        NeuroMLConstants.NEUROML2_NEUROLEX_AXON_GROUP));
+                                    segGroupElement.addComment("Axon group");
+                                }
                             }
                                 
 
@@ -1979,7 +1985,7 @@ public class MorphMLConverter extends FormatImporter
                 {
                     rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                                     NeuroMLConstants.NAMESPACE_URI_VERSION_2
-                                                                    + "  " + NeuroMLElements.DEFAULT_SCHEMA_LOCATION_VERSION_2_BETA1));
+                                                                    + "  " + NeuroMLElements.DEFAULT_SCHEMA_LOCATION_VERSION_2_BETA2));
                 }
 
             }
@@ -2207,7 +2213,7 @@ public class MorphMLConverter extends FormatImporter
           MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l2File, NeuroMLLevel.NEUROML_LEVEL_2, NeuroMLVersion.NEUROML_VERSION_1);
           System.out.println("Saved MML file as: " + nml_l2File.getCanonicalPath());
           
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA1);
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA2);
           System.out.println("Saved MML file as: " + nml2File.getCanonicalPath());
 
 

@@ -759,6 +759,14 @@ public class GeneralProperties
     {
         return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta1.xsd");
     }
+    /**
+     * Gets the NeuroML v2beta schema
+     *
+     */
+    public static File getNeuroMLv2beta2SchemaFile()
+    {
+        return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta2.xsd");
+    }
 
 
 
