@@ -28,7 +28,6 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.xml.bind.JAXBException;

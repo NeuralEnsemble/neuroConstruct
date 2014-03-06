@@ -203,13 +203,16 @@
             <word>FRBPyr</word>
             <word>FS</word>
             <word>GABAA</word>
+            <word>Gleeson</word>
             <word>IB</word>
             <word>LTS</word>
+            <word>Neuroscience</word>
             <word>NMDA</word>
             <word>NonTuftRS</word>
             <word>nRT</word>
             <word>NT</word>
             <word>obl</word>
+            <word>Padraig</word>
             <word>PostCellGroup</word>
             <word>prox</word>
             <word>Pyr</word>
@@ -226,6 +229,7 @@
             <word>Syn</word>
             <word>TCR</word>
             <word>TuftIB</word>
+            <word>Wellcome</word>
         </spellchecker-wordlist>
     </configuration>
 </project>
