@@ -19,11 +19,13 @@ REM   than half your total physical memory is best.
 REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***  
 set NC_MAX_MEMORY=500M 
 
-set NC_VERSION=1.7.0
+set NC_VERSION=1.7.1
+
+set JNEUROML_VERSION=0.5.0
+
+# Should no longer be used...
 set LIB_NEUROML_VERSION=2.0.0
 set LEMS_VERSION=0.8.3
-
-set JNEUROML_VERSION=0.4.0
 
 REM ##########################################################################
 
