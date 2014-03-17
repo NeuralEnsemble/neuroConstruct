@@ -198,7 +198,7 @@ public class NeuroMLFileManager
                 }
                 else
                 {
-                    loc = NeuroMLElements.DEFAULT_SCHEMA_LOCATION_VERSION_2_BETA1;
+                    loc = NeuroMLElements.LATEST_SCHEMA_LOCATION;
                 }
                 metaPrefix = "";
             }
@@ -1531,21 +1531,11 @@ public class NeuroMLFileManager
     /*
      * TODO: replace with function in org.neuroml.model!!
      */
-    public static boolean validateAgainstNeuroML2beta1Schema(File nmlFile)
+    public static boolean validateAgainstLatestNeuroML2Schema(File nmlFile)
     {
-        File schemaFile = GeneralProperties.getNeuroMLv2beta1SchemaFile();
+        File schemaLatestBetaFile = GeneralProperties.getNeuroMLv2LatestSchemaFile();
 
-        return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
-
-    }
-    /*
-     * TODO: replace with function in org.neuroml.model!!
-     */
-    public static boolean validateAgainstNeuroML2beta2Schema(File nmlFile)
-    {
-        File schemaFile = GeneralProperties.getNeuroMLv2beta2SchemaFile();
-
-        return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
+        return XMLUtils.validateAgainstSchema(nmlFile, schemaLatestBetaFile);
 
     }
 

@@ -34,6 +34,7 @@ import javax.swing.*;
 
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
 
 /**
  * Storing of general properties associated with the application
@@ -49,7 +50,7 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = "ucl.physiol.neuroconstruct.cell";
 
-    private static final String versionNumber = "1.7.0";
+    private static final String versionNumber = "1.7.1";
 
     //private static final String latestNeuroMLVersionNumber = "1.8.1";
 
@@ -752,7 +753,7 @@ public class GeneralProperties
     }
     
     /**
-     * Gets the NeuroML v2beta schema
+     * Gets the NeuroML v2beta1 schema
      *
      */
     public static File getNeuroMLv2beta1SchemaFile()
@@ -760,12 +761,29 @@ public class GeneralProperties
         return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta1.xsd");
     }
     /**
-     * Gets the NeuroML v2beta schema
+     * Gets the NeuroML v2beta2 schema
      *
      */
     public static File getNeuroMLv2beta2SchemaFile()
     {
         return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta2.xsd");
+    }
+    /**
+     * Gets the NeuroML v2beta3 schema
+     *
+     */
+    public static File getNeuroMLv2beta3SchemaFile()
+    {
+        return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta2.xsd");
+    }
+
+    /**
+     * Gets the latest NeuroML v2 schema
+     *
+     */
+    public static File getNeuroMLv2LatestSchemaFile()
+    {
+        return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v"+NeuroMLConstants.NeuroMLVersion.getLatestVersion().toString()+".xsd");
     }
 
 

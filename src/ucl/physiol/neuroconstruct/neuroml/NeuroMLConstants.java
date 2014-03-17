@@ -116,11 +116,19 @@ public class NeuroMLConstants
             {
                 return "2beta2";
             }
+        },
+        NEUROML_VERSION_2_BETA3
+        {
+            @Override
+            public String toString()
+            {
+                return "2beta3";
+            }
         };
         
         public static NeuroMLVersion getLatestVersion()
         {
-            return NEUROML_VERSION_2_BETA2;
+            return NEUROML_VERSION_2_BETA3;
         }
 
         public boolean isVersion2()
