@@ -379,7 +379,18 @@ public class MorphMLConverter extends FormatImporter
             if (cell.getCellDescription()!=null)
             {
                 descElement = new SimpleXMLElement(metadataPrefix + MetadataConstants.NOTES_ELEMENT);
-                descElement.addContent(GeneralUtils.replaceAllTokens(cell.getCellDescription(), "&", "and"));
+                String desc = GeneralUtils.replaceAllTokens(cell.getCellDescription(), "&", "and");
+                
+                
+                if (nml2)
+                {
+                    String descCut = NeuroMLFileManager.parseDescriptionForMetadata(cell.getCellDescription(), cellElement);
+                    descElement.addContent(descCut);
+                }
+                else
+                {
+                    descElement.addContent(desc);
+                }
                 cellElement.addChildElement(descElement);
                 cellElement.addContent("\n\n        ");
             }
@@ -2167,11 +2178,11 @@ public class MorphMLConverter extends FormatImporter
         {
            //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
            //File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
-           File f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
-           f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
+           File f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
            f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
            f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
            f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+           f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {

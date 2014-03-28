@@ -72,6 +72,9 @@ public class NeuroMLFileManager
     private float genTime = -1;
     boolean mainFileGenerated = false;
     private HashMap<String, Integer> nextColour = new HashMap<String, Integer>();
+    
+    public static final String METADATA_IN_DESCRIPTION = "---Metadata---";
+    public static final String METADATA_NEUROLEX = "neurolex:";
 
     private NeuroMLFileManager()
     {
@@ -86,6 +89,35 @@ public class NeuroMLFileManager
     {
         nextColour = new HashMap<String, Integer>();
 
+    }
+    
+    public static String parseDescriptionForMetadata(String description, SimpleXMLElement element)
+    {
+        String[] lines = description.split("\n");
+        StringBuilder chopped = new StringBuilder();
+        boolean metadataFound = false;
+        for (String line: lines)
+        {
+            line = line.trim();
+            
+            if (line.contains(METADATA_IN_DESCRIPTION)) metadataFound = true;
+            if (metadataFound)
+            {
+                if (line.startsWith(METADATA_NEUROLEX))
+                {
+                    String neuroLexId = line.substring(METADATA_NEUROLEX.length());
+                    element.addAttribute(NeuroMLConstants.NEUROML2_NEUROLEX_ID, neuroLexId);
+                }
+            }
+            else
+            {
+                chopped.append(line+"\n");
+            }
+        }
+        String desc = chopped.toString();
+        if (desc.endsWith("\n")) desc = desc.substring(0, desc.length()-1);
+        return desc;
+        
     }
     
     public static boolean fileClaimsToBeNeuroML2(File nmlFile) throws NeuroMLException
