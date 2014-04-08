@@ -73,6 +73,9 @@ public class MetadataConstants
 
     public static String GROUP_ELEMENT = "group";
 
+    public static String ANNOTATION_ELEMENT_V2 = "annotation";
+    public static String PROP_ELEMENT_V2 = "property";
+
 
     public static void addProperty(SimpleXMLElement propertiesElement, String tag, String value, String indent)
     {
@@ -81,9 +84,9 @@ public class MetadataConstants
 
     public static void addProperty(SimpleXMLElement propertiesElement, String tag, String value, String indent, NeuroMLVersion version)
     {
-        String metadataPrefix = version.isVersion2() ? "" : MetadataConstants.PREFIX + ":";
+        String metadataElName = version.isVersion2() ? MetadataConstants.PROP_ELEMENT_V2 : MetadataConstants.PREFIX + ":"+ MetadataConstants.PROP_ELEMENT;
 
-        SimpleXMLElement propElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.PROP_ELEMENT);
+        SimpleXMLElement propElement = new SimpleXMLElement(metadataElName);
 
         propertiesElement.addContent("\n"+indent); // to make it more readable...
         propertiesElement.addChildElement(propElement);

@@ -541,6 +541,21 @@ public class GeneratedCellPositions
                         
                         // This may be removed in later versions of NML2; redundant info, though useful when parsing large files...
                         populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POPULATION_SIZE, cellsHere.size()+""));
+                        
+                        Color c = project.cellGroupsInfo.getColourOfCellGroup(cellGroup);
+
+                        if (c!=null)
+                        {
+                            SimpleXMLElement annotation = new SimpleXMLElement(MetadataConstants.ANNOTATION_ELEMENT_V2);
+                            populationElement.addContent("    ");
+                            populationElement.addChildElement(annotation);
+                            MetadataConstants.addProperty(annotation,
+                                                      "color",
+                                                      (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
+                                                      "            ",
+                                                      version);
+                            annotation.addContent("        ");
+                        }
 
                         for (int i = 0; i < cellsHere.size(); i++)
                         {
@@ -604,7 +619,7 @@ public class GeneratedCellPositions
                                                   (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
                                                   "            ",
                                                   version);
-                        props.addContent("\n        ");
+                        props.addContent("        ");
                     }
 
                     SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
@@ -667,7 +682,7 @@ public class GeneratedCellPositions
     {
         try
         {
-            Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),
+            Project testProj = Project.loadProject(new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -685,12 +700,14 @@ public class GeneratedCellPositions
             GeneratedCellPositions cpr = new GeneratedCellPositions(testProj);
 
             System.out.println("Internal info: \n"+ cpr.toString()); 
-
-            cpr.addPosition("CGone", 3, 2.2f,3.3f,4.4f);
-            cpr.addPosition("CGone", 4, 2.77f,37.3f,47.4f);
-            cpr.addPosition("CGtwo", 5, 2.2f,3.3f,4.4f);
-            cpr.addPosition("CGtwo", 6, 2.2f,3.3f,4.4f);
-            cpr.addPosition("CGtwo", 7, 2.2f,3.3f,4.4f);
+            
+            cpr.addPosition("Gran", 3, 2.2f,3.3f,4.4f);
+            cpr.addPosition("Gran", 4, 2.77f,37.3f,47.4f);
+            cpr.addPosition("Gran2", 5, 2.2f,3.3f,4.4f);
+            cpr.addPosition("Gran2", 6, 2.2f,3.3f,4.4f);
+            cpr.addPosition("Gran2", 7, 2.2f,3.3f,4.4f);
+                    
+            
 
             System.out.println("Internal info: \n"+ cpr.toString()); 
 
@@ -709,6 +726,13 @@ public class GeneratedCellPositions
             for (SimpleXMLElement pop: pops)
             {
                 System.out.println("------ Pop: ------\n"+pop.getXMLString("", false));
+            }
+
+            ArrayList<SimpleXMLElement> pops1 = cpr2.getNetworkMLElements(NeuroMLVersion.NEUROML_VERSION_1);
+
+            for (SimpleXMLElement pop: pops1)
+            {
+                System.out.println("------ Pop1: ------\n"+pop.getXMLString("", false));
             }
 
 
