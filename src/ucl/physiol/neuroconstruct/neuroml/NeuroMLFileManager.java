@@ -1602,7 +1602,7 @@ public class NeuroMLFileManager
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
-            //File projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+            projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             
             
             Project p = Project.loadProject(projFile, null);

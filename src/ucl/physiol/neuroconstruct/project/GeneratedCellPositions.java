@@ -547,14 +547,14 @@ public class GeneratedCellPositions
                         if (c!=null)
                         {
                             SimpleXMLElement annotation = new SimpleXMLElement(MetadataConstants.ANNOTATION_ELEMENT_V2);
-                            populationElement.addContent("    ");
+                            populationElement.addContent("\n           ");
                             populationElement.addChildElement(annotation);
                             MetadataConstants.addProperty(annotation,
                                                       "color",
                                                       (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
-                                                      "            ",
+                                                      "                ",
                                                       version);
-                            annotation.addContent("        ");
+                            annotation.addContent("            ");
                         }
 
                         for (int i = 0; i < cellsHere.size(); i++)
@@ -602,10 +602,6 @@ public class GeneratedCellPositions
                     //////populationElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.CELLTYPE_ELEMENT, type));
 
                     populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELLTYPE_ATTR, type));
-
-
-
-
 
                     Color c = project.cellGroupsInfo.getColourOfCellGroup(cellGroup);
 
