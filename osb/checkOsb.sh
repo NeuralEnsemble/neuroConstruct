@@ -2,6 +2,21 @@
 
 pull=false
 
+function gitss () {
+    tput setaf 7
+    git status
+    tput setaf 3
+    git fetch --dry-run
+    git stash list
+    tput setaf 9
+}
+
+function gitpp () {
+    tput setaf 2
+    git pull -p
+    tput setaf 9
+}
+
 
 if [ $# -eq 1 ] ; then
     if [ $1 == '-u' ]; then
@@ -64,13 +79,10 @@ standardGHProject()
 
     cd $tgtDir
     if $pull; then
-        git pull
+        gitpp
     else
-        git status
-        tput setaf 3
-        git fetch --dry-run
+        gitss
     fi
-    tput sgr0
 
     cd $startDir
 }
