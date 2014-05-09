@@ -3,7 +3,7 @@
 pull=false
 
 function gitss () {
-    tput setaf 7
+    tput setaf 5
     git status
     tput setaf 3
     git fetch --dry-run
