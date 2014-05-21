@@ -18,6 +18,21 @@ function gitpp () {
 }
 
 
+function hgss () {
+    tput setaf 1
+    hg status
+    tput setaf 5
+    hg in
+    tput setaf 9
+}
+
+function hgpp () {
+    tput setaf 3
+    hg pull -u
+    tput setaf 9
+}
+
+
 if [ $# -eq 1 ] ; then
     if [ $1 == '-u' ]; then
         pull=true
@@ -123,13 +138,10 @@ standardBBProject()
 
     cd $tgtDir
     if $pull; then
-        hg pull -u
+        hgpp
     else
-        hg status
-        tput setaf 3
-        hg in
+        hgss
     fi
-    tput sgr0
 
     cd $startDir
 }
@@ -160,6 +172,7 @@ standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
 standardBBProject 'dentate' 'dentate_gyrus/networks' 'mbezaire'
 standardBBProject 'nc_ca1' 'hippocampus/networks' 'mbezaire'
+standardBBProject 'nc_superdeep' 'hippocampus/networks' 'mbezaire'
 
 standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
 
