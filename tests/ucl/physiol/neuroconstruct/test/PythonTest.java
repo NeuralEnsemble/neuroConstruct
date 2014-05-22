@@ -116,7 +116,13 @@ public class PythonTest
     {
         String projFileName = "osb/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx";
         checkPythonScripts(projFileName);
-    }/**/
+    }
+
+    @Test public void testACNet2()
+    {
+        String projFileName = "osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx";
+        checkPythonScripts(projFileName);
+    }
 
     @Test public void testThalamocortical()
     {
