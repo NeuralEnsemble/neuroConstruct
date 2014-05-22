@@ -167,6 +167,14 @@ public class ModelTest
 
         checkProject(projFileName, cellsToIgnore, true);
     }
+    
+    @Test public void testACNet2()
+    {
+        String projFileName = "osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx";
+        ArrayList<String> cellsToIgnore = new ArrayList<String>();
+
+        checkProject(projFileName, cellsToIgnore, true);
+    }
 
     /*
     @Test public void testPurkinjeCell()
@@ -255,7 +263,7 @@ public class ModelTest
         }
 
         assertTrue("Insufficiently long project description in: "+project,
-                project.getProjectDescription().length()>300);
+                project.getProjectDescription().length()>200);
 
 
         String validity = pm.getValidityReport(false,

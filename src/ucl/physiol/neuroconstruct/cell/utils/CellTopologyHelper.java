@@ -3152,7 +3152,7 @@ public class CellTopologyHelper
         float maxPhysiologicalMembPot = 100;   // mV, limit to warn about
 
         float minPhysiologicalSpecCap = 2e-10f;   // μF μm-2, limit to warn about
-        float maxPhysiologicalSpecCap = 2.5e-8f;  // μF μm-2, limit to warn about
+        float maxPhysiologicalSpecCap = 3e-8f;  // μF μm-2, limit to warn about
 
         float minPhysiologicalSpecAxRes = 100f;  //  kohm μm , limit to warn about
         float maxPhysiologicalSpecAxRes = 3000f; //  kohm μm , limit to warn about
