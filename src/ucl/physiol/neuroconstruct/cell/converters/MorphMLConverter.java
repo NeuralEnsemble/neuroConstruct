@@ -1677,10 +1677,7 @@ public class MorphMLConverter extends FormatImporter
 
                                     ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
                                     ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());
-                                    if (!grp.equals(Section.ALL))
-                                    {
-                                        ionPropEl.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, grp);
-                                    }
+                                    
                                 }
                             }
                         }

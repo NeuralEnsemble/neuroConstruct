@@ -1635,6 +1635,7 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("ACnet2"))
             {
                 simConf = "TestChannels";
+                simConf = "Default Simulation Configuration";
                 p.simulationParameters.setDt(0.01f);
             }
             /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))

@@ -4,8 +4,10 @@ pull=false
 
 function gitss () {
     tput setaf 5
-    git status
+    git rev-parse --abbrev-ref HEAD
     tput setaf 3
+    git status -s
+    tput setaf 2
     git fetch --dry-run
     git stash list
     tput setaf 9
