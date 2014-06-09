@@ -203,6 +203,7 @@ standardGHProject 'korngreen-pyramidal' 'cerebral_cortex/neocortical_pyramidal_n
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
+standardGHProject 'V1NetworkModels' 'cerebral_cortex/networks'
 standardGHProject 'ACnet2' 'cerebral_cortex/networks'
 standardGHProject 'Brunel2000' 'cerebral_cortex/networks'
 standardGHProject 'VogelsEtAl2011' 'cerebral_cortex/networks'

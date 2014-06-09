@@ -383,31 +383,45 @@ public class MainApplication
                     }
 
                     PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+                    DataSetManager.DataReadFormat drf = DataSetManager.DataReadFormat.UNSPECIFIED;
+                    
+                    int remArgsStart = 1;
+                    
+                    if (args[1].equals("-a") || args[1].equals("-A")) 
+                    {
+                        drf = DataSetManager.DataReadFormat.EACH_COL_DATA;
+                        remArgsStart = 2;
+                    }
+                    else if (args[1].equals("-b") || args[1].equals("-B")) 
+                    {
+                        drf = DataSetManager.DataReadFormat.FIRST_COL_TIME;
+                        remArgsStart = 2;
+                    }
+                    else if (args[1].equals("-c") || args[1].equals("-C")) 
+                    {
+                        drf = DataSetManager.DataReadFormat.NUMBERED_TRACES;
+                        remArgsStart = 2;
+                    }
 
-                    for (int remArg=i+1;remArg<args.length;remArg++)
+                    for (int remArg=i+remArgsStart;remArg<args.length;remArg++)
                     {
 
                         File dataFile = new File(args[remArg]);
 
-                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false, DataSetManager.DataReadFormat.UNSPECIFIED);
-
-                        //String plotFrameRef = "Plot of data from "+dataFile.getAbsolutePath();
-
+                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false, drf);
 
                         RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(dataFile.getAbsolutePath());
-
-
 
                         frame.setStandAlone(true);
 
                         for(DataSet dataSet: dataSets)
                             frame.addDataSet(dataSet);
 
-
                         frame.setVisible(true);
                     }
 
                     startupMode = StartupMode.PLOT_ONLY_MODE;
+                    i = args.length; // end looping...
                      
                 }
 
