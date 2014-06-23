@@ -373,11 +373,12 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 }
             }
         }
-        catch(JAXBException e) {
+        catch (MalformedURLException e) 
+        {
             throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
-        } catch (MalformedURLException e) {
-            throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
-        } catch (org.neuroml.model.util.NeuroMLException e) {
+        } 
+        catch (org.neuroml.model.util.NeuroMLException e) 
+        {
             throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
         }
         
