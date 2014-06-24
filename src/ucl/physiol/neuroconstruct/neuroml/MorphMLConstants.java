@@ -120,6 +120,18 @@ public class MorphMLConstants
 
     public static String SEG_GROUP_V2 = "segmentGroup";
     public static String MEMBER_V2 = "member";
+    
+    
+    public static String INHOMO_PARAM_V2 = "inhomogeneousParam";
+    public static String INHOMO_PARAM_ID_ATTR_V2 = "id";
+    public static String INHOMO_PARAM_VARIABLE_ATTR_V2 = "variable";
+    public static String INHOMO_PARAM_METRIC_ATTR_V2 = "metric";
+    
+    public static String INHOMO_PARAM_PROXIMAL_V2 = "proximal";
+    public static String INHOMO_PARAM_PROXIMAL_TRANS_START_ATTR_V2 = "translationStart";
+
+    public static String INHOMO_PARAM_DISTAL_V2 = "distal";
+    public static String INHOMO_PARAM_DISTAL_NORM_END_ATTR_V2 = "normalizationEnd";
 
 
 

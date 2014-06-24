@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_0" class="java.beans.XMLDecoder">
+<java version="1.7.0_55" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -12,7 +12,7 @@ part of NeuroML or any standardised XML specification. -->
    <string>Simple test project to check generation of N&amp;G simulation codes &amp; non uniform params along cells, e.g. e_pas, g_pas, etc.</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.4.1</string>
+   <string>neuroConstruct v1.7.1</string>
   </void>
   <void property="projectName">
    <string>TestDetailedMorphs</string>
@@ -42,9 +42,13 @@ part of NeuroML or any standardised XML specification. -->
     <void method="add">
      <object class="ucl.physiol.neuroconstruct.project.RectangularBox">
       <void property="parameterList">
-       <void index="4">
-        <void property="value">
-         <float>50.0</float>
+       <void id="InternalParameter0" index="4">
+        <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
+         <string>value</string>
+         <void method="set">
+          <object idref="InternalParameter0"/>
+          <float>50.0</float>
+         </void>
         </void>
        </void>
       </void>
@@ -136,6 +140,9 @@ part of NeuroML or any standardised XML specification. -->
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.utils.Display3DProperties">
+  <void property="antiAliasing">
+   <int>1</int>
+  </void>
   <void property="backgroundColour3D">
    <object class="java.awt.Color">
     <int>144</int>
@@ -316,9 +323,13 @@ createTestReport</string>
      <void property="cellGroup">
       <string>SampleCellGroup</string>
      </void>
-     <void property="dur">
-      <void property="numberType">
-       <int>11</int>
+     <void id="NumberGenerator0" property="dur">
+      <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+       <string>numberType</string>
+       <void method="set">
+        <object idref="NumberGenerator0"/>
+        <int>11</int>
+       </void>
       </void>
      </void>
      <void property="reference">

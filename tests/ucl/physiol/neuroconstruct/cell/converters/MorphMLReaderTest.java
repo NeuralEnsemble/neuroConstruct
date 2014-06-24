@@ -28,6 +28,12 @@ package ucl.physiol.neuroconstruct.cell.converters;
 
 import java.io.File;
 import java.io.IOException;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -49,10 +55,13 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
  */
 public class MorphMLReaderTest {
 
-    static final String projName = "TestMorphs";
-    static File projDir = new File("testProjects/"+ projName);
+    static final String proj1Name = "TestMorphs";
+    static File proj1Dir = new File("testProjects/"+ proj1Name);
+    static final String proj2Name = "TestDetailedMorphs";
+    static File proj2Dir = new File("testProjects/"+ proj2Name);
         
-    ProjectManager pm = null;
+    Project proj1 = null;
+    Project proj2 = null;
     
     public MorphMLReaderTest() {
     }
@@ -61,8 +70,10 @@ public class MorphMLReaderTest {
     public static void cleanUp()
     {
         System.out.println("---------------   cleanUp() MorphMLReaderTest");
-        File generateDir = new File(projDir, "generatedNeuroML");
-        GeneralUtils.removeAllFiles(generateDir, false, false, true);
+        GeneralUtils.removeAllFiles(new File(proj1Dir, "generatedNeuroML"), false, false, true);
+        GeneralUtils.removeAllFiles(new File(proj1Dir, "generatedNeuroML2"), false, false, true);
+        GeneralUtils.removeAllFiles(new File(proj2Dir, "generatedNeuroML"), false, false, true);
+        GeneralUtils.removeAllFiles(new File(proj2Dir, "generatedNeuroML2"), false, false, true);
     }
 
     @Before
@@ -70,44 +81,50 @@ public class MorphMLReaderTest {
     {
         System.out.println("---------------   setUp() MorphMLReaderTest");        
         
-        File projFile = ProjectStructure.findProjectFile(projDir);
-        
-        pm = new ProjectManager();
-        
         try 
         {
-            pm.loadProject(projFile);
-        
-            System.out.println("Proj status: "+ pm.getCurrentProject().getProjectStatusAsString());
-
+            ProjectManager pm1 = new ProjectManager();
+            proj1 = pm1.loadProject(ProjectStructure.findProjectFile(proj1Dir));
+            ProjectManager pm2 = new ProjectManager();
+            proj2 = pm2.loadProject(ProjectStructure.findProjectFile(proj2Dir));
             
         } 
         catch (ProjectFileParsingException ex) 
         {
-            fail("Error loading: "+ projFile.getAbsolutePath());
+            fail("Error loading project...");
         }
     }
-/*
+
     @Test public void testWriteAndReadLevel1() throws MorphologyException, SAXException, IOException
     {
-        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_1);
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_1, proj1, "SampleCell_ca");
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_1, proj2, "SampleCell");
     }
 
     @Test public void testWriteAndReadLevel2() throws MorphologyException, SAXException, IOException
     {
-        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_2);
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_2, proj1, "SampleCell_ca");
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_2, proj2, "SampleCell");
     }
 
     @Test public void testWriteAndReadLevel3() throws MorphologyException, SAXException, IOException
     {
-        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_3);
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_3, proj1, "SampleCell_ca");
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_3, proj2, "SampleCell");
+    }
+    
+
+    @Test public void testWriteNeuroML2() throws MorphologyException, SAXException, IOException
+    {
+        writeNeuroML2(proj1, "Granule_98", true);
+        //writeNeuroML2(proj1, "SampleCell_ca", false);
     }
 
-    public void doWriteAndRead(NeuroMLLevel level) throws MorphologyException, SAXException, IOException
+    public void doWriteAndRead(NeuroMLLevel level, Project proj, String cell) throws MorphologyException, SAXException, IOException
     {
         System.out.println("---  testWriteAndRead...");
 
-        Cell cell1 = pm.getCurrentProject().cellManager.getCell("SampleCell_ca");
+        Cell cell1 = proj.cellManager.getCell(cell);
         ////Cell cell1 = pm.getCurrentProject().cellManager.getCell("Granule_98");
         //Cell cell1 = pm.getCurrentProject().cellManager.getCell("SimpleHH");
         
@@ -117,17 +134,17 @@ public class MorphMLReaderTest {
         
         MorphMLConverter mmlC = new MorphMLConverter();
         
-        File savedNeuroMLDir = ProjectStructure.getNeuroML1Dir(projDir);
+        File savedNeuroMLDir = ProjectStructure.getNeuroML1Dir(proj.getProjectMainDirectory());
 
         int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
 
         for(int unit: units)
         { 
-            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv1__u"+unit+"_"+level.toString().replace(" ", "")+".xml");
+            File morphFile = new File(savedNeuroMLDir, cell+"v1__u"+unit+"_"+level.toString().replace(" ", "")+".xml");
 
             MorphMLConverter.setPreferredExportUnits(unit);
             
-            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
+            MorphMLConverter.saveCellInNeuroMLFormat(cell1, proj, morphFile,
                 level, NeuroMLVersion.NEUROML_VERSION_1);
 
             assertTrue(morphFile.exists());
@@ -176,22 +193,22 @@ public class MorphMLReaderTest {
 
         }
         
-    }*/
+    }
 
 
-    @Test public void testWriteNeuroML2() throws MorphologyException, SAXException, IOException
+    public void writeNeuroML2(Project proj, String cell, boolean alphaToo) throws MorphologyException, SAXException, IOException
     {
         System.out.println("---  testWriteNeuroML2...");
 
-        Cell cell1 = pm.getCurrentProject().cellManager.getCell("Granule_98");
+        Cell cell1 = proj.cellManager.getCell(cell);
 
         cell1.setCellDescription("This is NeuroML2...");
 
-        System.out.println(CellTopologyHelper.printDetails(cell1, pm.getCurrentProject()));
+        System.out.println(CellTopologyHelper.printDetails(cell1, proj));
 
         MorphMLConverter mmlC = new MorphMLConverter();
 
-        File savedNeuroMLDir = ProjectStructure.getNeuroML2Dir(projDir);
+        File savedNeuroMLDir = ProjectStructure.getNeuroML2Dir(proj.getProjectMainDirectory());
 
         int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
 
@@ -199,25 +216,31 @@ public class MorphMLReaderTest {
         {
             MorphMLConverter.setPreferredExportUnits(unit);
 
-            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+"a.xml");
+            
+            File morphFile = null;
+            
+            if (alphaToo) 
+            {
+                morphFile = new File(savedNeuroMLDir, cell+"v2__"+unit+"a.xml");
 
-            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
-                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
+                MorphMLConverter.saveCellInNeuroMLFormat(cell1, proj, morphFile,
+                    NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
 
-            assertTrue(morphFile.exists());
+                assertTrue(morphFile.exists());
 
-            System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
+                System.out.println("Saved cell in NeuroML v2alpha file: "+ morphFile.getAbsolutePath());
 
-            assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(morphFile));
+                assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(morphFile));
+            }
 
-            morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+"b.xml");
+            morphFile = new File(savedNeuroMLDir, cell+"v2__"+unit+"b.xml");
 
-            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
+            MorphMLConverter.saveCellInNeuroMLFormat(cell1, proj, morphFile,
                 NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.getLatestVersion());
 
             assertTrue(morphFile.exists());
 
-            System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
+            System.out.println("Saved cell in NeuroML v2 latest file: "+ morphFile.getAbsolutePath());
 
             assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstLatestNeuroML2Schema(morphFile));
             
