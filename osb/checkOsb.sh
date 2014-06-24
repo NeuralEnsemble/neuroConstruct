@@ -156,6 +156,8 @@ standardGHProject 'NSGPortalShowcase' 'showcase'
 standardGHProject 'NIFShowcase' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
 standardGHProject 'NEURONShowcase' 'showcase' 
+standardGHProject 'SBMLShowcase' 'showcase'
+standardGHProject 'BrianShowcase' 'showcase'
 
 standardGHProject 'CSAShowcase' 'showcase'
 standardGHProject 'neuroConstructShowcase' 'showcase'
