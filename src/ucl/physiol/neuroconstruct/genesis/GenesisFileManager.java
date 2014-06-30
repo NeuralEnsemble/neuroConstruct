@@ -4830,9 +4830,7 @@ public class GenesisFileManager
 
         try
         {
-            //Project p = Project.loadProject(new File("projects/Moro/Moro.neuro.xml"), null);
-            Project p = Project.loadProject(new File("../nC_projects/TestSyns/TestSyns.ncx"), null);
-            //Proje
+            Project p = Project.loadProject(new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx"), null);
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
 
@@ -4848,11 +4846,7 @@ public class GenesisFileManager
                 Thread.sleep(600);
             }
 
-
-
             OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
-
-
 
             gen.generateTheGenesisFiles(p.simConfigInfo.getDefaultSimConfig(), null, oc, 12345);
             //gen.runGenesisFile();

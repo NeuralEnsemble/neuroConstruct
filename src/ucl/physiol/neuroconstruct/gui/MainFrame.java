@@ -3160,7 +3160,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jButtonGenerate.setEnabled(false);
         jButtonGenerate.setText("Generate Cell Positions and Connections");
         jButtonGenerateSave.setText("Save NetworkML");
-        jButtonGenerateLoad.setText("Load NetworkML");
+        jButtonGenerateLoad.setText("Load network from file");
 
         //jCheckBoxGenerateZip.setText("Compress");
         jCheckBoxGenerateExtraNetComments.setText("Extra comments");

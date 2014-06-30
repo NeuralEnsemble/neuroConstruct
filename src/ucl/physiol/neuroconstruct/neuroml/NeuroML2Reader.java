@@ -30,13 +30,14 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Vector;
-import javax.xml.bind.JAXBException;
 import org.neuroml.export.Utils;
 import org.neuroml.model.BiophysicalProperties;
 import org.neuroml.model.ChannelDensity;
 import org.neuroml.model.Connection;
 import org.neuroml.model.Include;
 import org.neuroml.model.InitMembPotential;
+import org.neuroml.model.Input;
+import org.neuroml.model.InputList;
 import org.neuroml.model.Instance;
 import org.neuroml.model.IntracellularProperties;
 import org.neuroml.model.Location;
@@ -47,6 +48,7 @@ import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.Point3DWithDiam;
 import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
+import org.neuroml.model.PulseGenerator;
 import org.neuroml.model.Resistivity;
 import org.neuroml.model.SegmentGroup;
 import org.neuroml.model.SegmentParent;
@@ -60,6 +62,7 @@ import ucl.physiol.neuroconstruct.cell.Section;
 import ucl.physiol.neuroconstruct.cell.Segment;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
@@ -69,16 +72,6 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
  *
  * @author Padraig Gleeson
  *  
- * 
- * Changes made to extend the importer to Level 3 NeuroML files (cells and channels have to be extracted):
- * - if the startElement find a CELL element turn on the flag insideCell.
- * - if the flag insideCell is true the reader start to copy the file line by line in a new file containing a Level 3 Cell Description.
- * - once the CELL is finished the new cell type is loaded in the project.
- * 
- * The same procedure is applied to the CHANNEL type...
- * NB: the channels can't be renamed by the user because the loaded cells will use the old names.
- * 
- * @author  Matteo Farinella
  * 
  */
 
@@ -306,6 +299,11 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 
             }
             
+            HashMap<String, PulseGenerator> pulseGenerators = new HashMap<String, PulseGenerator>();
+            for (PulseGenerator pg: neuroml.getPulseGenerator()) 
+            {
+                pulseGenerators.put(pg.getId(), pg);
+            }
             
             /// Networks
 
@@ -335,6 +333,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
                 for (Population population: network.getPopulation())
                 {
+                    if (!project.cellGroupsInfo.getAllCellGroupNames().contains(population.getId())) 
+                    {
+                        throw new NeuroMLException("neuroConstruct can only import populations from networks when a Cell Group with that name already exists!");
+                    }
                     for (Instance instance: population.getInstance()) 
                     {
                         Location loc = instance.getLocation();
@@ -348,8 +350,24 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     String netConn = projection.getId();
                     String source = projection.getPresynapticPopulation();
                     String target = projection.getPostsynapticPopulation();
-
-                    //TODO: check source & target in cell grpups
+                    
+                    if (! (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn) ||
+                           project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)))
+                    {
+                        throw new NeuroMLException("neuroConstruct can only import network connections from networks when a Network Connection with that name already exists!");
+                    }
+                    if (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn)) {
+                        if (!project.morphNetworkConnectionsInfo.getSourceCellGroup(netConn).equals(source) ||
+                            !project.morphNetworkConnectionsInfo.getTargetCellGroup(netConn).equals(target)) {
+                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                        }
+                    }
+                    if (project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)) {
+                        if (!project.volBasedConnsInfo.getSourceCellGroup(netConn).equals(source) ||
+                            !project.volBasedConnsInfo.getTargetCellGroup(netConn).equals(target)) {
+                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                        }
+                    }
 
                     for (Connection conn: projection.getConnection())
                     {
@@ -371,6 +389,40 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                                                             null);
                     }
                 }
+                
+                
+                for (InputList inputList: network.getInputList()) 
+                {
+                    String inputId = inputList.getId();
+                    
+                    if (!project.elecInputInfo.getAllStimRefs().contains(inputId)) 
+                    {
+                        throw new NeuroMLException("neuroConstruct can only import inputLists from NeuroML when an electrical input with that name already exists in the project!");
+                    }
+                    
+                    for (Input input: inputList.getInput()) 
+                    {
+                        String inputType = null;
+                        
+                        if (pulseGenerators.containsKey(inputId))
+                            inputType = IClamp.TYPE;
+                        else 
+                        {
+                            throw new NeuroMLException("Can not determine the type of the electrical input to "+inputId+" (no <pulseGenerator> with that id)!");
+                        }
+                        
+                        int segmentId = input.getSegmentId()!=null ? input.getSegmentId() : 0;
+
+                        float fractAlong = input.getFractionAlong()!=null ? input.getFractionAlong().floatValue() : 0.5f;
+                        
+                        elecInputs.addSingleInput(inputId, 
+                                                  inputType, 
+                                                  inputList.getPopulation(), 
+                                                  parseForCellNumber(input.getTarget()), 
+                                                  segmentId, 
+                                                  fractAlong);
+                    }
+                }
             }
         }
         catch (MalformedURLException e) 
@@ -387,6 +439,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     
     private int parseForCellNumber(String cellIdString) 
     {
+        //System.out.println("cellIdString: "+cellIdString);
         int lastSlash = cellIdString.lastIndexOf("/");
         int secondLastSlash = cellIdString.substring(0, lastSlash).lastIndexOf("/");
         return Integer.parseInt(cellIdString.substring(secondLastSlash+1, lastSlash));
@@ -406,10 +459,11 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             File f = new File("testProjects/TestNetworkML/savedNetworks/test_nml2.xml");
             f = new File("testProjects/TestNetworkML/savedNetworks/nnn.nml");
             
-            boolean network = false;
+            boolean network = true;
             if (network) 
             {
                 f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/pythonScripts/CElegansConnectome.nml");
+                f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/generatedNeuroML2/ACnet2.net.nml");
 
                 logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
 

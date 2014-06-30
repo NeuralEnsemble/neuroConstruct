@@ -1605,6 +1605,10 @@ public class NeuroMLFileManager
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             
             
+            //LemsOption lo = LemsOption.GENERATE_GRAPH;
+            //LemsOption lo = LemsOption.NONE;
+            LemsOption lo = LemsOption.EXECUTE_MODEL;
+            
             Project p = Project.loadProject(projFile, null);
             //Proje
             ProjectManager pm = new ProjectManager(null, null);
@@ -1636,6 +1640,8 @@ public class NeuroMLFileManager
             {
                 simConf = "TestChannels";
                 simConf = "Default Simulation Configuration";
+                simConf = "SmallNetwork";
+                lo = LemsOption.NONE;
                 p.simulationParameters.setDt(0.01f);
             }
             /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))
@@ -1662,9 +1668,6 @@ public class NeuroMLFileManager
 
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
-            //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            //LemsOption lo = LemsOption.NONE;
-            LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             
             File neuroMLDir = ProjectStructure.getNeuroMLDir(p.getProjectMainDirectory(), version);

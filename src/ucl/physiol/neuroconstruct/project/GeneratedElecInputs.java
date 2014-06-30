@@ -96,7 +96,8 @@ public class GeneratedElecInputs
                                cellGroup,
                                cellNumber,
                                segmentId,
-                               fractionAlong);
+                               fractionAlong,
+                               null);
     }
     
     public void addSingleInput(String inputReference,
@@ -670,6 +671,15 @@ public class GeneratedElecInputs
                                 expInputElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, i+"");
                                 expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
                                 expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_DESTINATION, NetworkMLConstants.NEUROML2_INPUT_DESTINATION_DEFAULT);
+                                
+                                if (sei.getSegmentId()!=0) 
+                                {
+                                    expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_SEGMENT_ID, sei.getSegmentId()+"");
+                                }
+                                if (sei.getFractionAlong()!=0.5f) 
+                                {
+                                    expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_FRACTION_ALONG, sei.getFractionAlong()+"");
+                                }
 
                                 inputTargetSitesElement.addChildElement(expInputElement);
                             }

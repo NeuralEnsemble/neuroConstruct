@@ -263,6 +263,8 @@ public class NetworkMLConstants
     public static String NEUROML2_INPUT_POPULATION = "population";
     public static String NEUROML2_INPUT_DESTINATION = "destination";
     public static String NEUROML2_INPUT_DESTINATION_DEFAULT = "synapses";
+    public static String NEUROML2_INPUT_SEGMENT_ID = "segmentId";
+    public static String NEUROML2_INPUT_FRACTION_ALONG = "fractionAlong";
 
     
     private NetworkMLConstants()

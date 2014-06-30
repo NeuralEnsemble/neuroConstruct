@@ -89,7 +89,7 @@ public class NetworkMLReaderTest
 
         Project proj0 = pm.getCurrentProject();
         SimConfig sc = proj0.simConfigInfo.getDefaultSimConfig();
-
+        
         pm.doGenerate(sc.getName(), 1234);
 
         while(pm.isGenerating())
@@ -162,7 +162,7 @@ public class NetworkMLReaderTest
         
         stateString1.append(proj0.generatedCellPositions.toLongString(false));
         stateString1.append(proj0.generatedNetworkConnections.details(false));
-        ////////////stateString1.append(proj0.generatedElecInputs.toString());
+        stateString1.append(proj0.generatedElecInputs.toString());
 
         StringBuilder plotsString1 = new StringBuilder();
         plotsString1.append(proj0.generatedPlotSaves.details());
@@ -216,7 +216,7 @@ public class NetworkMLReaderTest
         
         stateString2.append(proj0.generatedCellPositions.toLongString(false));
         stateString2.append(proj0.generatedNetworkConnections.details(false));
-        //stateString2.append(proj0.generatedElecInputs.toString());
+        stateString2.append(proj0.generatedElecInputs.toString());
         
         //proj0.generatedNetworkConnections.getSynapticConnections(projName)
         String input1_0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
@@ -381,8 +381,8 @@ public class NetworkMLReaderTest
 
         validity2 = GeneralUtils.replaceAllTokens(validity2, proj2.getProjectFile().getAbsolutePath(), "<proj_path>");
 
-        System.out.println("V1: "+ GeneralUtils.replaceAllTokens(validity1, "\n", "\n"));
-        System.out.println("V2: "+ GeneralUtils.replaceAllTokens(validity2, "\n", "\n"));
+        System.out.println(">>>>>>>>>>>>>>>V1: "+ GeneralUtils.replaceAllTokens(validity1, "\n", "\n"));
+        System.out.println(">>>>>>>>>>>>>>>V2: "+ GeneralUtils.replaceAllTokens(validity2, "\n", "\n"));
 
         assertEquals(validity1, validity2);
 
@@ -393,13 +393,10 @@ public class NetworkMLReaderTest
         System.out.println("---- post: "+input2_0);
 
 
-
         assertEquals(input0, input2_0);
         assertEquals(input1, input2_1);
         
-   
-        
-        
+  
         //test the NetworkML reader on a Level3 file with annotations
         System.out.println("\n\n*** LEVEL3 WITH ANNOTATIONS TEST ***\n");
         File l3FileAnnotations = new File(saveNetsDir, "l3testAnnotations.nml");
