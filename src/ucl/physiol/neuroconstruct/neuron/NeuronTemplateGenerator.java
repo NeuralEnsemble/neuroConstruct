@@ -1367,6 +1367,7 @@ public class NeuronTemplateGenerator
                             }
                         }
                         else if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION) ||
+                                 cellMech.getMechanismType().equals(CellMechanism.NEUROML2_CONC_MODEL) ||
                                  cellMech.getMechanismType().equals(CellMechanism.SBML_MECHANISM))
                         {
                             
