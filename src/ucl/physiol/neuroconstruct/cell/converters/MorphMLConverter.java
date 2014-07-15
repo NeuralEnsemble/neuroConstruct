@@ -710,7 +710,6 @@ public class MorphMLConverter extends FormatImporter
             {
                 Hashtable<String, SimpleXMLElement> segGroupElsVsGroupNames = new Hashtable<String, SimpleXMLElement>();
 
-
                 for (Section sec: allSections)
                 {
                     for(String group: sec.getGroups())
@@ -951,6 +950,8 @@ public class MorphMLConverter extends FormatImporter
                 Units permeabilityUnit = UnitConverter.permeabilityUnits[preferredExportUnits];
                 
                 HashMap<String, SimpleXMLElement> ionSpeciesV2 = new HashMap<String, SimpleXMLElement>();
+                
+                /// **********    Uniform channel densities   ********************
 
                 for (int j = 0; j < allUniformChanMechs.size(); j++)
                 {
@@ -972,7 +973,7 @@ public class MorphMLConverter extends FormatImporter
                     
 
                     if (nml2) {
-                        String comment = null;
+                        String comment;
 
                         for (String group : groups) {
                             boolean addAtStartMembPropsElement = false;
@@ -981,10 +982,9 @@ public class MorphMLConverter extends FormatImporter
                             SimpleXMLElement mechElement = null;
                             if (cm.isChannelMechanism()) {
 
-
                                 addAtStartMembPropsElement = true;
 
-                                if (permeability > 0.0) {
+                                if (permeability >= 0.0) {
                                     mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_GHK_ELEMENT_V2);
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PERMEABILITY_ATTR_V2,
                                             permeability + " " + permeabilityUnit.getNeuroML2Symbol()));
@@ -1000,14 +1000,15 @@ public class MorphMLConverter extends FormatImporter
 
                                 mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
                                         chanMech.getName()));
-                            } else if (cm.isIonConcMechanism()) {
+                            } 
+                            else if (cm.isIonConcMechanism()) 
+                            {
                                 mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIES_ELEMENT_V2);
 
                                 addAtStartMembPropsElement = false;
                                 addAtEndMembPropsElement = false;
 
                                 intraCellPropsElement.addContent("\n\n                ");
-
                                 intraCellPropsElement.addChildElement(mechElement);
 
                             }
@@ -1045,7 +1046,7 @@ public class MorphMLConverter extends FormatImporter
                         }
                         
                     }
-                    else
+                    else   // nml1
                     {
 
                         SimpleXMLElement mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.MECHANISM_ELEMENT);
@@ -1333,15 +1334,13 @@ public class MorphMLConverter extends FormatImporter
                         {
 
                         }
-
-
+                        
                         SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT);
                         mechElement.addContent("\n                    ");
                         mechElement.addChildElement(pe);
 
                         pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                         vm.getParam().getName()));
-
 
                         SimpleXMLElement group = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                         pe.addContent("\n                        ");
@@ -1387,8 +1386,10 @@ public class MorphMLConverter extends FormatImporter
                     membPropsElement.addContent("\n\n                ");
                     membPropsElement.addChildElement(el);
                 }
+                
+                
 
-
+                //***********    Specific Capacitance   ************
 
                 SimpleXMLElement specCapElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT);
                 
@@ -1449,6 +1450,9 @@ public class MorphMLConverter extends FormatImporter
                     }
 
                 }
+                
+                
+                //***********    Axial resistance   ************
 
                 SimpleXMLElement specAxResElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT);
                 
@@ -1507,6 +1511,8 @@ public class MorphMLConverter extends FormatImporter
                     }
                 }
 
+                
+                //***********    Initial potential   ************
 
 
                 SimpleXMLElement initPotElement = new SimpleXMLElement(bioPrefix+BiophysicsConstants.INITIAL_POT_ELEMENT);
@@ -1550,9 +1556,14 @@ public class MorphMLConverter extends FormatImporter
                paramElement.addChildElement(groupElement1);
                paramElement.addContent("\n                    ");
                groupElement1.addContent("all");
+               
+               
+               
+                //***********    Ion Properties   ************
 
                Enumeration<IonProperties> e = cell.getIonPropertiesVsGroups().keys();
-
+               
+               //System.out.println("cell.getIonPropertiesVsGroups(): "+cell.getIonPropertiesVsGroups());
                while (e.hasMoreElements())
                {
                     IonProperties ip = e.nextElement();
@@ -1568,7 +1579,7 @@ public class MorphMLConverter extends FormatImporter
                     }
                     else
                     {
-                        ionPropEl = ionSpeciesV2.get(ip.getName());
+                        //ionPropEl = ionSpeciesV2.get(ip.getName());
                     }
 
                     Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
@@ -1619,13 +1630,7 @@ public class MorphMLConverter extends FormatImporter
                             else
                             {
                                 
-                                //SimpleXMLElement concModelEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.ION_CONC_MODEL_ELEMENT_V2);
-                                //ionPropEl.addContent("\n                     ");
-                                //ionPropEl.addChildElement(concModelEl);
-                                ///ionPropEl.addContent("\n                 ");
-
-                                //System.out.println(ionPropEl);
-                                //System.out.println(ionSpeciesV2);
+                                ionPropEl = ionSpeciesV2.get(ip.getName()+"_"+grp);
 
                                 if (ionPropEl!=null)
                                 {
@@ -1672,7 +1677,6 @@ public class MorphMLConverter extends FormatImporter
 
                if (nml2) intraCellPropsElement.addContent("\n\n            ");
                if (nml2) biophysElement.addContent("\n\n        ");
-
 
 
 
@@ -1831,6 +1835,7 @@ public class MorphMLConverter extends FormatImporter
                                                  HashMap<String, SimpleXMLElement> ionSpeciesV2) throws XMLMechanismException {
 
         CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
+        
         if (!group.equals(Section.ALL)) {
             mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
         }
@@ -1838,6 +1843,9 @@ public class MorphMLConverter extends FormatImporter
         String comment = null;
 
         boolean revPotSetInMP = false;
+        
+        boolean addExtraParams = false;
+        
         for (MechParameter mp : chanMech.getExtraParameters()) {
 
             //SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
@@ -1846,14 +1854,15 @@ public class MorphMLConverter extends FormatImporter
             boolean ghk = mp.getName().equals(BiophysicsConstants.PARAMETER_GHK_2);
             try {
                 if (!eOrErev && !ghk) {
-                    mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e or erev!!"));
+                    if (addExtraParams) {
+                        mechElement.addContent("\n");
+                        mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e or erev..."));
+                    }
                 }
             } catch (Exception e) {
                 GuiUtils.showErrorMessage(logger, "Problem when annotating chan mech: " + chanMech + ", mechElement: " + mechElement, e, null);
             }
 
-                                //pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
-            //                                                 mp.getName()));
             float val = mp.getValue();
             String unitSuffix = "";
 
@@ -1875,10 +1884,13 @@ public class MorphMLConverter extends FormatImporter
             }
 
             if (!ghk) {
-                mechElement.addAttribute(attrName, val + unitSuffix);
+                if (addExtraParams) {
+                    mechElement.addAttribute(attrName, val + unitSuffix);
+                }
             }
 
         }
+        
 
         if (cm instanceof XMLCellMechanism) {
             XMLCellMechanism cmlCm = (XMLCellMechanism) cm;
@@ -1956,7 +1968,6 @@ public class MorphMLConverter extends FormatImporter
                 String xpath = ChannelMLConstants.getIonSpeciesNameXPath();
                 String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
-                                    //System.out.println("--- cmlCm: "+ cmlCm);
                 if (cmlCm.isNeuroML2()) {
                     xpath = NeuroMLConstants.ROOT_ELEMENT + "/" + ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2 + "/@" + ChannelMLConstants.ION_ATTR_V2;
                     ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
@@ -1967,16 +1978,14 @@ public class MorphMLConverter extends FormatImporter
 
                 }
 
-                mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
-                        ion));
+                mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, ion));
 
                 //TODO: Remove this as id should be sufficient!!
                 mechElement.addAttribute(new SimpleXMLAttribute("ion", ion));
 
-                mechElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2,
-                        cmlCm.getInstanceName()));
+                mechElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2, chanMech.getNML2Name()));
 
-                ionSpeciesV2.put(ion, mechElement);
+                ionSpeciesV2.put(ion+"_"+group, mechElement);
 
             }
         }
@@ -2305,6 +2314,7 @@ public class MorphMLConverter extends FormatImporter
            f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
            f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
+           f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
            
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
@@ -2321,7 +2331,8 @@ public class MorphMLConverter extends FormatImporter
 
            Vector<Cell> cells = testProj.cellManager.getAllCells();
            cells = (Vector<Cell>)GeneralUtils.reorderAlphabetically(cells, true);
-           Cell cell = cells.get(2);
+            System.out.println("Cells: "+cells);
+           Cell cell = cells.get(1);
 
             System.out.println("Found a cell: "+ cell);
 

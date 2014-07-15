@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.OriginalCompartmentalisation;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLException;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
 /**
@@ -55,7 +56,7 @@ public class ExampleProjects
 
 
 
-    public static void generateMainPage(File mainFile, File sourceProjDir) throws IOException, ProjectFileParsingException
+    public static void generateMainPage(File mainFile, File sourceProjDir) throws IOException, ProjectFileParsingException, NeuroMLException
     {
         SimpleXMLElement root = new SimpleXMLElement("document");
         SimpleXMLElement header = new SimpleXMLElement("header");

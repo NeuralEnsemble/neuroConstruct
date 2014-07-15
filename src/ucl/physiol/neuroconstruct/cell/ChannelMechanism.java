@@ -193,10 +193,33 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         return info.toString();
     }
     
+    public String getNML2Name()
+    {
+        StringBuilder info = new StringBuilder(name);
+           
+        if (extraParameters!=null)
+        {
+            for (MechParameter mp: extraParameters)
+            {
+                String val = mp.getValue()+"";
+                if ((int)mp.getValue() == mp.getValue())
+                    val = (int)mp.getValue()+"";
+                
+                val = GeneralUtils.replaceAllTokens(val, "-", "min"); // - allowed in genesis element name?
+                val = GeneralUtils.replaceAllTokens(val, ".", "_");
+                
+                info.append("__"+ mp.getName()+""+ val);
+            }
+        }
+        
+        
+        return info.toString();
+    }
+    
     @Override
     public String getExtraParamsDesc()
     {
-        StringBuffer info = new StringBuffer();
+        StringBuilder info = new StringBuilder();
         
            
         if (extraParameters!=null)
@@ -205,7 +228,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
             
             for (MechParameter mp: mpa)
             {
-                info.append(", "+ mp.toString());
+                info.append(", ").append(mp.toString());
             }
         }
         return info.toString();
@@ -213,7 +236,7 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
     @Override
     public String getExtraParamsBracket()
     {
-        StringBuffer info = new StringBuffer("(");
+        StringBuilder info = new StringBuilder("(");
            
         if (extraParameters!=null)
         {
@@ -281,33 +304,6 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         System.out.println("ChannelMechanism 3: "+ cm3);
         System.out.println("ChannelMechanism 3: "+ cm3.hashCode());
         
-        
-  /*      
-        //cell.associateGroupWithChanMech("all", cm);
-        cell.associateGroupWithChanMech("soma_group", cm);
-        //cell.associateGroupWithChanMech("dendrite_group", cm2);
-        cell.associateGroupWithChanMech("all", cm2);
-        
-        
-       // System.out.println(CellTopologyHelper.printDetails(cell, null));
-        
-        System.out.println("Cell chans: "+ cell.getChanMechsVsGroups());
-        
-        
-
-        ChannelMechanism cm2 = new ChannelMechanism(cm.toString());
-
-
-
-        System.out.println("ChannelMechanism2: " + cm2);
-
-        System.out.println("Equals: "+ cm.equals(cm2));
-        System.out.println("Equals: "+ cm.equals(cm3));
-
-        cell.associateGroupWithChanMech("hh", cm);
-        c2.associateGroupWithChanMech("hh", cm3);
-
-        System.out.println(CellTopologyHelper.compare(cell, c2));*/
 
 
     }

@@ -14,6 +14,7 @@ public interface IMechanism {
 
     Object clone();
 
+    @Override
     boolean equals(Object otherObj);
 
     MechParameter getExtraParameter(String paramName);
@@ -23,6 +24,8 @@ public interface IMechanism {
     String getExtraParamsBracket();
 
     String getExtraParamsDesc();
+    
+    String getNML2Name();
 
     String getName();
 
@@ -32,6 +35,7 @@ public interface IMechanism {
 
     void setName(String name);
 
+    @Override
     String toString();
     
 }

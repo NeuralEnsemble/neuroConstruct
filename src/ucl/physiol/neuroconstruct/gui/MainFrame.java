@@ -13751,6 +13751,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             GuiUtils.showErrorMessage(logger , "Error when generating NeuroML", ex, this);
             return;
         }
+        catch(NeuroMLException ex)
+        {
+            GuiUtils.showErrorMessage(logger , "Error when generating NeuroML", ex, this);
+            return;
+        }
 
         jButtonNeuroMLGenSim.setText(origText);
 

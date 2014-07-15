@@ -30,15 +30,18 @@ import java.io.*;
 import java.util.*;
 import org.lemsml.jlems.core.sim.Sim;
 import org.lemsml.jlems.core.type.Component;
-
+import org.lemsml.jlems.core.type.QuantityReader;
 import org.neuroml.export.Utils;
+import org.neuroml.model.util.NeuroMLElements;
 
 import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.LemsConstants.LemsOption;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLLevel;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLVersion;
 import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
@@ -50,7 +53,6 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 import ucl.physiol.neuroconstruct.utils.units.Units;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
-import org.neuroml.model.util.NeuroMLElements;
 
 /**
  * Main file for generating simulations based on NeuroML
@@ -522,7 +524,7 @@ public class NeuroMLFileManager
     public void generateNeuroMLFiles(SimConfig simConf,
                                      MorphCompartmentalisation mc,
                                      int seed,
-                                     boolean singleL3File) throws IOException
+                                     boolean singleL3File) throws IOException, NeuroMLException
     {
         generateNeuroMLFiles(simConf, mc, seed, singleL3File, false);
     }
@@ -531,7 +533,7 @@ public class NeuroMLFileManager
                                      MorphCompartmentalisation mc,
                                      int seed,
                                      boolean singleL3File,
-                                     boolean annotations) throws IOException
+                                     boolean annotations) throws IOException, NeuroMLException
     {
         generateNeuroMLFiles(simConf, NeuroMLVersion.NEUROML_VERSION_1, LemsOption.NONE, mc, seed, singleL3File, annotations);
     }
@@ -542,7 +544,7 @@ public class NeuroMLFileManager
                                      MorphCompartmentalisation mc,
                                      int seed,
                                      boolean singleL3File,
-                                     boolean annotations) throws IOException
+                                     boolean annotations) throws IOException, NeuroMLException
     {
         generateNeuroMLFiles(simConf, version, lemsOption, mc, seed, singleL3File, annotations, false);
     }
@@ -554,7 +556,7 @@ public class NeuroMLFileManager
                                      int seed,
                                      boolean singleL3File,
                                      boolean annotations,
-                                     boolean runInBackground) throws IOException
+                                     boolean runInBackground) throws IOException, NeuroMLException
     {
 
         File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory(), version);
@@ -578,7 +580,7 @@ public class NeuroMLFileManager
                                      boolean singleL3File,
                                      boolean annotations,
                                      File generateDir,
-                                     boolean runInBackground) throws IOException
+                                     boolean runInBackground) throws IOException, NeuroMLException
     {
         generateNeuroMLFiles(simConf,
                              version,
@@ -601,7 +603,7 @@ public class NeuroMLFileManager
                                      boolean annotations,
                                      File generateDir,
                                      String units,
-                                     boolean runInBackground) throws IOException
+                                     boolean runInBackground) throws IOException, NeuroMLException
     {
         logger.logComment("Starting generation of the files into dir: " + generateDir.getCanonicalPath() + ", version: " + version, true);
         
@@ -759,9 +761,10 @@ public class NeuroMLFileManager
                 {
                     String mechExtension = lastExtension;
                     
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
+                    
                     if (!cellMechFilesHandled.contains(cellMech))
                     {
-                        CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
 
                         if (cm == null)
                         {
@@ -787,6 +790,9 @@ public class NeuroMLFileManager
                                 generatedChanSynFiles.add(newFile);
                                 
                                 logger.logComment("copied: " + copied, false);
+                                String nml2Contents = GeneralUtils.readShortFile(newFile);
+                                
+                                handleExtraParamsForNml2(cm, nextCell, generateDir, nml2Contents, extraExtn);
                             }
                             
                             
@@ -853,30 +859,16 @@ public class NeuroMLFileManager
                                 {
                                     xslChannelML2NeuroML2 = ProjectStructure.getChannelML2NeuroML2beta();
                                 }
-
-
+                                
                                 String xslContents = GeneralUtils.readShortFile(xslChannelML2NeuroML2);
-
-                                //DONE Make celsius a global variable!!
-                                /*String defaultTemp = project.simulationParameters.getTemperature() +" degC";
-                                 int start = xslContents.indexOf("<xsl:variable name=\"defaultTemp\">")+33;
-                                 int end = xslContents.indexOf("</xsl:variable>", start);
-                                 xslContents = xslContents.substring(0, start)+defaultTemp+xslContents.substring(end);*/
-                                //System.out.println(xslContents);
 
                                 String nml2Contents = XMLUtils.transform(origCmlFile, xslContents);
 
                                 GeneralUtils.writeShortFile(newCmlFile, nml2Contents);
                                 generatedChanSynFiles.add(newCmlFile);
 
-                                //XMLUtils.transform(origCmlFile, xslChannelML2NeuroML2, generateDir, ".nml");
+                                handleExtraParamsForNml2(cm, nextCell, generateDir, nml2Contents, extraExtn);
 
-                                //String origFileName = origCmlFile.getName();
-
-                                //File generatedFile = new File(generateDir, origFileName.substring(0, origFileName.length()-4)+".nml");
-
-
-                                //generatedFile.renameTo(newCmlFile);
                             }
                             else
                             {
@@ -896,6 +888,8 @@ public class NeuroMLFileManager
                         }
                         cellMechFilesHandled.add(cellMech);
                     }
+                    
+                    
                 }
             }
 
@@ -1437,6 +1431,56 @@ public class NeuroMLFileManager
 
     }
 
+    private void handleExtraParamsForNml2(CellMechanism cm, Cell cell, File generateDir, String origContents, String extraExtn) throws IOException, NeuroMLException {
+
+        for (ChannelMechanism chanMech : cell.getAllUniformChanMechs(true)) {
+            if (chanMech.getName().equals(cm.getInstanceName()) && chanMech.getExtraParameters().size() > 0) {
+
+                //System.out.println("chanMech: " + chanMech);
+                //System.out.println("cellMech: " + cm);
+                
+                String newMechName = chanMech.getNML2Name();
+                File epCmlFile = new File(generateDir, newMechName + extraExtn + ".nml");
+                
+                String newContents = new String(origContents);
+                for (MechParameter mp : chanMech.getExtraParameters()) {
+                    String attrEquals = mp.getName()+"=\"";
+                    int startAttr = newContents.indexOf(attrEquals);
+                    if (startAttr<0) 
+                        throw new NeuroMLException("Problem substituting values for extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
+                                + "Not found:  "+attrEquals);
+                    int startVal = startAttr + mp.getName().length()+2;
+                    int endVal = newContents.indexOf("\"", startVal);
+                    String origVal = newContents.substring(startVal, endVal);
+                    String[] val = QuantityReader.splitToMagnitudeAndUnit(origVal);
+                    String newVal = mp.getValue()+"";
+                    if (val.length>1)
+                        newVal = newVal + " " + val[1];
+                    
+                    newContents = newContents.substring(0,startVal)+newVal+newContents.substring(endVal);
+                    
+                    // Rename the component to the suffixed name
+                    newContents = newContents.replaceAll("\""+chanMech.getName()+"\"", "\""+newMechName+"\"");
+                    
+                }
+                // knock out any ComponentType definitions as they will be in the original file
+                newContents = newContents.replaceAll("<ComponentType ", "<!--<ComponentType ");
+                newContents = newContents.replaceAll("</ComponentType>", "</ComponentType>-->");
+                
+                
+                String info = "\n<!--\n       This file has been generated by neuroConstruct because a cell mechanism ("+cm+")\n"+
+                              "      has a different set of parameters "+chanMech.getExtraParamsBracket()+" on a group of sections.\n\n"+
+                              "      Conversion of the original NML2 file to use the updated parameters is implemented in handleExtraParamsForNml2()\n"+ 
+                              "      in https://github.com/NeuralEnsemble/neuroConstruct/blob/master/src/ucl/physiol/neuroconstruct/neuroml/NeuroMLFileManager.java\n"+
+                              "      See that file to check/improve this conversion\n-->\n\n";
+                
+                newContents = newContents.replace("<neuroml ", info+"<neuroml ");
+
+                GeneralUtils.writeShortFile(epCmlFile, newContents);
+            }
+        }
+    }
+
     private String convertValue(String val)
     {
         logger.logComment("Converting val: " + val);
@@ -1603,6 +1647,7 @@ public class NeuroMLFileManager
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+            projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
             
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
@@ -1643,6 +1688,10 @@ public class NeuroMLFileManager
                 simConf = "SmallNetwork";
                 lo = LemsOption.NONE;
                 p.simulationParameters.setDt(0.01f);
+            }
+            else if (projFile.getName().startsWith("L5bPyrCell"))
+            {
+                lo = LemsOption.NONE;
             }
             /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))
             {

@@ -316,6 +316,30 @@ public class VariableMechanism implements Serializable, IMechanism
     public void setExtraParameters(ArrayList<MechParameter> params) {
         this.extraParameters = params;
     }
+    
+    
+    public String getNML2Name()
+    {
+        StringBuilder info = new StringBuilder(name);
+           
+        if (extraParameters!=null)
+        {
+            for (MechParameter mp: extraParameters)
+            {
+                String val = mp.getValue()+"";
+                if ((int)mp.getValue() == mp.getValue())
+                    val = (int)mp.getValue()+"";
+                
+                val = GeneralUtils.replaceAllTokens(val, "-", "min"); // - allowed in genesis element name?
+                val = GeneralUtils.replaceAllTokens(val, ".", "_");
+                
+                info.append("__"+ mp.getName()+""+ val);
+            }
+        }
+        
+        
+        return info.toString();
+    }
 
 
 }
