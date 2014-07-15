@@ -39,7 +39,6 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.LemsConstants.LemsOption;
-import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLLevel;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLVersion;
 import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
@@ -61,6 +60,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  *
  */
 
+@SuppressWarnings("StringConcatenationInsideStringBufferAppend")
 public class NeuroMLFileManager
 {
 
@@ -687,7 +687,7 @@ public class NeuroMLFileManager
         else
         {
 
-            ArrayList<Cell> generatedCells = null;
+            ArrayList<Cell> generatedCells;
 
             if (project.generatedCellPositions.getAllPositionRecords().isEmpty())
             {
@@ -1209,22 +1209,22 @@ public class NeuroMLFileManager
                             Units u = UnitConverter.timeUnits[preferredUnits];
                             lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
                         }
-                        else if (plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CONCENTRATION + SimPlot.PLOTTED_VALUE_SEPARATOR) >= 0)
+                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CONCENTRATION + SimPlot.PLOTTED_VALUE_SEPARATOR))
                         {
                             Units u = UnitConverter.concentrationUnits[preferredUnits];
                             lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
                         }
-                        else if (plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.COND_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR) >= 0)
+                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.COND_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR))
                         {
                             Units u = UnitConverter.conductanceDensityUnits[preferredUnits];
                             lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
                         }
-                        else if (plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CURR_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR) >= 0)
+                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CURR_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR))
                         {
                             Units u = UnitConverter.currentDensityUnits[preferredUnits];
                             lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
                         }
-                        else if (plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.REV_POT + SimPlot.PLOTTED_VALUE_SEPARATOR) >= 0)
+                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.REV_POT + SimPlot.PLOTTED_VALUE_SEPARATOR))
                         {
                             Units u = UnitConverter.voltageUnits[preferredUnits];
                             lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());

@@ -143,6 +143,16 @@ public class BiophysicsConstants
     public static String REV_POT_ATTR_V2 = "erev";
     public static String ION_ATTR_V2 = "ion";
     
+    
+    public static String VAR_PARAMETER_ELEMENT_V2 = "variableParameter";
+
+    public static String PARAMETER_NAME_ATTR_V2 = "parameter";
+    
+    public static String PARAMETER_VALUE_ATTR_V2 = "value";
+    public static String INHOMOGENEOUS_VALUE_V2 = "inhomogeneousValue";
+    public static String INHOMOGENEOUS_PARAM_NAME_V2 = "inhomogeneousParam";
+    public static String INHOMOGENEOUS_PARAM_VALUE_V2 = "value";
+    
     public static String SPECIES_ELEMENT_V2 = "species";
     
     private BiophysicsConstants()

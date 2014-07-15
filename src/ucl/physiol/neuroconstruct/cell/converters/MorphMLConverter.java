@@ -951,8 +951,12 @@ public class MorphMLConverter extends FormatImporter
                 
                 HashMap<String, SimpleXMLElement> ionSpeciesV2 = new HashMap<String, SimpleXMLElement>();
                 
+                
+                
                 /// **********    Uniform channel densities   ********************
 
+                HashMap<SimpleXMLElement, String> postAddElement = new HashMap<SimpleXMLElement, String>();
+                
                 for (int j = 0; j < allUniformChanMechs.size(); j++)
                 {
                     ChannelMechanism chanMech = allUniformChanMechs.get(j);
@@ -1034,14 +1038,7 @@ public class MorphMLConverter extends FormatImporter
                             }
                             if (addAtEndMembPropsElement) 
                             {
-                                if (comment!=null) {
-                                    membPropsElement.addContent("\n\n                ");
-                                    membPropsElement.addComment(comment);
-                                    membPropsElement.addContent("\n\n                ");
-                                }
-                                membPropsElement.addChildElement(mechElement);
-                                membPropsElement.addContent("\n\n                ");
-
+                                postAddElement.put(mechElement, comment);
                             }
                         }
                         
@@ -1248,8 +1245,10 @@ public class MorphMLConverter extends FormatImporter
                         mechElement.addContent("\n                ");
                     }
                 }
-
-
+                
+                /// ********** Non uniform channel densities   ********************
+                
+                
                 Hashtable<VariableMechanism, ParameterisedGroup> allVarChanMechs = cell.getVarMechsVsParaGroups();
 
                 Enumeration<VariableMechanism> varMechs = allVarChanMechs.keys();
@@ -1258,14 +1257,12 @@ public class MorphMLConverter extends FormatImporter
                     VariableMechanism vm = varMechs.nextElement();
                     ParameterisedGroup pg = allVarChanMechs.get(vm);
                     membPropsElement.addContent("\n\n            ");
-                    membPropsElement.addComment(vm.toString() + " on "+pg);
+                    //membPropsElement.addComment();
 
                     if(nml2)
                     {
                         
                         SimpleXMLElement mechElement = new SimpleXMLElement(BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
-                        membPropsElement.addContent("\n                ");
-                        membPropsElement.addChildElement(mechElement);
 
                         mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, vm.getName() + "_" + pg.getGroup()));
 
@@ -1273,22 +1270,20 @@ public class MorphMLConverter extends FormatImporter
 
                         CellMechanism cm = project.cellMechanismInfo.getCellMechanism(vm.getName());
 
-                        SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT);
-                        mechElement.addContent("\n                    ");
-                        mechElement.addChildElement(pe);
+                        SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT_V2);
 
-                        pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, vm.getParam().getName()));
+                        String paramName = vm.getParam().getName();
+                        if (paramName.equals(BiophysicsConstants.PARAMETER_GMAX)) {
+                            paramName = BiophysicsConstants.COND_DENS_ATTR_V2;
+                        }
+                        pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR_V2, paramName));
 
+                        pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, pg.getGroup()));
 
-                        SimpleXMLElement group = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
-                        pe.addContent("\n                        ");
-                        pe.addChildElement(group);
-                        group.addContent(pg.getGroup());
-
-                        SimpleXMLElement iv = new SimpleXMLElement(bioPrefix + BiophysicsConstants.INHOMOGENEOUS_VALUE);
+                        SimpleXMLElement iv = new SimpleXMLElement(bioPrefix + BiophysicsConstants.INHOMOGENEOUS_VALUE_V2);
                         pe.addContent("\n                        ");
                         pe.addChildElement(iv);
-                        iv.addAttribute(BiophysicsConstants.INHOMOGENEOUS_PARAM_NAME, pg.getName());
+                        iv.addAttribute(BiophysicsConstants.INHOMOGENEOUS_PARAM_NAME_V2, pg.getName());
                         String convFactor = "";
 
                         if (vm.getParam().getName().equals(BiophysicsConstants.PARAMETER_GMAX))
@@ -1311,8 +1306,37 @@ public class MorphMLConverter extends FormatImporter
                         }
 
                         pe.addContent("\n                    "); // to make it more readable...
-
+                        
+                        mechElement.addContent("\n                    ");
+                        mechElement.addChildElement(pe);
                         mechElement.addContent("\n                ");
+                        
+                        String comm = handleNml2ChannelDensityAttrs(project, vm, mechElement, null, bioPrefix, ionSpeciesV2);
+                        
+                        comm = (comm!=null ? comm+"\n    " : "") +vm.toString() + " on "+pg;
+                        //membPropsElement.addContent("\n                ");
+                        //membPropsElement.addChildElement(mechElement);
+                        
+                        boolean addAtStartMembPropsElement = true;
+                        if (comm!= null && (comm.contains("GHK") || comm.contains("Nernst"))) {
+                            addAtStartMembPropsElement = false;
+                        }
+
+                        if (addAtStartMembPropsElement) 
+                        {
+                            membPropsElement.addChildElementAt(mechElement,0);
+                            membPropsElement.addContentAt("\n\n                ",0);
+                            if (comm!=null) {
+                                membPropsElement.addContentAt("\n\n                ",0);
+                                membPropsElement.addCommentAt(comm,0);
+                                membPropsElement.addContentAt("\n\n                ",0);
+                            }
+
+                        } else {
+                            postAddElement.put(mechElement, comm);
+                        }
+
+                        
                     }
                     else
                     {
@@ -1378,6 +1402,21 @@ public class MorphMLConverter extends FormatImporter
                     }
 
                 }
+                
+                // Add membPropsElements put to end, e.g. channelDensityNernst
+                for (SimpleXMLElement sxe : postAddElement.keySet()) {
+                    String comment = postAddElement.get(sxe);
+
+                    if (comment != null) {
+                        membPropsElement.addContent("\n\n                ");
+                        membPropsElement.addComment(comment);
+                        membPropsElement.addContent("\n\n                ");
+                    }
+                    membPropsElement.addChildElement(sxe);
+                    membPropsElement.addContent("\n\n                ");
+                }
+
+                
 
                 if (nml2)
                 {
@@ -1836,7 +1875,7 @@ public class MorphMLConverter extends FormatImporter
 
         CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
         
-        if (!group.equals(Section.ALL)) {
+        if (group!=null && !group.equals(Section.ALL)) {
             mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
         }
 
@@ -2147,13 +2186,20 @@ public class MorphMLConverter extends FormatImporter
 
             if (version.isVersion2())
             {
-                ArrayList<String> allChanMechs = cell.getAllChanMechNames(true);
+                HashMap<String, String> allChanMechsVsOrigName = new HashMap<String, String>();
                 
+                for (ChannelMechanism cm: cell.getChanMechsVsGroups().keySet()) {
+                    String cmNml2Name = cm.getNML2Name();
+                    if (!allChanMechsVsOrigName.containsKey(cmNml2Name))
+                        allChanMechsVsOrigName.put(cmNml2Name, cm.getName());
+                }
+                ArrayList<String> allChanMechs = new ArrayList<String>();
+                allChanMechs.addAll(allChanMechsVsOrigName.keySet());
                 allChanMechs = (ArrayList<String>)GeneralUtils.reorderAlphabetically(allChanMechs, true);
 
                 for(String chan: allChanMechs)                    
                 {
-                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chan);
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(allChanMechsVsOrigName.get(chan));
                     SimpleXMLElement includeElement = new SimpleXMLElement(MorphMLConstants.INCLUDE_V2);
 
                     String extra = cm.isChannelMechanism() ? ProjectStructure.neuroml2ChannelExtension : "";
@@ -2332,7 +2378,7 @@ public class MorphMLConverter extends FormatImporter
            Vector<Cell> cells = testProj.cellManager.getAllCells();
            cells = (Vector<Cell>)GeneralUtils.reorderAlphabetically(cells, true);
             System.out.println("Cells: "+cells);
-           Cell cell = cells.get(1);
+           Cell cell = cells.get(0);
 
             System.out.println("Found a cell: "+ cell);
 
