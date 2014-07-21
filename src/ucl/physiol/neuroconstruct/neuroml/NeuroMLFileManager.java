@@ -1434,10 +1434,9 @@ public class NeuroMLFileManager
     private void handleExtraParamsForNml2(CellMechanism cm, Cell cell, File generateDir, String origContents, String extraExtn) throws IOException, NeuroMLException {
 
         for (ChannelMechanism chanMech : cell.getAllUniformChanMechs(true)) {
-            if (chanMech.getName().equals(cm.getInstanceName()) && chanMech.getExtraParameters().size() > 0) {
-
-                //System.out.println("chanMech: " + chanMech);
-                //System.out.println("cellMech: " + cm);
+            if (chanMech.getName().equals(cm.getInstanceName()) && 
+                chanMech.getExtraParameters().size() > 0 && 
+                !(chanMech.getExtraParameters().size()==1 && (chanMech.getExtraParameters().get(0).isReversalPotential()))) {
                 
                 String newMechName = chanMech.getNML2Name();
                 File epCmlFile = new File(generateDir, newMechName + extraExtn + ".nml");

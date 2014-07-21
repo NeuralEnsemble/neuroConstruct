@@ -29,6 +29,7 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.io.*;
 import java.util.ArrayList;
+import ucl.physiol.neuroconstruct.neuroml.BiophysicsConstants;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import ucl.physiol.neuroconstruct.utils.equation.*;
@@ -137,27 +138,6 @@ public class VariableMechanism implements Serializable, IMechanism
         this.extraParameters.add(mp);
     }
     
-    /*
-    public ArrayList<VariableParameter> getParams()
-    {
-        return params;
-    }
-
-    public void setParams(ArrayList<VariableParameter> params)
-    {
-        this.params = params;
-    }
-    
-    public double evaluateAt(String paramName, double varParamValue) throws ParameterException, EquationException
-    {
-        for(VariableParameter vp: params)
-        {
-            if (vp.getName().equals(paramName)){
-                return vp.evaluateAt(varParamValue);
-            }
-        }
-        throw new ParameterException("Parameter "+paramName+"cannot be evaluated at "+ varParamValue+" in variable mechanism "+ this.toString());
-    }*/
     
     public double evaluateAt(double varParamValue) throws ParameterException, EquationException
     {
@@ -326,18 +306,18 @@ public class VariableMechanism implements Serializable, IMechanism
         {
             for (MechParameter mp: extraParameters)
             {
-                String val = mp.getValue()+"";
-                if ((int)mp.getValue() == mp.getValue())
-                    val = (int)mp.getValue()+"";
-                
-                val = GeneralUtils.replaceAllTokens(val, "-", "min"); // - allowed in genesis element name?
-                val = GeneralUtils.replaceAllTokens(val, ".", "_");
-                
-                info.append("__"+ mp.getName()+""+ val);
+                if (!mp.isReversalPotential()) {
+                    String val = mp.getValue()+"";
+                    if ((int)mp.getValue() == mp.getValue())
+                        val = (int)mp.getValue()+"";
+
+                    val = GeneralUtils.replaceAllTokens(val, "-", "min"); // - allowed in genesis element name?
+                    val = GeneralUtils.replaceAllTokens(val, ".", "_");
+
+                    info.append("__"+ mp.getName()+""+ val);
+                }
             }
         }
-        
-        
         return info.toString();
     }
 

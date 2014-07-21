@@ -55,7 +55,6 @@ def generateNeuroML2(projFile,
                      simConfigs, 
                      neuroConstructSeed = 1234,
                      seed = 1234,
-                     validateWithJnml = True,
                      verbose =          True):
                          
     projectManager = ProjectManager()
@@ -78,6 +77,49 @@ def generateNeuroML2(projFile,
         simConfig = project.simConfigInfo.getSimConfig(simConfigName)
         nmlfm.generateNeuroMLFiles(simConfig,
                                     NeuroMLConstants.NeuroMLVersion.getLatestVersion(),
+                                    LemsConstants.LemsOption.LEMS_WITHOUT_EXECUTE_MODEL,
+                                    OriginalCompartmentalisation(),
+                                    seed,
+                                    False,
+                                    True,
+                                    genDir,
+                                    "GENESIS Physiological Units",
+                                    False)
+    
+    info = "These files are not the source files for the model, they have been generated from the source of the model in the neuroConstruct directory.\n"+ \
+           "These have been added to provide examples of valid NeuroML files for testing applications & the OSB website and may be removed at any time."
+
+    readme = open(genDir.getAbsolutePath()+'/README--GENERATED-FILES', 'w')
+    readme.write(info)
+    readme.close()
+    
+
+def generateNeuroML1(projFile, 
+                     simConfigs, 
+                     neuroConstructSeed = 1234,
+                     seed = 1234,
+                     verbose =          True):
+                         
+    projectManager = ProjectManager()
+    project = projectManager.loadProject(projFile)
+    nmlfm = NeuroMLFileManager(project)
+    
+    genDir = File(projFile.getParentFile(), "generatedNeuroML")
+    
+        
+    if verbose: print("Generating NeuroML v1.x files for project %s, sim configs: %s, into %s"%(project.getProjectName(), str(simConfigs), genDir.getAbsolutePath()))
+    
+    for simConfigName in simConfigs:
+        
+        projectManager.doGenerate(simConfigName, neuroConstructSeed)
+
+        while projectManager.isGenerating():
+                if verbose: print("Waiting for the project to be generated with Simulation Configuration: "+simConfigName)
+                time.sleep(5)
+            
+        simConfig = project.simConfigInfo.getSimConfig(simConfigName)
+        nmlfm.generateNeuroMLFiles(simConfig,
+                                    NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_1,
                                     LemsConstants.LemsOption.LEMS_WITHOUT_EXECUTE_MODEL,
                                     OriginalCompartmentalisation(),
                                     seed,

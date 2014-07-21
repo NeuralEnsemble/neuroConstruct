@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.cell;
  
 
 import java.io.Serializable;
+import ucl.physiol.neuroconstruct.neuroml.BiophysicsConstants;
 
  /**
   * A class representing a generic parameter for a channel mechanism
@@ -122,12 +123,23 @@ public class MechParameter implements Serializable
         return name +" = "+value;
     }
     
+    
+    public boolean isReversalPotential() {
+        return name.equals(BiophysicsConstants.PARAMETER_REV_POT)
+                    || name.equals(BiophysicsConstants.PARAMETER_REV_POT_2);
+    }
+    
     public static void main(String[] args) 
     {
         MechParameter mp1 = new MechParameter("mp1", 1234);
         MechParameter mp2 = new MechParameter("mp1",1234);
+        MechParameter mp3 = new MechParameter("e",1234);
+        MechParameter mp4 = new MechParameter("erev",1234);
         
         System.out.println("mp1 == mp2: "+ mp1.equals(mp2));
+        System.out.println(mp1.isReversalPotential());
+        System.out.println(mp3.isReversalPotential());
+        System.out.println(mp4.isReversalPotential());
         
     }
 

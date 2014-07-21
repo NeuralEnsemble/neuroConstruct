@@ -1883,13 +1883,14 @@ public class MorphMLConverter extends FormatImporter
 
         boolean revPotSetInMP = false;
         
-        boolean addExtraParams = false;
         
         for (MechParameter mp : chanMech.getExtraParameters()) {
+            
+            boolean addExtraParams = mp.isReversalPotential();
 
             //SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
-            boolean eOrErev = mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT)
-                    || mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2);
+            boolean eOrErev = mp.isReversalPotential();
+            
             boolean ghk = mp.getName().equals(BiophysicsConstants.PARAMETER_GHK_2);
             try {
                 if (!eOrErev && !ghk) {
@@ -2358,10 +2359,10 @@ public class MorphMLConverter extends FormatImporter
            f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
            f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
            f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
-           f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
            f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
            
+           f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)
