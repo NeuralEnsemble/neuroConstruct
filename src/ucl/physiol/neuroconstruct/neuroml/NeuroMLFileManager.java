@@ -1647,6 +1647,7 @@ public class NeuroMLFileManager
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
+            projFile = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
             
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;

@@ -1262,7 +1262,7 @@ public class MorphMLConverter extends FormatImporter
                     if(nml2)
                     {
                         
-                        SimpleXMLElement mechElement = new SimpleXMLElement(BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
+                        SimpleXMLElement mechElement = new SimpleXMLElement(BiophysicsConstants.CHAN_DENSITY_NON_UNIFORM_ELEMENT_V2);
 
                         mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, vm.getName() + "_" + pg.getGroup()));
 
