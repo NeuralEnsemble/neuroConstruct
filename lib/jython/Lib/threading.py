@@ -1,4 +1,4 @@
-from java.lang import InterruptedException
+from java.lang import IllegalThreadStateException, InterruptedException
 from java.util import Collections, WeakHashMap
 from java.util.concurrent import Semaphore, CyclicBarrier
 from java.util.concurrent.locks import ReentrantLock
@@ -12,7 +12,8 @@ import sys as _sys
 from traceback import print_exc as _print_exc
 
 # Rename some stuff so "from threading import *" is safe
-__all__ = ['activeCount', 'Condition', 'currentThread', 'enumerate', 'Event',
+__all__ = ['activeCount', 'active_count', 'Condition', 'currentThread',
+           'current_thread', 'enumerate', 'Event',
            'Lock', 'RLock', 'Semaphore', 'BoundedSemaphore', 'Thread',
            'Timer', 'setprofile', 'settrace', 'local', 'stack_size']
 
@@ -98,7 +99,7 @@ class JavaThread(object):
         _thread = self._thread
         status = ThreadStates[_thread.getState()]
         if _thread.isDaemon(): status + " daemon"
-        return "<%s(%s, %s)>" % (self.__class__.__name__, self.getName(), status)
+        return "<%s(%s, %s %s)>" % (self.__class__.__name__, self.getName(), status, self.ident)
 
     def __eq__(self, other):
         if isinstance(other, JavaThread):
@@ -110,12 +111,19 @@ class JavaThread(object):
         return not self.__eq__(other)
 
     def start(self):
-        self._thread.start()
+        try:
+            self._thread.start()
+        except IllegalThreadStateException:
+            raise RuntimeError("threads can only be started once")
 
     def run(self):
         self._thread.run()
 
     def join(self, timeout=None):
+        if self._thread == java.lang.Thread.currentThread():
+            raise RuntimeError("cannot join current thread")
+        elif self._thread.getState() == java.lang.Thread.State.NEW:
+            raise RuntimeError("cannot join thread before it is started")
         if timeout:
             millis = timeout * 1000.
             millis_int = int(millis)
@@ -124,20 +132,40 @@ class JavaThread(object):
         else:
             self._thread.join()
 
+    def ident(self):
+        return self._thread.getId()
+
+    ident = property(ident)
+
     def getName(self):
         return self._thread.getName()
 
     def setName(self, name):
         self._thread.setName(str(name))
 
+    name = property(getName, setName)
+
     def isAlive(self):
         return self._thread.isAlive()
+
+    is_alive = isAlive
 
     def isDaemon(self):
         return self._thread.isDaemon()
 
     def setDaemon(self, daemonic):
-        self._thread.setDaemon(bool(daemonic))
+        if self._thread.getState() != java.lang.Thread.State.NEW:
+            # thread could in fact be dead... Python uses the same error
+            raise RuntimeError("cannot set daemon status of active thread")
+        try:
+            self._thread.setDaemon(bool(daemonic))
+        except IllegalThreadStateException:
+            # changing daemonization only makes sense in Java when the
+            # thread is alive; need extra test on the exception
+            # because of possible races on interrogating with getState
+            raise RuntimeError("cannot set daemon status of active thread")
+
+    daemon = property(isDaemon, setDaemon)
 
     def __tojava__(self, c):
         if isinstance(self._thread, c):
@@ -261,8 +289,12 @@ def currentThread():
         pythread = JavaThread(jthread)
     return pythread
 
+current_thread = currentThread
+
 def activeCount():
     return len(_threads)
+
+active_count = activeCount
 
 def enumerate():
     return _threads.values()
@@ -314,7 +346,8 @@ class _Semaphore(_Verbose):
     # After Tim Peters' semaphore class, but not quite the same (no maximum)
 
     def __init__(self, value=1, verbose=None):
-        assert value >= 0, "Semaphore initial value must be >= 0"
+        if value < 0:
+            raise ValueError("Semaphore initial value must be >= 0")
         _Verbose.__init__(self, verbose)
         self.__cond = Condition(Lock())
         self.__value = value
@@ -385,6 +418,8 @@ class _Event(_Verbose):
     def isSet(self):
         return self.__flag
 
+    is_set = isSet
+
     def set(self):
         self.__cond.acquire()
         try:
@@ -405,5 +440,8 @@ class _Event(_Verbose):
         try:
             if not self.__flag:
                 self.__cond.wait(timeout)
+            # Issue 2005: Since CPython 2.7, threading.Event.wait(timeout) returns boolean.
+            # The function should return False if timeout is reached before the event is set.
+            return self.__flag
         finally:
             self.__cond.release()

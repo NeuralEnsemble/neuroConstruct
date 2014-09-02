@@ -18,6 +18,14 @@ Thanks to Tim Peters for suggesting using it.
 
 import time as _time
 import math as _math
+import sys as _sys
+
+if _sys.platform.startswith('java'):
+    from java.lang import Object
+    from java.sql import Date, Timestamp, Time
+    from java.util import Calendar
+    from org.python.core import Py
+
 
 MINYEAR = 1
 MAXYEAR = 9999
@@ -174,7 +182,7 @@ def _format_time(hh, mm, ss, us):
     return result
 
 # Correctly substitute for %z and %Z escapes in strftime formats.
-def _wrap_strftime(object, format, timetuple):
+def _wrap_strftime(object, format, timetuple, microsecond=0):
     year = timetuple[0]
     if year < 1900:
         raise ValueError("year=%d is before 1900; the datetime strftime() "
@@ -217,6 +225,9 @@ def _wrap_strftime(object, format, timetuple):
                                 # strftime is going to have at this: escape %
                                 Zreplace = s.replace('%', '%%')
                     newformat.append(Zreplace)
+                elif ch == 'f':
+                    us_string = '%.06d' % microsecond
+                    newformat.append(us_string)
                 else:
                     push('%')
                     push(ch)
@@ -981,22 +992,18 @@ class date(object):
     def __reduce__(self):
         return (self.__class__, self.__getstate())
 
-    def __tojava__(self, java_class):
-        from java.lang import Object
-        from java.sql import Date
-        from java.util import Calendar
-        from org.python.core import Py
+    if _sys.platform.startswith('java'):
+        def __tojava__(self, java_class):
+            if java_class not in (Calendar, Date, Object):
+                return Py.NoConversion
 
-        if java_class not in (Calendar, Date, Object):
-            return Py.NoConversion
-
-        calendar = Calendar.getInstance()
-        calendar.clear()
-        calendar.set(self.year, self.month - 1, self.day)
-        if java_class == Calendar:
-            return calendar
-        else:
-            return Date(calendar.getTimeInMillis())
+            calendar = Calendar.getInstance()
+            calendar.clear()
+            calendar.set(self.year, self.month - 1, self.day)
+            if java_class == Calendar:
+                return calendar
+            else:
+                return Date(calendar.getTimeInMillis())
 
 
 _date_class = date  # so functions w/ args named "date" can get at the class
@@ -1265,7 +1272,7 @@ class time(object):
         timetuple = (1900, 1, 1,
                      self.__hour, self.__minute, self.__second,
                      0, 1, -1)
-        return _wrap_strftime(self, fmt, timetuple)
+        return _wrap_strftime(self, fmt, timetuple, self.microsecond)
 
     # Timezone functions
 
@@ -1364,26 +1371,22 @@ class time(object):
     def __reduce__(self):
         return (time, self.__getstate())
 
-    def __tojava__(self, java_class):
-        # TODO, if self.tzinfo is not None, convert time to UTC
-        from java.lang import Object
-        from java.sql import Time
-        from java.util import Calendar
-        from org.python.core import Py
+    if _sys.platform.startswith('java'):
+        def __tojava__(self, java_class):
+            # TODO, if self.tzinfo is not None, convert time to UTC
+            if java_class not in (Calendar, Time, Object):
+                return Py.NoConversion
 
-        if java_class not in (Calendar, Time, Object):
-            return Py.NoConversion
-
-        calendar = Calendar.getInstance()
-        calendar.clear()
-        calendar.set(Calendar.HOUR_OF_DAY, self.hour)
-        calendar.set(Calendar.MINUTE, self.minute)
-        calendar.set(Calendar.SECOND, self.second)
-        calendar.set(Calendar.MILLISECOND, self.microsecond // 1000)
-        if java_class == Calendar:
-            return calendar
-        else:
-            return Time(calendar.getTimeInMillis())
+            calendar = Calendar.getInstance()
+            calendar.clear()
+            calendar.set(Calendar.HOUR_OF_DAY, self.hour)
+            calendar.set(Calendar.MINUTE, self.minute)
+            calendar.set(Calendar.SECOND, self.second)
+            calendar.set(Calendar.MILLISECOND, self.microsecond // 1000)
+            if java_class == Calendar:
+                return calendar
+            else:
+                return Time(calendar.getTimeInMillis())
 
 
 _time_class = time  # so functions w/ args named "time" can get at the class
@@ -1634,6 +1637,10 @@ class datetime(date):
         "Convert to string, for str()."
         return self.isoformat(sep=' ')
 
+    def strftime(self, fmt):
+        "Format using strftime()."
+        return _wrap_strftime(self, fmt, self.timetuple(), self.microsecond)
+
     def utcoffset(self):
         """Return the timezone offset in minutes east of UTC (negative west of
         UTC)."""
@@ -1839,28 +1846,24 @@ class datetime(date):
     def __reduce__(self):
         return (self.__class__, self.__getstate())
 
-    def __tojava__(self, java_class):
-        # TODO, if self.tzinfo is not None, convert time to UTC
-        from java.lang import Object
-        from java.sql import Timestamp
-        from java.util import Calendar
-        from org.python.core import Py
+    if _sys.platform.startswith('java'):
+        def __tojava__(self, java_class):
+            # TODO, if self.tzinfo is not None, convert time to UTC
+            if java_class not in (Calendar, Timestamp, Object):
+                return Py.NoConversion
 
-        if java_class not in (Calendar, Timestamp, Object):
-            return Py.NoConversion
+            calendar = Calendar.getInstance()
+            calendar.clear()
+            calendar.set(self.year, self.month - 1, self.day,
+                         self.hour, self.minute, self.second)
 
-        calendar = Calendar.getInstance()
-        calendar.clear()
-        calendar.set(self.year, self.month - 1, self.day,
-                     self.hour, self.minute, self.second)
-
-        if java_class == Calendar:
-            calendar.set(Calendar.MILLISECOND, self.microsecond // 1000)
-            return calendar
-        else:
-            timestamp = Timestamp(calendar.getTimeInMillis())
-            timestamp.setNanos(self.microsecond * 1000)
-            return timestamp
+            if java_class == Calendar:
+                calendar.set(Calendar.MILLISECOND, self.microsecond // 1000)
+                return calendar
+            else:
+                timestamp = Timestamp(calendar.getTimeInMillis())
+                timestamp.setNanos(self.microsecond * 1000)
+                return timestamp
 
 
 datetime.min = datetime(1, 1, 1)

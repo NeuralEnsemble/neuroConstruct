@@ -1,5 +1,3 @@
-# $Id: dbexts.py 6638 2009-08-10 17:05:49Z fwierzbicki $
-
 """
 This script provides platform independence by wrapping Python
 Database API 2.0 compatible drivers to allow seamless database
@@ -49,8 +47,6 @@ import os, re
 from types import StringType
 
 __author__ = "brian zimmer (bzimmer@ziclix.com)"
-__version__ = "$Revision: 6638 $"[11:-2]
-
 __OS__ = os.name
 
 choose = lambda bool, a, b: (bool and [a] or [b])[0]
