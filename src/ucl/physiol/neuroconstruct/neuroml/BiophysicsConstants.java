@@ -26,6 +26,8 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 
+import org.neuroml.model.ChannelDensity;
+
 
 
 /**
@@ -154,7 +156,7 @@ public class BiophysicsConstants
     
     public static String PARAMETER_VALUE_ATTR_V2 = "value";
     public static String INHOMOGENEOUS_VALUE_V2 = "inhomogeneousValue";
-    public static String INHOMOGENEOUS_PARAM_NAME_V2 = "inhomogeneousParam";
+    public static String INHOMOGENEOUS_PARAM_NAME_V2 = "inhomogeneousParameter";
     public static String INHOMOGENEOUS_PARAM_VALUE_V2 = "value";
     
     public static String SPECIES_ELEMENT_V2 = "species";

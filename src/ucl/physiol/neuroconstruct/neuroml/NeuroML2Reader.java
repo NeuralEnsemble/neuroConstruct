@@ -271,6 +271,15 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         nCcell.associateGroupWithChanMech(group, cm);
                         
                     }
+                    if (!mp.getChannelDensityGHK().isEmpty()) {
+                        throw new NeuroMLException("Import of NeuroML2 with channelDensityGHK not yet implemented! Ask and it shall be done...");
+                    }
+                    if (!mp.getChannelDensityNernst().isEmpty()) {
+                        throw new NeuroMLException("Import of NeuroML2 with channelDensityNernst not yet implemented! Ask and it shall be done...");
+                    }
+                    if (!mp.getChannelDensityNonUniform().isEmpty()) {
+                        throw new NeuroMLException("Import of NeuroML2 with channelDensityNonUniform not yet implemented! Ask and it shall be done...");
+                    }
                     /*
                     for (SpikeThresh st: mp.getSpikeThresh()) {
                         

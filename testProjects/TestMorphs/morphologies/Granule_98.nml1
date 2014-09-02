@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:mml="http://morphml.org/morphml/schema" xmlns:bio="http://morphml.org/biophysics/schema" xmlns:cml="http://morphml.org/channelml/schema" xmlns:net="http://morphml.org/networkml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/neuroml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd" lengthUnits="micron">
+
+    <cells>
+        <cell name="Granule_98">
+
+            <meta:notes>An implementation using ChannelML of the Granule cell mode from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a Detailed Network Model of the Cerebellar Granule Cell Layer, 1998</meta:notes>
+
+            <mml:segments>
+
+                <mml:segment id="0" name="Soma" cable="0">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="10.0"/>
+                    <mml:distal x="0.0" y="0.0" z="0.0" diameter="10.0"/>
+                </mml:segment>
+
+                
+            </mml:segments>
+
+            <mml:cables>
+
+                <mml:cable id="0" name="Soma">
+                    <meta:group>all</meta:group>
+                    <meta:group>soma_group</meta:group>
+                </mml:cable>
+
+            </mml:cables>
+
+            <!--Adding the biophysical parameters-->
+
+            <biophysics units="Physiological Units">
+
+                <bio:mechanism name="GranPassiveCond" type="Channel Mechanism" passive_conductance="true">
+                    <bio:parameter name="e" value="-65.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="gmax" value="0.0330033">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_CaHVA_98" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="0.9084216">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_CaPool_98" type="Ion Concentration">    <!--Note: Calcium pools are not proper ion channels, thus this parameter does not represent a proper maximum conductance.
+The scaling factor for converting current into change in ion concentration should be
+ determined from ChannelML file for the CaPool...-->
+
+                    <bio:parameter name="gmax" value="0.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_H_98" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="0.03090506">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_KA_98" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="1.14567">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_KCa_98" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="17.9811">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_KDr_98" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="8.89691">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Gran_NaF_98" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="55.7227">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:spec_capacitance>
+                    <bio:parameter value="1.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_capacitance>
+
+                <bio:spec_axial_resistance>
+                    <bio:parameter value="0.1">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_axial_resistance>
+
+                <bio:init_memb_potential>
+                    <bio:parameter value="-65.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:init_memb_potential>
+
+                <bio:ion_props name="h">
+                    <bio:parameter name="e" value="-42.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            
+
+                <bio:ion_props name="k">
+                    <bio:parameter name="e" value="-90.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            
+
+                <bio:ion_props name="ca">
+                    <bio:parameter name="conc_e" value="2.4E-6">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                
+                    <bio:parameter name="conc_i" value="7.55E-11">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            
+
+                <bio:ion_props name="na">
+                    <bio:parameter name="e" value="55.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            </biophysics>
+
+            <connectivity>
+                <net:potential_syn_loc synapse_type="AMPA_GranGol">
+                    <net:group>all</net:group>
+                </net:potential_syn_loc>
+            
+                <net:potential_syn_loc synapse_type="GABAA">
+                    <net:group>all</net:group>
+                </net:potential_syn_loc>
+            
+                <net:potential_syn_loc synapse_type="MF_AMPA">
+                    <net:group>all</net:group>
+                </net:potential_syn_loc>
+            
+                <net:potential_syn_loc synapse_type="NMDA">
+                    <net:group>all</net:group>
+                </net:potential_syn_loc>
+            </connectivity>
+
+        </cell>
+    </cells>
+</neuroml>

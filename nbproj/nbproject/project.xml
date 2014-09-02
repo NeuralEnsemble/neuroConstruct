@@ -193,6 +193,7 @@
             <word>apic</word>
             <word>AxAx</word>
             <word>CG</word>
+            <word>condDens</word>
             <word>CortIN</word>
             <word>DeepFS</word>
             <word>DeepIN</word>
@@ -205,7 +206,9 @@
             <word>GABAA</word>
             <word>Gleeson</word>
             <word>IB</word>
+            <word>ionChannel</word>
             <word>LTS</word>
+            <word>NaConductance</word>
             <word>Neuroscience</word>
             <word>NMDA</word>
             <word>NonTuftRS</word>

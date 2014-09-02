@@ -592,7 +592,9 @@ DERIVATIVE states {
     <xsl:for-each select="cml:current_voltage_relation/cml:gate"
     ><xsl:variable name="gateName"><xsl:value-of select="@name"/></xsl:variable>, temp_adj_<xsl:value-of select="$gateName"/>
         <xsl:for-each select='cml:transition | cml:time_course | cml:steady_state'
-        ><xsl:variable name="stateName"><xsl:value-of select="@id"/></xsl:variable><xsl:if test="$favourPublicParameters = 0">,<xsl:text>
+        ><xsl:variable name="stateName"><xsl:value-of
+        select="@id"/></xsl:variable><xsl:if
+        test="$favourPublicParameters = 0 and @expr_form!='generic'">,<xsl:text>
         </xsl:text> A_<xsl:value-of select="@name"/>_<xsl:value-of select="$gateName"/>, B_<xsl:value-of select="@name"/>_<xsl:value-of
             select="$gateName"/>, Vhalf_<xsl:value-of select="@name"/>_<xsl:value-of select="$gateName"/>  </xsl:if>
     </xsl:for-each>
@@ -637,14 +639,26 @@ DERIVATIVE states {
         </xsl:variable>
 
     <xsl:if test="count(cml:current_voltage_relation/cml:gate/cml:closed_state) = count(cml:current_voltage_relation/cml:gate)">
+<xsl:text>
+    </xsl:text>
+        <xsl:choose>
+            <xsl:when test="count(cml:parameters/cml:parameter) = 0">
     TABLE <xsl:for-each select="cml:current_voltage_relation/cml:ohmic/cml:conductance/cml:gate"><xsl:value-of 
     select="cml:state/@name"/>inf, <xsl:value-of select="cml:state/@name"/>tau<xsl:if test="position() &lt; number($numGates)">,</xsl:if> 
     </xsl:for-each><xsl:for-each select="cml:current_voltage_relation/cml:gate/cml:open_state"><xsl:value-of 
     select="@id"/>inf, <xsl:value-of select="@id"/>tau<xsl:if test="position() &lt; number($numGates)">,</xsl:if> 
-    </xsl:for-each> DEPEND celsius<xsl:for-each select="cml:parameters/cml:parameter">, <xsl:value-of select="@name"/></xsl:for-each><xsl:if test="$favourPublicParameters = 1">
+    </xsl:for-each> DEPEND celsius<xsl:if test="$favourPublicParameters = 1">
     <xsl:for-each select="cml:hh_gate/cml:transition/cml:voltage_gate/*/cml:parameterised_hh">
         <xsl:for-each select="cml:parameter">, <xsl:value-of select="@name"/>_<xsl:value-of select="name(../..)"/>_<xsl:value-of select="../../../../../@state"/></xsl:for-each>
-    </xsl:for-each></xsl:if> FROM <xsl:value-of select="$min_v"/> TO <xsl:value-of select="$max_v"/> WITH <xsl:value-of select="$table_divisions"/></xsl:if>
+    </xsl:for-each></xsl:if> FROM <xsl:value-of select="$min_v"/> TO <xsl:value-of select="$max_v"/> WITH <xsl:value-of select="$table_divisions"/>
+            </xsl:when>
+            <xsl:otherwise>
+    : NOT USING TABLE: as there are some changable parameters (<xsl:for-each select="cml:parameters/cml:parameter"> <xsl:value-of select="@name"/></xsl:for-each>)
+    : which may be different on different sections, using a TABLE for computing these values can lead to errors.</xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:if>
+
     </xsl:if>
     
     UNITSOFF
@@ -898,7 +912,8 @@ DERIVATIVE states {
         </xsl:choose>
                 
        <xsl:if test="name()='tau'">
-    <xsl:value-of select="$stateName"/>tau = tau/temp_adj_<xsl:value-of select="$stateName"/><xsl:text>
+    <xsl:variable name="gateName"><xsl:value-of select="@id"/></xsl:variable>
+    <xsl:value-of select="$stateName"/>tau = tau/temp_adj_<xsl:value-of select="$gateName"/><xsl:text>
     </xsl:text>   
        </xsl:if>    
                    
@@ -1141,7 +1156,7 @@ DERIVATIVE states {
        </xsl:if>
 
        <xsl:if test="name()='time_course'">
-    <xsl:value-of select="@to"/>tau = tau/temp_adj_<xsl:value-of select="@to"/><xsl:text>
+    <xsl:value-of select="@to"/>tau = tau/temp_adj_<xsl:value-of select="$gateName"/><xsl:text>
     </xsl:text>
        </xsl:if>
                    

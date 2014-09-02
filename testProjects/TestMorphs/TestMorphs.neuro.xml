@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_55" class="java.beans.XMLDecoder">
+<java version="1.7.0_65" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -10,10 +10,7 @@ part of NeuroML or any standardised XML specification. -->
  <object class="ucl.physiol.neuroconstruct.project.BasicProjectInfo">
   <void property="projectDescription">
    <string>This is a simple project with a single cell placed randomly in a 3D rectangular box.
-
-Go to tab Generate, press Generate Cell Positions and Connections, and then to visualise the results, go to tab Visualisation and press View, with Latest Generated Positions selected in the drop down box.
-
-If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string>
+</string>
   </void>
   <void property="projectFileVersion">
    <string>neuroConstruct v1.7.1</string>
@@ -75,7 +72,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <void method="get">
     <string>Cell Type</string>
     <void method="add">
-     <string>SampleCell</string>
+     <string>SampleCell_ca</string>
     </void>
     <void method="add">
      <string>Granule_98</string>
@@ -191,7 +188,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
  </object>
  <object class="ucl.physiol.neuroconstruct.project.ProjectProperties">
   <void property="preferredSaveFormat">
-   <string>Java Serialized Object Format</string>
+   <string>NeuroML v1.8.1 Format</string>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.utils.Display3DProperties">
@@ -235,7 +232,7 @@ allchans</string>
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>Sim_4</string>
+   <string>Sim_20</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
@@ -267,6 +264,38 @@ allchans</string>
      </void>
      <void property="reference">
       <string>SampleIClamp</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+     <void property="amp">
+      <void property="fixedNum">
+       <float>0.2</float>
+      </void>
+     </void>
+     <void property="cellGroup">
+      <string>GrC</string>
+     </void>
+     <void property="del">
+      <void property="fixedNum">
+       <float>100.0</float>
+      </void>
+     </void>
+     <void id="NumberGenerator1" property="dur">
+      <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+       <string>numberType</string>
+       <void method="set">
+        <object idref="NumberGenerator1"/>
+        <int>11</int>
+       </void>
+      </void>
+      <void property="fixedNum">
+       <float>500.0</float>
+      </void>
+     </void>
+     <void property="reference">
+      <string>Input_0</string>
      </void>
     </object>
    </void>
@@ -309,6 +338,11 @@ allchans</string>
        <string>GrC</string>
       </void>
      </void>
+     <void property="inputs">
+      <void method="add">
+       <string>Input_0</string>
+      </void>
+     </void>
      <void property="name">
       <string>Granc</string>
      </void>
@@ -318,7 +352,7 @@ allchans</string>
       </void>
      </void>
      <void property="simDuration">
-      <float>100.0</float>
+      <float>700.0</float>
      </void>
     </object>
    </void>

@@ -116,13 +116,16 @@ public class MorphMLConstants
     public static String PARENT_V2 = "parent";
     public static String SEGMENT_V2 = "segment";
     public static String PARENT_FRACT_ALONG_V2 = "fractionAlong";
+    
+    
+    public static String NUMBER_INTERNAL_DIVS_PROP_V2 = "numberInternalDivisions";
 
 
     public static String SEG_GROUP_V2 = "segmentGroup";
     public static String MEMBER_V2 = "member";
     
     
-    public static String INHOMO_PARAM_V2 = "inhomogeneousParam";
+    public static String INHOMO_PARAM_V2 = "inhomogeneousParameter";
     public static String INHOMO_PARAM_ID_ATTR_V2 = "id";
     public static String INHOMO_PARAM_VARIABLE_ATTR_V2 = "variable";
     public static String INHOMO_PARAM_METRIC_ATTR_V2 = "metric";

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:mml="http://morphml.org/morphml/schema" xmlns:bio="http://morphml.org/biophysics/schema" xmlns:cml="http://morphml.org/channelml/schema" xmlns:net="http://morphml.org/networkml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/neuroml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd" lengthUnits="micron">
+
+    <cells>
+        <cell name="SampleCell_ca">
+
+            <meta:notes>A Simple cell for testing purposes</meta:notes>
+
+            <mml:segments>
+
+                <mml:segment id="0" name="Soma" cable="0">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="8.0"/>
+                    <mml:distal x="-10.0" y="0.0" z="0.0" diameter="8.0"/>
+                </mml:segment>
+
+                <mml:segment id="1" name="mainDend" parent="0" cable="1">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="10.0" y="0.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="2" name="subDend1" parent="1" cable="2">
+                    <mml:proximal x="10.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="30.0" y="15.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="3" name="subDend2" parent="1" cable="3">
+                    <mml:proximal x="10.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="35.0" y="0.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="4" name="subDend3" parent="1" cable="4">
+                    <mml:proximal x="10.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="30.0" y="-15.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="5" name="mainAxon" parent="0" cable="5">
+                    <mml:proximal x="-10.0" y="0.0" z="0.0" diameter="1.0"/>
+                    <mml:distal x="-20.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="6" name="Segment_6" parent="5" cable="5">
+                    <mml:distal x="-30.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="7" name="Segment_7" parent="6" cable="6">
+                    <mml:proximal x="-30.0" y="0.0" z="0.0" diameter="1.0"/>
+                    <mml:distal x="-40.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="8" name="Segment_8" parent="7" cable="6">
+                    <mml:distal x="-50.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="9" name="Segment_9" parent="8" cable="6">
+                    <mml:distal x="-60.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="10" name="Segment_10" parent="9" cable="7">
+                    <mml:proximal x="-60.0" y="0.0" z="0.0" diameter="1.0"/>
+                    <mml:distal x="-70.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="11" name="Segment_11" parent="10" cable="7">
+                    <mml:distal x="-80.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="12" name="Segment_12" parent="11" cable="7">
+                    <mml:distal x="-90.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                <mml:segment id="13" name="Segment_13" parent="12" cable="7">
+                    <mml:distal x="-100.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                
+            </mml:segments>
+
+            <mml:cables>
+
+                <mml:cable id="0" name="Soma"/>
+            
+
+                <mml:cable id="1" name="mainDendSec" fract_along_parent="0.0"/>
+            
+
+                <mml:cable id="2" name="subDendSec1"/>
+            
+
+                <mml:cable id="3" name="subDendSec2"/>
+            
+
+                <mml:cable id="4" name="subDendSec3"/>
+            
+
+                <mml:cable id="5" name="mainAxonSec">
+                    <meta:properties>
+                        
+                    <meta:property tag="numberInternalDivisions" value="10"/>
+
+                    </meta:properties>
+                </mml:cable>
+            
+
+                <mml:cable id="6" name="Section_6"/>
+            
+
+                <mml:cable id="7" name="Section_7"/>
+        
+
+            
+            
+                <mml:cablegroup name="all">
+                    <mml:cable id="0"/>
+                    <mml:cable id="1"/>
+                    <mml:cable id="2"/>
+                    <mml:cable id="3"/>
+                    <mml:cable id="4"/>
+                    <mml:cable id="5"/>
+                    <mml:cable id="6"/>
+                    <mml:cable id="7"/>
+                    <mml:inhomogeneous_param name="ZeroToOneOverCell" variable="p">
+                        <mml:metric>Path Length from root</mml:metric>
+                        <mml:proximal translationStart="0"/>
+                        <mml:distal normalizationEnd="1"/>
+                    </mml:inhomogeneous_param>
+                    
+                    <mml:inhomogeneous_param name="PathLengthOverCell" variable="p">
+                        <mml:metric>Path Length from root</mml:metric>
+                    </mml:inhomogeneous_param>
+                    
+               </mml:cablegroup>
+            
+                <mml:cablegroup name="soma_group">
+                    <mml:cable id="0"/>
+               </mml:cablegroup>
+            
+                <mml:cablegroup name="dendrite_group">
+                    <mml:cable id="1"/>
+                    <mml:cable id="2"/>
+                    <mml:cable id="3"/>
+                    <mml:cable id="4"/>
+                    <mml:inhomogeneous_param name="PathLengthOverDendrites" variable="p">
+                        <mml:metric>Path Length from root</mml:metric>
+                        <mml:proximal translationStart="0"/>
+                    </mml:inhomogeneous_param>
+                    
+               </mml:cablegroup>
+            
+                <mml:cablegroup name="dendTips">
+                    <mml:cable id="2"/>
+                    <mml:cable id="3"/>
+                    <mml:cable id="4"/>
+               </mml:cablegroup>
+            
+                <mml:cablegroup name="axon_group">
+                    <mml:cable id="5"/>
+                    <mml:cable id="6"/>
+                    <mml:cable id="7"/>
+               </mml:cablegroup>
+            
+                <mml:cablegroup name="axonInit">
+                    <mml:cable id="5"/>
+               </mml:cablegroup>
+            </mml:cables>
+
+            <!--Adding the biophysical parameters-->
+
+            <biophysics units="Physiological Units">
+
+                <bio:mechanism name="Gran_CaPool_98" type="Ion Concentration">    <!--Note: Calcium pools are not proper ion channels, thus this parameter does not represent a proper maximum conductance.
+The scaling factor for converting current into change in ion concentration should be
+ determined from ChannelML file for the CaPool...-->
+
+                    <bio:parameter name="gmax" value="0.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="LeakConductance" type="Channel Mechanism" passive_conductance="true">
+                    <bio:parameter name="e" value="-44.0">
+                        <bio:group>axon_group</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="gmax" value="0.3">
+                        <bio:group>axon_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="LeakConductance" type="Channel Mechanism" passive_conductance="true">
+                    <bio:parameter name="e" value="-50.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="gmax" value="0.3">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="LeakConductance" type="Channel Mechanism" passive_conductance="true">
+                    <bio:parameter name="e" value="-56.0">
+                        <bio:group>dendrite_group</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="gmax" value="0.3">
+                        <bio:group>dendrite_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="NaConductance" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="120.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+            
+
+                <bio:mechanism name="NaConductance" type="Channel Mechanism">
+                    <bio:variable_parameter name="gmax">
+                        <bio:group>dendrite_group</bio:group>
+                        <bio:inhomogeneous_value param_name="PathLengthOverDendrites" value="1.0E8 * 5.0E-8 * exp(((-1) * p) / 100)"/>    <!--Note: conversion factor (1.0E8 * ) included to convert to units: GENESIS Physiological Units-->
+
+                    </bio:variable_parameter>
+                </bio:mechanism>
+
+            
+
+                <bio:mechanism name="KConductance" type="Channel Mechanism">
+                    <bio:variable_parameter name="gmax">
+                        <bio:group>all</bio:group>
+                        <bio:inhomogeneous_value param_name="ZeroToOneOverCell" value="1.0E8 * 1.0E-7 * exp((-1) * p)"/>    <!--Note: conversion factor (1.0E8 * ) included to convert to units: GENESIS Physiological Units-->
+
+                    </bio:variable_parameter>
+                </bio:mechanism>
+
+                <bio:spec_capacitance>
+                    <bio:parameter value="1.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_capacitance>
+
+                <bio:spec_axial_resistance>
+                    <bio:parameter value="0.03">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_axial_resistance>
+
+                <bio:init_memb_potential>
+                    <bio:parameter value="-65.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:init_memb_potential>
+
+                <bio:ion_props name="ca">
+                    <bio:parameter name="conc_e" value="5.0E-6">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                
+                    <bio:parameter name="conc_i" value="2.0E-6">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            
+
+                <bio:ion_props name="na">
+                    <bio:parameter name="e" value="55.0">
+                        <bio:group>dendrite_group</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            
+
+                <bio:ion_props name="k">
+                    <bio:parameter name="e" value="-77.7">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            
+
+                <bio:ion_props name="na">
+                    <bio:parameter name="e" value="56.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:ion_props>
+            </biophysics>
+
+            <connectivity>
+                <net:potential_syn_loc synapse_type="DoubExpSyn">
+                    <net:group>all</net:group>
+                </net:potential_syn_loc>
+            </connectivity>
+
+        </cell>
+    </cells>
+</neuroml>

@@ -114,10 +114,14 @@ public class MorphMLReaderTest {
     }
     
 
-    @Test public void testWriteNeuroML2() throws MorphologyException, SAXException, IOException
+    @Test public void testWriteNeuroML2gran() throws MorphologyException, SAXException, IOException
     {
         writeNeuroML2(proj1, "Granule_98", true);
-        //writeNeuroML2(proj1, "SampleCell_ca", false);
+    }
+
+    @Test public void testWriteNeuroML2ca() throws MorphologyException, SAXException, IOException
+    {
+        writeNeuroML2(proj1, "SampleCell_ca", false);
     }
 
     public void doWriteAndRead(NeuroMLLevel level, Project proj, String cell) throws MorphologyException, SAXException, IOException
