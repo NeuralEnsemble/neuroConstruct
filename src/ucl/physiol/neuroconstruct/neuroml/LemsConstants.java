@@ -45,7 +45,7 @@ public class LemsConstants
     public static String NAMESPACE_URI = "http://www.neuroml.org/lems/"+LEMS_SCHEMA_VERSION;
 
     //public static String DEFAULT_SCHEMA_LOCATION = "https://raw.github.com/LEMS/LEMS/master/Schemas/LEMS/LEMS_v"+LEMS_SCHEMA_VERSION+".xsd";
-    public static String DEFAULT_SCHEMA_LOCATION = "https://raw.github.com/LEMS/LEMS/development/Schemas/LEMS/LEMS_v"+LEMS_SCHEMA_VERSION+".xsd";
+    public static String DEFAULT_SCHEMA_LOCATION = "https://raw.githubusercontent.com/LEMS/LEMS/development/Schemas/LEMS/LEMS_v"+LEMS_SCHEMA_VERSION+".xsd";
 
     public static String ID_ATTR = "id";
 

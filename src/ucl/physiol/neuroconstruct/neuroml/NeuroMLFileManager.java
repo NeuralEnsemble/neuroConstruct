@@ -786,13 +786,15 @@ public class NeuroMLFileManager
                                 File copied = GeneralUtils.copyFileIntoDir(nmlCm.getXMLFile(project), generateDir);
                                 File newFile = new File(generateDir, newName);
                                 copied.renameTo(newFile);
-
+                                //logger.logComment("Copied: " + copied+" to "+newName, true);
                                 generatedChanSynFiles.add(newFile);
                                 
-                                logger.logComment("copied: " + copied, false);
                                 String nml2Contents = GeneralUtils.readShortFile(newFile);
                                 
-                                handleExtraParamsForNml2(cm, nextCell, generateDir, nml2Contents, extraExtn);
+                                ArrayList<File> newEpFiles = handleExtraParamsForNml2(cm, nextCell, generateDir, nml2Contents, extraExtn);
+                       
+                                generatedChanSynFiles.addAll(newEpFiles);
+                                
                             }
                             
                             
@@ -865,9 +867,11 @@ public class NeuroMLFileManager
                                 String nml2Contents = XMLUtils.transform(origCmlFile, xslContents);
 
                                 GeneralUtils.writeShortFile(newCmlFile, nml2Contents);
-                                generatedChanSynFiles.add(newCmlFile);
-
-                                handleExtraParamsForNml2(cm, nextCell, generateDir, nml2Contents, extraExtn);
+                                generatedChanSynFiles.add(newCmlFile);                                
+                                
+                                ArrayList<File> newEpFiles = handleExtraParamsForNml2(cm, nextCell, generateDir, nml2Contents, extraExtn);
+                       
+                                generatedChanSynFiles.addAll(newEpFiles);
 
                             }
                             else
@@ -1007,7 +1011,6 @@ public class NeuroMLFileManager
 
             for (File genFile : generatedChanSynFiles)
             {
-
                 SimpleXMLElement incElc = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
                 incElc.addAttribute(LemsConstants.FILE_ATTR, genFile.getName());
                 lemsElement.addChildElement(incElc);
@@ -1431,15 +1434,18 @@ public class NeuroMLFileManager
 
     }
 
-    private void handleExtraParamsForNml2(CellMechanism cm, Cell cell, File generateDir, String origContents, String extraExtn) throws IOException, NeuroMLException {
-
+    private ArrayList<File> handleExtraParamsForNml2(CellMechanism cm, Cell cell, File generateDir, String origContents, String extraExtn) throws IOException, NeuroMLException {
+        ArrayList<File> epFiles = new ArrayList<File>();
+        
         for (ChannelMechanism chanMech : cell.getAllUniformChanMechs(true)) {
             if (chanMech.getName().equals(cm.getInstanceName()) && 
                 chanMech.getExtraParameters().size() > 0 && 
                 !(chanMech.getExtraParameters().size()==1 && (chanMech.getExtraParameters().get(0).isReversalPotential()))) {
+            
+                System.out.println("--- Handling: "+cm+", for "+cell.getInstanceName()+", "+chanMech.getExtraParameters());
                 
                 String newMechName = chanMech.getNML2Name();
-                File epCmlFile = new File(generateDir, newMechName + extraExtn + ".nml");
+                File epFile = new File(generateDir, newMechName + extraExtn + ".nml");
                 
                 String newContents = new String(origContents);
                 for (MechParameter mp : chanMech.getExtraParameters()) {
@@ -1475,9 +1481,13 @@ public class NeuroMLFileManager
                 
                 newContents = newContents.replace("<neuroml ", info+"<neuroml ");
 
-                GeneralUtils.writeShortFile(epCmlFile, newContents);
+                GeneralUtils.writeShortFile(epFile, newContents);
+                System.out.println("Written: "+epFile.getAbsolutePath());
+                epFiles.add(epFile);
             }
         }
+        
+        return epFiles;
     }
 
     private String convertValue(String val)
@@ -1646,8 +1656,8 @@ public class NeuroMLFileManager
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
-            projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
             projFile = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
+            projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
             
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
@@ -1691,7 +1701,7 @@ public class NeuroMLFileManager
             }
             else if (projFile.getName().startsWith("L5bPyrCell"))
             {
-                lo = LemsOption.NONE;
+                lo = LemsOption.EXECUTE_MODEL; // To get the LEMS_... file
             }
             /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))
             {

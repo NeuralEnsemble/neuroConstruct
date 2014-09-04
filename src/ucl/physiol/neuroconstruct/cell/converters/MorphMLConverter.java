@@ -980,38 +980,34 @@ public class MorphMLConverter extends FormatImporter
                 
                 /// **********    Uniform channel densities   ********************
 
-                HashMap<SimpleXMLElement, String> postAddElement = new HashMap<SimpleXMLElement, String>();
+                HashMap<SimpleXMLElement, String> chanMechElements = new HashMap<SimpleXMLElement, String>();
+                HashMap<SimpleXMLElement, String> chanMechNernstElements = new HashMap<SimpleXMLElement, String>();
+                HashMap<SimpleXMLElement, String> chanMechGHKElements = new HashMap<SimpleXMLElement, String>();
+                HashMap<SimpleXMLElement, String> chanMechNonUniElements = new HashMap<SimpleXMLElement, String>();
+                HashMap<SimpleXMLElement, String> chanMechNonUniNernstElements = new HashMap<SimpleXMLElement, String>();
                 
-                for (int j = 0; j < allUniformChanMechs.size(); j++)
-                {
-                    ChannelMechanism chanMech = allUniformChanMechs.get(j);
-
+                for (ChannelMechanism chanMech : allUniformChanMechs) {
+                    
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
                     float condDens = -1, permeability = -1;
-
                     MechParameter permPar = chanMech.getExtraParameter(BiophysicsConstants.PARAMETER_GHK_2);
-
                     if (null != permPar) {
                         permeability = (float) UnitConverter.getPermeability(permPar.getValue(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
 
                     } else {
                         condDens = (float) UnitConverter.getConductanceDensity(chanMech.getDensity(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
                     }
-
                     List<String> groups = cell.getGroupsWithChanMech(chanMech);
-                    
-
                     if (nml2) {
                         String comment;
 
                         for (String group : groups) {
-                            boolean addAtStartMembPropsElement = false;
-                            boolean addAtEndMembPropsElement = false;
+                            //boolean addAtStartMembPropsElement = false;
+                            //boolean addAtEndMembPropsElement = false;
 
                             SimpleXMLElement mechElement = null;
                             if (cm.isChannelMechanism()) {
-
-                                addAtStartMembPropsElement = true;
+                                //addAtStartMembPropsElement = true;
 
                                 if (permeability >= 0.0) {
                                     mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_GHK_ELEMENT_V2);
@@ -1029,13 +1025,10 @@ public class MorphMLConverter extends FormatImporter
 
                                 mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
                                         chanMech.getName()));
-                            } 
+                            }
                             else if (cm.isIonConcMechanism()) 
                             {
                                 mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIES_ELEMENT_V2);
-
-                                addAtStartMembPropsElement = false;
-                                addAtEndMembPropsElement = false;
 
                                 intraCellPropsElement.addContent("\n\n                ");
                                 intraCellPropsElement.addChildElement(mechElement);
@@ -1043,28 +1036,19 @@ public class MorphMLConverter extends FormatImporter
                             }
 
                             String comm = handleNml2ChannelDensityAttrs(project, cell, chanMech, mechElement, group, null, bioPrefix, ionSpeciesV2);
+                            boolean isNernst = comm!= null && comm.contains("Nernst");
+                            boolean isGHK = comm!= null && comm.contains("GHK");
                             
-                            if (comm!= null && (comm.contains("GHK") || comm.contains("Nernst"))) {
-                                addAtStartMembPropsElement = false;
-                                addAtEndMembPropsElement = true;
-                            }
                             comment  = comm;
+                            if (!cm.isIonConcMechanism()) {
+                                if (isNernst)
+                                    chanMechNernstElements.put(mechElement, comment);
+                                else if (isGHK)
+                                    chanMechGHKElements.put(mechElement, comment);
+                                else
+                                    chanMechElements.put(mechElement, comment);
+                            }
                             
-                            if (addAtStartMembPropsElement) 
-                            {
-                                membPropsElement.addChildElementAt(mechElement,0);
-                                membPropsElement.addContentAt("\n\n                ",0);
-                                if (comment!=null) {
-                                    membPropsElement.addContentAt("\n\n                ",0);
-                                    membPropsElement.addCommentAt(comment,0);
-                                    membPropsElement.addContentAt("\n\n                ",0);
-                                }
-
-                            }
-                            if (addAtEndMembPropsElement) 
-                            {
-                                postAddElement.put(mechElement, comment);
-                            }
                         }
                         
                     }
@@ -1076,42 +1060,42 @@ public class MorphMLConverter extends FormatImporter
                         membPropsElement.addChildElement(mechElement);
 
                         mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_NAME_ATTR,
-                                                                        chanMech.getName()));
-
+                                chanMech.getName()));
+                        
                         if (!cm.isIonConcMechanism())
                         {
                             mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
-                                                                        BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
+                                    BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
                         }
                         else
                         {
                             mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
-                                                                        BiophysicsConstants.MECHANISM_TYPE_ION_CONC));
-
+                                    BiophysicsConstants.MECHANISM_TYPE_ION_CONC));
+                            
                         }
-
-
+                        
+                        
                         ArrayList<SimpleXMLElement> allParamGrps = new ArrayList<SimpleXMLElement>();
 
                         SimpleXMLElement gmaxParamElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                         gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
-                                                                         BiophysicsConstants.PARAMETER_GMAX));
-
+                                BiophysicsConstants.PARAMETER_GMAX));
+                        
                         gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR, condDens+ ""));
 
                         if (cm.isIonConcMechanism() && chanMech.getDensity() == 0)
                         {
-
-                            mechElement.addComment("Note: Calcium pools are not proper ion channels, thus this parameter does not represent a proper maximum conductance.\n" 
-                           +"The scaling factor for converting current into change in ion concentration should be\n" 
-                           + " determined from ChannelML file for the CaPool...");
-
+                            
+                            mechElement.addComment("Note: Calcium pools are not proper ion channels, thus this parameter does not represent a proper maximum conductance.\n"
+                                    +"The scaling factor for converting current into change in ion concentration should be\n"
+                                    + " determined from ChannelML file for the CaPool...");
+                            
                         }
                         allParamGrps.add(gmaxParamElement);
-
-
-
+                        
+                        
+                        
                         ArrayList<MechParameter> mps = chanMech.getExtraParameters();
 
                         for(MechParameter mp: mps)
@@ -1121,28 +1105,28 @@ public class MorphMLConverter extends FormatImporter
                             pe.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e!!"));
 
                             pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
-                                                                             mp.getName()));
-
+                                    mp.getName()));
+                            
                             float val = mp.getValue();
 
                             if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
-                                mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                                    mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
                             {
                                 val = (float)UnitConverter.getVoltage(val,
-                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                        preferredExportUnits);
+                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                        preferredExportUnits);
                             }
-
-
+                            
+                            
                             pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
-                                                                             val+""));
-
+                                    val+""));
+                            
                             allParamGrps.add(pe);
 
                         }
-
-
-
+                        
+                        
+                        
                         if (cm instanceof ChannelMLCellMechanism)
                         {
                             ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
@@ -1161,8 +1145,8 @@ public class MorphMLConverter extends FormatImporter
                                 SimpleXMLElement revPotParamElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                                 revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
-                                                                                 BiophysicsConstants.PARAMETER_REV_POT));
-
+                                        BiophysicsConstants.PARAMETER_REV_POT));
+                                
                                 String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
                                 String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
@@ -1184,7 +1168,7 @@ public class MorphMLConverter extends FormatImporter
                                 for(MechParameter mp:chanMech.getExtraParameters())
                                 {
                                     if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
-                                        mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                                            mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
                                     {
                                         revPot = mp.getValue();
                                         unitsUsedInt = UnitConverter.NEUROCONSTRUCT_UNITS;
@@ -1220,13 +1204,13 @@ public class MorphMLConverter extends FormatImporter
                                         }
                                     }
                                 }
-
-
+                                
+                                
                                 revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                         (float) UnitConverter.getVoltage(revPot,
-                                        unitsUsedInt,
-                                        preferredExportUnits) + ""));
-
+                                                unitsUsedInt,
+                                                preferredExportUnits) + ""));
+                                
                                 if (!revPotSetElsewhere)
                                 {
                                     mechElement.addContent("\n                    ");
@@ -1235,34 +1219,30 @@ public class MorphMLConverter extends FormatImporter
 
                                 Vector<String> gps = cell.getGroupsWithChanMech(chanMech);
 
-                                for (int k = 0; k < gps.size(); k++)
-                                {
+                                for (String gp : gps) {
+                                    
                                     SimpleXMLElement groupElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
-
                                     revPotParamElement.addContent("\n                        ");
                                     revPotParamElement.addChildElement(groupElement);
-                                    groupElement.addContent(gps.get(k));
-
+                                    groupElement.addContent(gp);
+                                    
                                 }
                                 revPotParamElement.addContent("\n                    ");
                             }
                         }
-
-
-
+                        
+                        
+                        
                         for(SimpleXMLElement paramElement: allParamGrps)
                         {
                             mechElement.addContent("\n                    ");
                             mechElement.addChildElement(paramElement);
 
-                            for (int k = 0; k < groups.size(); k++)
-                            {
+                            for (String group : groups) {
                                 SimpleXMLElement groupElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
-
                                 paramElement.addContent("\n                        ");
                                 paramElement.addChildElement(groupElement);
-                                groupElement.addContent(groups.get(k));
-
+                                groupElement.addContent(group);
                             }
                             paramElement.addContent("\n                    ");
                         }
@@ -1286,8 +1266,7 @@ public class MorphMLConverter extends FormatImporter
                 for (VariableMechanism vm: varMechs)
                 {
                     ParameterisedGroup pg = allVarChanMechs.get(vm);
-                    membPropsElement.addContent("\n\n            ");
-                    //membPropsElement.addComment();
+                    //membPropsElement.addContent("\n\n            ");
 
                     if(nml2)
                     {
@@ -1347,31 +1326,21 @@ public class MorphMLConverter extends FormatImporter
                         String comm = handleNml2ChannelDensityAttrs(project, cell, vm, mechElement, null, pg.getGroup(), bioPrefix, ionSpeciesV2);
                         
                         comm = (comm!=null ? comm+"\n    " : "") +vm.toString() + " on "+pg;
-                        //membPropsElement.addContent("\n                ");
-                        //membPropsElement.addChildElement(mechElement);
                         
-                        boolean addAtStartMembPropsElement = true;
-                        if (comm!= null && (comm.contains("GHK") || comm.contains("Nernst"))) {
-                            addAtStartMembPropsElement = false;
-                        }
+                        boolean isNernst = comm!= null && comm.contains("Nernst");
+                        boolean isGHK = comm!= null && comm.contains("GHK");
 
-                        if (addAtStartMembPropsElement) 
-                        {
-                            membPropsElement.addChildElementAt(mechElement,0);
-                            membPropsElement.addContentAt("\n\n                ",0);
-                            if (comm!=null) {
-                                //membPropsElement.addContentAt("\n\n                ",0);
-                                membPropsElement.addCommentAt(comm,0);
-                                membPropsElement.addContentAt("\n\n                ",0);
-                            }
-
-                        } else {
-                            postAddElement.put(mechElement, comm);
-                        }
+                        String comment  = comm;
+                        if (isNernst)
+                            chanMechNonUniNernstElements.put(mechElement, comment);
+                        else if (isGHK)
+                            throw new NeuroMLException("Non uniform GHK channel densities not yet supported...");
+                        else
+                            chanMechNonUniElements.put(mechElement, comment);
 
                         
                     }
-                    else
+                    else // nml1
                     {
                         SimpleXMLElement mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.MECHANISM_ELEMENT);
                         membPropsElement.addContent("\n\n                ");
@@ -1436,17 +1405,28 @@ public class MorphMLConverter extends FormatImporter
 
                 }
                 
-                // Add membPropsElements put to end, e.g. channelDensityNernst
-                for (SimpleXMLElement sxe : postAddElement.keySet()) {
-                    String comment = postAddElement.get(sxe);
+                ArrayList<HashMap<SimpleXMLElement, String>> chanMechMaps = new ArrayList<HashMap<SimpleXMLElement, String>>();
+                chanMechMaps.add(chanMechElements);
+                chanMechMaps.add(chanMechNernstElements);
+                chanMechMaps.add(chanMechGHKElements);
+                chanMechMaps.add(chanMechNonUniElements);
+                chanMechMaps.add(chanMechNonUniNernstElements);
+                
+                membPropsElement.addContent("\n                ");
+                for(HashMap<SimpleXMLElement, String> chanMechMap: chanMechMaps) {
+                
+                    for (SimpleXMLElement sxe : chanMechMap.keySet()) {
+                        String comment = chanMechMap.get(sxe);
 
-                    if (comment != null) {
-                        membPropsElement.addContent("\n\n                ");
-                        membPropsElement.addComment(comment);
-                        membPropsElement.addContent("\n\n                ");
+                        if (comment != null) {
+                            membPropsElement.addContent("\n\n            ");
+                            membPropsElement.addComment(comment);
+                            //membPropsElement.addContent("\n                ");
+                        }
+                        membPropsElement.addContent("\n                ");
+                        membPropsElement.addChildElement(sxe);
+                        membPropsElement.addContent("\n                ");
                     }
-                    membPropsElement.addChildElement(sxe);
-                    membPropsElement.addContent("\n\n                ");
                 }
 
                 
@@ -1881,9 +1861,8 @@ public class MorphMLConverter extends FormatImporter
                    {
                        String warn = "\nNote that the following Volume based connection arbours are specified for the cell, but this is not yet supported by NeuroML!";
 
-                       for (int i = 0; i < axC.size(); i++)
-                       {
-                           warn = warn +"\n  - "+axC.get(i);
+                       for (AxonalConnRegion axC1 : axC) {
+                           warn = warn +"\n  - " + axC1;
                        }
                        warn = warn +"\n";
                        SimpleXMLComment comm = new SimpleXMLComment(warn);
@@ -1908,7 +1887,7 @@ public class MorphMLConverter extends FormatImporter
                                                  String bioPrefix, 
                                                  HashMap<String, SimpleXMLElement> ionSpeciesV2) throws XMLMechanismException {
         
-        System.out.println("Handling "+chanMech+", group "+group+" (nonuniform group "+nonUniformgroup+") for "+cell.getInstanceName());
+        //System.out.println("Handling "+chanMech+", group "+group+" (nonuniform group "+nonUniformgroup+") for "+cell.getInstanceName());
 
         CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
         
@@ -1999,8 +1978,12 @@ public class MorphMLConverter extends FormatImporter
                         } else {
                             comment = "Reversal potential for " + thisChannelsIon + " in " + cmlCm.getInstanceName()
                                     + " will be calculated by Nernst equation from internal & external calcium";
-
-                            mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
+                            
+                            if (group!=null) {
+                                mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
+                            } else if (nonUniformgroup!=null) {
+                                mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NON_UNIFORM_NERNST_ELEMENT_V2);
+                            }
                         }
 
                     } else {
@@ -2074,12 +2057,9 @@ public class MorphMLConverter extends FormatImporter
         if (thisChannelsIon!=null) {
             for (IonProperties ip: cell.getIonPropertiesVsGroups().keySet()) {
                 Vector<String> grps= cell.getIonPropertiesVsGroups().get(ip);
-                //System.out.println("----------- ip: "+ip+ " on "+grps+"\n   Chan mech group "+group);
                 if (thisChannelsIon.equals(ip.getName())) {
-                    //System.out.println("   Maybe...");
                     for (String grp: grps) {
                         if (CellTopologyHelper.isGroupASubset(group, grp, cell)) {
-                            //System.out.println("   Subset!");
                             if (!ip.revPotSetByConcs()) {
                                 float revPotConv = (float) UnitConverter.getVoltage(ip.getReversalPotential(),
                                     UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -2304,8 +2284,12 @@ public class MorphMLConverter extends FormatImporter
 
             return stringForm;
         }
-        catch (Exception ex)
+        catch (NeuroMLException ex)
         {
+            throw new MorphologyException("Problem creating MorphML file", ex);
+        } 
+        catch (XMLMechanismException ex) {
+            
             throw new MorphologyException("Problem creating MorphML file", ex);
         }
     }
@@ -2363,7 +2347,7 @@ public class MorphMLConverter extends FormatImporter
         {
             Cell mappedCell = mc.getCompartmentalisation(origCell);
 
-            File cellFile = null;
+            File cellFile;
 
             /*   if (!CellTopologyHelper.checkSimplyConnected(cell))
                {
@@ -2412,22 +2396,23 @@ public class MorphMLConverter extends FormatImporter
 
 
 
-
+    @SuppressWarnings("UnusedAssignment")
     public static void main(String[] args)
     {
         try
         {
            //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
            //File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
+           
            File f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
            f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
            f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
            f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
            f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
-           f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
            
-           f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
+           f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+           f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
            
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
@@ -2445,7 +2430,7 @@ public class MorphMLConverter extends FormatImporter
            Vector<Cell> cells = testProj.cellManager.getAllCells();
            cells = (Vector<Cell>)GeneralUtils.reorderAlphabetically(cells, true);
             System.out.println("Cells: "+cells);
-           Cell cell = cells.get(2);
+           Cell cell = cells.get(0);
 
             System.out.println("Found a cell: "+ cell);
 

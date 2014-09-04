@@ -30,7 +30,6 @@ package ucl.physiol.neuroconstruct.cell;
 import java.io.Serializable;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.examples.*;
-import ucl.physiol.neuroconstruct.neuroml.BiophysicsConstants;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 

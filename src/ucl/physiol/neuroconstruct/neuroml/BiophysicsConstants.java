@@ -140,8 +140,8 @@ public class BiophysicsConstants
     public static String CHAN_DENSITY_GHK_ELEMENT_V2 = "channelDensityGHK";
 
     public static String CHAN_DENSITY_NON_UNIFORM_ELEMENT_V2 = "channelDensityNonUniform";
-    public static String CHAN_DENSITY_NON_UNIFORM_NERNST_ELEMENT_V2 = "channelDensityNernstNonUniform";
-    public static String CHAN_DENSITY_NON_UNIFORM_GHK_ELEMENT_V2 = "channelDensityGHKNonUniform";
+    public static String CHAN_DENSITY_NON_UNIFORM_NERNST_ELEMENT_V2 = "channelDensityNonUniformNernst";
+    //public static String CHAN_DENSITY_NON_UNIFORM_GHK_ELEMENT_V2 = "channelDensityNonUniformGHK";
 
     public static String ION_CHAN_ATTR_V2 = "ionChannel";
     public static String COND_DENS_ATTR_V2 = "condDensity";
