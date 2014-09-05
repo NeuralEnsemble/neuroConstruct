@@ -980,11 +980,11 @@ public class MorphMLConverter extends FormatImporter
                 
                 /// **********    Uniform channel densities   ********************
 
-                HashMap<SimpleXMLElement, String> chanMechElements = new HashMap<SimpleXMLElement, String>();
-                HashMap<SimpleXMLElement, String> chanMechNernstElements = new HashMap<SimpleXMLElement, String>();
-                HashMap<SimpleXMLElement, String> chanMechGHKElements = new HashMap<SimpleXMLElement, String>();
-                HashMap<SimpleXMLElement, String> chanMechNonUniElements = new HashMap<SimpleXMLElement, String>();
-                HashMap<SimpleXMLElement, String> chanMechNonUniNernstElements = new HashMap<SimpleXMLElement, String>();
+                LinkedHashMap<SimpleXMLElement, String> chanMechElements = new LinkedHashMap<SimpleXMLElement, String>();
+                LinkedHashMap<SimpleXMLElement, String> chanMechNernstElements = new LinkedHashMap<SimpleXMLElement, String>();
+                LinkedHashMap<SimpleXMLElement, String> chanMechGHKElements = new LinkedHashMap<SimpleXMLElement, String>();
+                LinkedHashMap<SimpleXMLElement, String> chanMechNonUniElements = new LinkedHashMap<SimpleXMLElement, String>();
+                LinkedHashMap<SimpleXMLElement, String> chanMechNonUniNernstElements = new LinkedHashMap<SimpleXMLElement, String>();
                 
                 for (ChannelMechanism chanMech : allUniformChanMechs) {
                     
@@ -1405,7 +1405,7 @@ public class MorphMLConverter extends FormatImporter
 
                 }
                 
-                ArrayList<HashMap<SimpleXMLElement, String>> chanMechMaps = new ArrayList<HashMap<SimpleXMLElement, String>>();
+                ArrayList<LinkedHashMap<SimpleXMLElement, String>> chanMechMaps = new ArrayList<LinkedHashMap<SimpleXMLElement, String>>();
                 chanMechMaps.add(chanMechElements);
                 chanMechMaps.add(chanMechNernstElements);
                 chanMechMaps.add(chanMechGHKElements);
@@ -1413,9 +1413,11 @@ public class MorphMLConverter extends FormatImporter
                 chanMechMaps.add(chanMechNonUniNernstElements);
                 
                 membPropsElement.addContent("\n                ");
-                for(HashMap<SimpleXMLElement, String> chanMechMap: chanMechMaps) {
+                for(LinkedHashMap<SimpleXMLElement, String> chanMechMap: chanMechMaps) {
                 
-                    for (SimpleXMLElement sxe : chanMechMap.keySet()) {
+                    Set<SimpleXMLElement> s = chanMechMap.keySet();
+                    ArrayList<SimpleXMLElement> al = (ArrayList<SimpleXMLElement>)GeneralUtils.reorderAlphabetically(new ArrayList(s), false);
+                    for (SimpleXMLElement sxe : al) {
                         String comment = chanMechMap.get(sxe);
 
                         if (comment != null) {
