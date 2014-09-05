@@ -1171,117 +1171,121 @@ public class NeuroMLFileManager
 
                     for (int cellNum : cellNumsToPlot)
                     {
-                        SimpleXMLElement lineEl = new SimpleXMLElement(LemsConstants.LINE_ELEMENT);
-                        SimpleXMLElement dispEl = displaysAdded.get(displayId);
+                        for (int segId: plot.segIdsToPlot) {
+                            SimpleXMLElement lineEl = new SimpleXMLElement(LemsConstants.LINE_ELEMENT);
+                            SimpleXMLElement dispEl = displaysAdded.get(displayId);
 
-                        dispEl.addContent("\n            "); // to make it more readable...
-                        dispEl.addChildElement(lineEl);
-                        dispEl.addContent("\n        "); // to make it more readable...
+                            dispEl.addContent("\n            "); // to make it more readable...
+                            dispEl.addChildElement(lineEl);
+                            dispEl.addContent("\n        "); // to make it more readable...
 
-                        String titleDisp = dispEl.getAttributeValue(LemsConstants.TITLE_ATTR);
-                        dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp + ", " + plot.simPlot.getValuePlotted());
-                        String ref = plot.simPlot.getValuePlotted();
-                        ref = GeneralUtils.replaceAllTokens(ref, "/", "_");
-                        ref = GeneralUtils.replaceAllTokens(ref, " ", "_");
-                        ref = GeneralUtils.replaceAllTokens(ref, ":", "_");
-                        if (project.generatedCellPositions.getNumberInAllCellGroups()>1)
-                        {
-                            ref = ref +"-"+ plot.simPlot.getCellGroup() + "_" + cellNum;
-                        }
-                        
-                        lineEl.addAttribute(LemsConstants.ID_ATTR, ref);
+                            String segIdInfo = segId + "/";
 
-                        String path = plot.simPlot.getCellGroup() + "[" + cellNum + "]/" + value;
-                        String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
-
-                        if (version.isVersion2Latest())
-                        {
-                            lineEl.addAttribute(LemsConstants.TIMESCALE_ATTR, timescale);
-                            path = plot.simPlot.getCellGroup() + "/" + cellNum + "/" + cellType + "/" + value;
-                        }
-
-                        lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
-
-                        if (plot.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
-                        {
-                            Units u = UnitConverter.voltageUnits[preferredUnits];
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
-                        }
-                        else if (plot.simPlot.getValuePlotted().endsWith("tau"))
-                        {
-                            Units u = UnitConverter.timeUnits[preferredUnits];
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
-                        }
-                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CONCENTRATION + SimPlot.PLOTTED_VALUE_SEPARATOR))
-                        {
-                            Units u = UnitConverter.concentrationUnits[preferredUnits];
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
-                        }
-                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.COND_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR))
-                        {
-                            Units u = UnitConverter.conductanceDensityUnits[preferredUnits];
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
-                        }
-                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CURR_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR))
-                        {
-                            Units u = UnitConverter.currentDensityUnits[preferredUnits];
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
-                        }
-                        else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.REV_POT + SimPlot.PLOTTED_VALUE_SEPARATOR))
-                        {
-                            Units u = UnitConverter.voltageUnits[preferredUnits];
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
-                        }
-                        else
-                        {
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1");   //TODO: check for units...
-                        }
-
-                        String colourHex = getNextColourHex(displayId);
-                        //String colourHex = getNextColourHex("All different colours...");
-
-                        lineEl.addAttribute(LemsConstants.COLOR_ATTR, "#" + colourHex);
-
-                        if (plot.simPlot.toBeSaved())
-                        {
-                            String datFile = plot.simPlot.getCellGroup() + "_" + cellNum + ".dat";
-                            if (!plot.simPlot.isVoltage())
+                            String titleDisp = dispEl.getAttributeValue(LemsConstants.TITLE_ATTR);
+                            dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp + ", " + plot.simPlot.getValuePlotted());
+                            String ref = plot.simPlot.getValuePlotted();
+                            ref = GeneralUtils.replaceAllTokens(ref, "/", "_");
+                            ref = GeneralUtils.replaceAllTokens(ref, " ", "_");
+                            ref = GeneralUtils.replaceAllTokens(ref, ":", "_");
+                            if (project.generatedCellPositions.getNumberInAllCellGroups()>1)
                             {
-                                datFile = plot.simPlot.getCellGroup() + "_" + cellNum + "." + plot.simPlot.getSafeVarName() + ".dat";
+                                ref = ref +"-"+ plot.simPlot.getCellGroup() + "_" + cellNum;
                             }
 
-                            File fullFile = new File(simDir, datFile);
-                            String fileStr = fullFile.getAbsolutePath();
-                            fileStr = fileStr.replaceAll("\\\\", "\\\\\\\\");
-                            
-                            if (version.isVersion2alpha())
+                            lineEl.addAttribute(LemsConstants.ID_ATTR, ref);
+
+                            String path = plot.simPlot.getCellGroup() + "[" + cellNum + "]/" + value;
+                            String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
+
+                            if (version.isVersion2Latest())
                             {
-                                lineEl.addAttribute(LemsConstants.SAVE_ATTR, fileStr);
+                                lineEl.addAttribute(LemsConstants.TIMESCALE_ATTR, timescale);
+                                path = plot.simPlot.getCellGroup() + "/" + cellNum + "/" + cellType + "/" + segIdInfo + value;
+                            }
+
+                            lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
+
+                            if (plot.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
+                            {
+                                Units u = UnitConverter.voltageUnits[preferredUnits];
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
+                            }
+                            else if (plot.simPlot.getValuePlotted().endsWith("tau"))
+                            {
+                                Units u = UnitConverter.timeUnits[preferredUnits];
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
+                            }
+                            else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CONCENTRATION + SimPlot.PLOTTED_VALUE_SEPARATOR))
+                            {
+                                Units u = UnitConverter.concentrationUnits[preferredUnits];
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
+                            }
+                            else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.COND_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR))
+                            {
+                                Units u = UnitConverter.conductanceDensityUnits[preferredUnits];
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
+                            }
+                            else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.CURR_DENS + SimPlot.PLOTTED_VALUE_SEPARATOR))
+                            {
+                                Units u = UnitConverter.currentDensityUnits[preferredUnits];
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
+                            }
+                            else if (plot.simPlot.getValuePlotted().contains(SimPlot.PLOTTED_VALUE_SEPARATOR + SimPlot.REV_POT + SimPlot.PLOTTED_VALUE_SEPARATOR))
+                            {
+                                Units u = UnitConverter.voltageUnits[preferredUnits];
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 " + u.getNeuroML2Symbol());
                             }
                             else
                             {
-                                SimpleXMLElement outputFileEl = new SimpleXMLElement(LemsConstants.OUTPUT_FILE_ELEMENT);
-                                
-                                outputFileEl.addAttribute(LemsConstants.ID_ATTR, plot.simPlot.getPlotReference()+"_OF");
-                                outputFileEl.addAttribute(LemsConstants.OUTPUT_FILENAME_ATTR, fileStr);
-                                
-                                SimpleXMLElement outputColEl = new SimpleXMLElement(LemsConstants.OUTPUT_COLUMN_ELEMENT);
-                                String id = path;
-                                if (path.lastIndexOf("/")>=0)
-                                    id = path.substring(path.lastIndexOf("/")+1);
-                                outputColEl.addAttribute(LemsConstants.ID_ATTR, id);
-                                outputColEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
-                                
-                                outputFileEl.addContent("\n            "); // to make it more readable...
-                                outputFileEl.addChildElement(outputColEl);
-                                outputFileEl.addContent("\n        "); // to make it more readable...
-                                
-                                outputFilesAdded.add(outputFileEl);
-                       
+                                lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1");   //TODO: check for units...
                             }
 
+                            String colourHex = getNextColourHex(displayId);
+                            //String colourHex = getNextColourHex("All different colours...");
+
+                            lineEl.addAttribute(LemsConstants.COLOR_ATTR, "#" + colourHex);
+
+                            if (plot.simPlot.toBeSaved())
+                            {
+                                String datFile = plot.simPlot.getCellGroup() + "_" + cellNum + ".dat";
+                                if (!plot.simPlot.isVoltage())
+                                {
+                                    datFile = plot.simPlot.getCellGroup() + "_" + cellNum + "." + plot.simPlot.getSafeVarName() + ".dat";
+                                }
+
+                                File fullFile = new File(simDir, datFile);
+                                String fileStr = fullFile.getAbsolutePath();
+                                fileStr = fileStr.replaceAll("\\\\", "\\\\\\\\");
+
+                                if (version.isVersion2alpha())
+                                {
+                                    lineEl.addAttribute(LemsConstants.SAVE_ATTR, fileStr);
+                                }
+                                else
+                                {
+                                    SimpleXMLElement outputFileEl = new SimpleXMLElement(LemsConstants.OUTPUT_FILE_ELEMENT);
+
+                                    outputFileEl.addAttribute(LemsConstants.ID_ATTR, plot.simPlot.getPlotReference()+"_OF");
+                                    outputFileEl.addAttribute(LemsConstants.OUTPUT_FILENAME_ATTR, fileStr);
+
+                                    SimpleXMLElement outputColEl = new SimpleXMLElement(LemsConstants.OUTPUT_COLUMN_ELEMENT);
+                                    String id = path;
+                                    if (path.lastIndexOf("/")>=0)
+                                        id = path.substring(path.lastIndexOf("/")+1);
+                                    outputColEl.addAttribute(LemsConstants.ID_ATTR, id);
+                                    outputColEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
+
+                                    outputFileEl.addContent("\n            "); // to make it more readable...
+                                    outputFileEl.addChildElement(outputColEl);
+                                    outputFileEl.addContent("\n        "); // to make it more readable...
+
+                                    outputFilesAdded.add(outputFileEl);
+
+                                }
+
+                            }
+                            logger.logComment("Adding line: " + lineEl.getXMLString("", false));
                         }
-                        logger.logComment("Adding line: " + lineEl.getXMLString("", false));
                     }
                 }
             }
