@@ -1168,7 +1168,9 @@ public class NeuroMLFileManager
                         displaysAdded.put(displayId, dispEl);
                         
                     }
-
+                    
+                    Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup()));
+                    
                     for (int cellNum : cellNumsToPlot)
                     {
                         for (int segId: plot.segIdsToPlot) {
@@ -1180,6 +1182,8 @@ public class NeuroMLFileManager
                             dispEl.addContent("\n        "); // to make it more readable...
 
                             String segIdInfo = segId + "/";
+                            if (cell.isNeuroML2AbstractCell())
+                                segIdInfo = ""; // No segments...
 
                             String titleDisp = dispEl.getAttributeValue(LemsConstants.TITLE_ATTR);
                             dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp + ", " + plot.simPlot.getValuePlotted());
