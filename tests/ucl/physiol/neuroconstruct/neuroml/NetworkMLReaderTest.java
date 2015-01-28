@@ -220,7 +220,7 @@ public class NetworkMLReaderTest
         
         //proj0.generatedNetworkConnections.getSynapticConnections(projName)
         String input1_0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
-        String input1_1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
+        //String input1_1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
 
         StringBuilder plotsString2 = new StringBuilder();
@@ -264,7 +264,7 @@ public class NetworkMLReaderTest
         plotsString1.append(proj0.generatedPlotSaves.details());
 
         String input0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
-        String input1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
+        /////String input1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
         
         System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
         if (verbose) 
@@ -314,7 +314,7 @@ public class NetworkMLReaderTest
         stateString2.append(proj0.generatedElecInputs.toString());
         //proj0.generatedNetworkConnections.getSynapticConnections(projName)
         String input1_0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
-        String input1_1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
+        ////////String input1_1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
 
         StringBuilder plotsString2 = new StringBuilder();
@@ -329,7 +329,7 @@ public class NetworkMLReaderTest
         System.out.println("Strings representing internal states equal!");
 
         assertEquals(input0, input1_0);
-        assertEquals(input1, input1_1);
+        ///////assertEquals(input1, input1_1);
 
         assertEquals(plotsString1.toString(), plotsString2.toString());
 
@@ -387,14 +387,14 @@ public class NetworkMLReaderTest
         assertEquals(validity1, validity2);
 
         String input2_0 = proj2.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
-        String input2_1 = proj2.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
+        /////String input2_1 = proj2.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
         System.out.println("---- pre:  "+input0);
         System.out.println("---- post: "+input2_0);
 
 
         assertEquals(input0, input2_0);
-        assertEquals(input1, input2_1);
+        ///////assertEquals(input1, input2_1);
         
   
         //test the NetworkML reader on a Level3 file with annotations
@@ -481,10 +481,10 @@ public class NetworkMLReaderTest
 
 
         String input3_0 = proj3.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
-        String input3_1 = proj3.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
+        /////String input3_1 = proj3.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
         assertEquals(input0, input3_0);
-        assertEquals(input1, input3_1);
+        ///////assertEquals(input1, input3_1);
        
     }
 

@@ -671,7 +671,7 @@ public class GeneratedElecInputs
                                 expInputElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, i+"");
                                 expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
                                 expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_DESTINATION, NetworkMLConstants.NEUROML2_INPUT_DESTINATION_DEFAULT);
-                                
+                                                                    
                                 if (sei.getSegmentId()!=0) 
                                 {
                                     expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_SEGMENT_ID, sei.getSegmentId()+"");

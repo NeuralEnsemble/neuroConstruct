@@ -131,18 +131,19 @@ public class NeuroMLFileManagerTest {
             assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(nmlFile));
     }
  
-
+  
     @Test
     public void testNml2betaExportingDef() throws NeuroMLException
     {
         testNml2betaExporting(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME);
     }
    
+    /*
     @Test
     public void testNml2betaExporting2() throws NeuroMLException
     {
         testNml2betaExporting("RndStim");
-    }
+    }*/
 
     private void testNml2betaExporting(String simConfig) throws NeuroMLException
     {

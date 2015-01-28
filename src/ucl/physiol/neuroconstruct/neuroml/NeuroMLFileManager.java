@@ -1665,11 +1665,12 @@ public class NeuroMLFileManager
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             projFile = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
             projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
+            projFile = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
             
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            //LemsOption lo = LemsOption.NONE;
-            LemsOption lo = LemsOption.EXECUTE_MODEL;
+            LemsOption lo = LemsOption.NONE;
+            //LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             Project p = Project.loadProject(projFile, null);
             //Proje
@@ -1709,6 +1710,11 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("L5bPyrCell"))
             {
                 lo = LemsOption.EXECUTE_MODEL; // To get the LEMS_... file
+            }
+            else if (projFile.getName().startsWith("CElegans"))
+            {
+                simConf = "TestSingleGapJunction";
+                lo = LemsOption.GENERATE_NEURON; // To get the LEMS_... file
             }
             /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))
             {

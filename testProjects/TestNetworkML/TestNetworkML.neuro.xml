@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_55" class="java.beans.XMLDecoder">
+<java version="1.7.0_65" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -484,10 +484,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <void method="add">
     <object class="ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings">
      <void property="cellGroup">
-      <string>CellGroup_3</string>
-     </void>
-     <void property="fractionAlong">
-      <float>0.13</float>
+      <string>SampleCellGroup</string>
      </void>
      <void property="rate">
       <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator1">
@@ -495,33 +492,6 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
         <string>numberType</string>
         <void method="set">
          <object idref="NumberGenerator1"/>
-         <int>11</int>
-        </void>
-       </void>
-       <void property="fixedNum">
-        <float>0.1</float>
-       </void>
-      </object>
-     </void>
-     <void property="reference">
-      <string>Input_0</string>
-     </void>
-     <void property="synapseType">
-      <string>DoubExpSyn</string>
-     </void>
-    </object>
-   </void>
-   <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings">
-     <void property="cellGroup">
-      <string>SampleCellGroup</string>
-     </void>
-     <void property="rate">
-      <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator2">
-       <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
-        <string>numberType</string>
-        <void method="set">
-         <object idref="NumberGenerator2"/>
          <int>11</int>
         </void>
        </void>
@@ -548,11 +518,11 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <void property="cellGroup">
       <string>SampleCellGroup</string>
      </void>
-     <void id="NumberGenerator3" property="dur">
+     <void id="NumberGenerator2" property="dur">
       <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
        <string>numberType</string>
        <void method="set">
-        <object idref="NumberGenerator3"/>
+        <object idref="NumberGenerator2"/>
         <int>11</int>
        </void>
       </void>
@@ -572,11 +542,11 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <void property="cellGroup">
       <string>CellGroup_3</string>
      </void>
-     <void id="NumberGenerator4" property="dur">
+     <void id="NumberGenerator3" property="dur">
       <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
        <string>numberType</string>
        <void method="set">
-        <object idref="NumberGenerator4"/>
+        <object idref="NumberGenerator3"/>
         <int>11</int>
        </void>
       </void>
@@ -606,11 +576,11 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <void property="cellGroup">
       <string>OneSegs</string>
      </void>
-     <void id="NumberGenerator5" property="dur">
+     <void id="NumberGenerator4" property="dur">
       <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
        <string>numberType</string>
        <void method="set">
-        <object idref="NumberGenerator5"/>
+        <object idref="NumberGenerator4"/>
         <int>11</int>
        </void>
       </void>
@@ -626,11 +596,11 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <string>CellGroup_3</string>
      </void>
      <void property="rate">
-      <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator6">
+      <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator5">
        <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
         <string>numberType</string>
         <void method="set">
-         <object idref="NumberGenerator6"/>
+         <object idref="NumberGenerator5"/>
          <int>11</int>
         </void>
        </void>
@@ -671,9 +641,6 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <string>This is the default configuration of the Cell Groups, stimulations, plots, etc for this project</string>
      </void>
      <void property="inputs">
-      <void method="add">
-       <string>Input_0</string>
-      </void>
       <void method="add">
        <string>Input_3</string>
       </void>
@@ -859,18 +826,18 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator7">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator6">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>distributionType</string>
            <void method="set">
-            <object idref="NumberGenerator7"/>
+            <object idref="NumberGenerator6"/>
             <int>1</int>
            </void>
           </void>
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator7"/>
+            <object idref="NumberGenerator6"/>
             <int>11</int>
            </void>
           </void>
@@ -914,18 +881,18 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator8">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator7">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>distributionType</string>
            <void method="set">
-            <object idref="NumberGenerator8"/>
+            <object idref="NumberGenerator7"/>
             <int>1</int>
            </void>
           </void>
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator8"/>
+            <object idref="NumberGenerator7"/>
             <int>11</int>
            </void>
           </void>
@@ -970,18 +937,18 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator9">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator8">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>distributionType</string>
            <void method="set">
-            <object idref="NumberGenerator9"/>
+            <object idref="NumberGenerator8"/>
             <int>1</int>
            </void>
           </void>
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator9"/>
+            <object idref="NumberGenerator8"/>
             <int>11</int>
            </void>
           </void>
@@ -1023,18 +990,18 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator10">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator9">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>distributionType</string>
            <void method="set">
-            <object idref="NumberGenerator10"/>
+            <object idref="NumberGenerator9"/>
             <int>1</int>
            </void>
           </void>
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator10"/>
+            <object idref="NumberGenerator9"/>
             <int>11</int>
            </void>
           </void>
@@ -1072,18 +1039,18 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator11">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator10">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>distributionType</string>
            <void method="set">
-            <object idref="NumberGenerator11"/>
+            <object idref="NumberGenerator10"/>
             <int>1</int>
            </void>
           </void>
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator11"/>
+            <object idref="NumberGenerator10"/>
             <int>11</int>
            </void>
           </void>
@@ -1125,11 +1092,11 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator12">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator11">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator12"/>
+            <object idref="NumberGenerator11"/>
             <int>11</int>
            </void>
           </void>
@@ -1164,11 +1131,11 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator13">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator12">
           <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
            <string>numberType</string>
            <void method="set">
-            <object idref="NumberGenerator13"/>
+            <object idref="NumberGenerator12"/>
             <int>11</int>
            </void>
           </void>

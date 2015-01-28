@@ -217,12 +217,16 @@ public class NetworkMLConstants
 
     // Projection
     
+    public static String NEUROML2_ELEC_PROJECTION_ELEMENT = "electricalProjection";
+    
     public static String NEUROML2_PROJ_PRE = "presynapticPopulation";
     public static String NEUROML2_PROJ_POST = "postsynapticPopulation";
     public static String NEUROML2_PROJ_SYNAPSE = "synapse";
     
     public static String NEUROML2_CONNECTION_ELEMENT = "connection";
     public static String NEUROML2_CONNECTION_WD_ELEMENT = "connectionWD";
+    public static String NEUROML2_ELEC_CONNECTION_ELEMENT = "electricalConnection";
+    public static String NEUROML2_ELEC_CONNECTION_SYNAPSE = "synapse";
     
     public static String NEUROML2_WEIGHT_ATTR = "weight";
     public static String NEUROML2_DELAY_ATTR = "delay";
@@ -235,6 +239,13 @@ public class NetworkMLConstants
     
     public static String NEUROML2_PRE_FRACTION_ALONG = "preFractionAlong";
     public static String NEUROML2_POST_FRACTION_ALONG = "postFractionAlong";
+    
+    
+    public static String NEUROML2_ELEC_PRE_CELL_ID = "preCell";
+    public static String NEUROML2_ELEC_POST_CELL_ID = "postCell";
+    
+    public static String NEUROML2_ELEC_PRE_SEGMENT_ID = "preSegment";
+    public static String NEUROML2_ELEC_POST_SEGMENT_ID = "postSegment";
 
     public static String NEUROML2_EXP_CONN_ELEMENT = "synapticConnection";
     public static String NEUROML2_EXP_CONN_WD_ELEMENT = "synapticConnectionWD";
