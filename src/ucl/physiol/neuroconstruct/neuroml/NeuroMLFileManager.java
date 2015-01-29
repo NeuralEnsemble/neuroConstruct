@@ -160,6 +160,7 @@ public class NeuroMLFileManager
                                         version,
                                         null);
     }
+    
     public static File saveNetworkStructureXML(Project project,
                                                File neuroMLFile,
                                                boolean zipped,
@@ -1136,7 +1137,6 @@ public class NeuroMLFileManager
                     {
                         SimpleXMLElement dispEl = new SimpleXMLElement(LemsConstants.DISPLAY_ELEMENT);
                         
-
                         simEl.addContent("\n        "); // to make it more readable...
                         simEl.addChildElement(dispEl);
                         simEl.addContent("\n    "); // to make it more readable...
@@ -1144,10 +1144,8 @@ public class NeuroMLFileManager
                         dispEl.addAttribute(LemsConstants.ID_ATTR, displayId);
                         dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName() + ": " + simConf.getName() + ", " + plot.simPlot.getCellGroup());
                         
-
                         if (version.isVersion2Latest())
                         {
-                            
                             float xmin = 0;
                             float xmax = simConf.getSimDuration();
                             float xdel = (xmax - xmin) * 0.1f;
@@ -1164,7 +1162,6 @@ public class NeuroMLFileManager
                             dispEl.addAttribute(LemsConstants.YMAX_ATTR, (ymax + ydel)*yscale + "");
                         }
                         dispEl.addAttribute(LemsConstants.TIMESCALE_ATTR, timescale);
-
                         displaysAdded.put(displayId, dispEl);
                         
                     }
@@ -1188,13 +1185,14 @@ public class NeuroMLFileManager
 
                             String titleDisp = dispEl.getAttributeValue(LemsConstants.TITLE_ATTR);
                             dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp + ", " + plot.simPlot.getValuePlotted());
-                            String ref = plot.simPlot.getValuePlotted();
+                            String ref = plot.simPlot.isVoltage() ? "v" : plot.simPlot.getValuePlotted();
                             ref = GeneralUtils.replaceAllTokens(ref, "/", "_");
                             ref = GeneralUtils.replaceAllTokens(ref, " ", "_");
                             ref = GeneralUtils.replaceAllTokens(ref, ":", "_");
+                            
                             if (project.generatedCellPositions.getNumberInAllCellGroups()>1)
                             {
-                                ref = ref +"-"+ plot.simPlot.getCellGroup() + "_" + cellNum;
+                                ref =  plot.simPlot.getCellGroup() + "_" + cellNum + ((plot.segIdsToPlot.size()>1 || segId!=0) ? "_"+segId : "") + " "+ ref;
                             }
 
                             lineEl.addAttribute(LemsConstants.ID_ATTR, ref);
@@ -1250,12 +1248,12 @@ public class NeuroMLFileManager
 
                             if (plot.simPlot.toBeSaved())
                             {
-                                String datFile = plot.simPlot.getCellGroup() + "_" + cellNum + ".dat";
+                                String datFile = plot.simPlot.getCellGroup() + "_" + cellNum + "." + segId + ".dat";
                                 if (!plot.simPlot.isVoltage())
                                 {
-                                    datFile = plot.simPlot.getCellGroup() + "_" + cellNum + "." + plot.simPlot.getSafeVarName() + ".dat";
+                                    datFile = plot.simPlot.getCellGroup() + "_" + cellNum + "." + segId + "." + plot.simPlot.getSafeVarName() + ".dat";
                                 }
-
+                                
                                 File fullFile = new File(simDir, datFile);
                                 String fileStr = fullFile.getAbsolutePath();
                                 fileStr = fileStr.replaceAll("\\\\", "\\\\\\\\");
@@ -1268,7 +1266,7 @@ public class NeuroMLFileManager
                                 {
                                     SimpleXMLElement outputFileEl = new SimpleXMLElement(LemsConstants.OUTPUT_FILE_ELEMENT);
 
-                                    outputFileEl.addAttribute(LemsConstants.ID_ATTR, plot.simPlot.getPlotReference()+"_OF");
+                                    outputFileEl.addAttribute(LemsConstants.ID_ATTR, plot.simPlot.getPlotReference() + "_" + cellNum + "_" + segId+"_OF");
                                     outputFileEl.addAttribute(LemsConstants.OUTPUT_FILENAME_ATTR, fileStr);
 
                                     SimpleXMLElement outputColEl = new SimpleXMLElement(LemsConstants.OUTPUT_COLUMN_ELEMENT);
@@ -1662,10 +1660,11 @@ public class NeuroMLFileManager
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
-            projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             projFile = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
             projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
+
             projFile = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
+
             
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
@@ -1702,9 +1701,10 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("ACnet2"))
             {
                 simConf = "TestChannels";
-                simConf = "Default Simulation Configuration";
                 simConf = "SmallNetwork";
+                simConf = "Default Simulation Configuration";
                 lo = LemsOption.NONE;
+                lo = LemsOption.EXECUTE_MODEL; // To get the LEMS_... file
                 p.simulationParameters.setDt(0.01f);
             }
             else if (projFile.getName().startsWith("L5bPyrCell"))

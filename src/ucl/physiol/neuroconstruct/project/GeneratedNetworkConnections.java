@@ -857,6 +857,7 @@ public class GeneratedNetworkConnections
                                                 NeuroMLVersion version) throws NeuroMLException
     {
         ArrayList<SimpleXMLEntity> entities = new ArrayList<SimpleXMLEntity>();
+        ArrayList<SimpleXMLEntity> elecConnEntities = new ArrayList<SimpleXMLEntity>();
         
         int numConns = this.getNumberSynapticConnections(ANY_NETWORK_CONNECTION);
         
@@ -1013,18 +1014,6 @@ public class GeneratedNetworkConnections
                             connElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_CONN_SYN_ATTR,
                                     synProps.getSynapseType());
 
-                            /*if (synConn.props!=null && synConn.props.size()>0)
-                            {
-                                for (ConnSpecificProps prop:synConn.props)
-                                {
-
-                                    connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_EXP_CONN_DELAY_ATTR,
-                                            (float)UnitConverter.getTime((synConn.apPropDelay+prop.internalDelay), UnitConverter.NEUROCONSTRUCT_UNITS,UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + "ms"));
-
-
-                                    connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_EXP_CONN_WEIGHT_ATTR, prop.weight+""));
-                                }
-                            }*/
                         }
                     }
                     else
@@ -1242,7 +1231,11 @@ public class GeneratedNetworkConnections
                 else if (nml2betaPlus) 
                 {
                     projectionElement.addContent("\n        ");
-                    entities.add(projectionElement);
+                    if (!electProjNml2) {
+                        entities.add(projectionElement);
+                    } else {
+                        elecConnEntities.add(projectionElement);
+                    }
                 }
             }
             logger.logComment("Finished saving data to projs element");
@@ -1253,6 +1246,8 @@ public class GeneratedNetworkConnections
         {
             throw new NeuroMLException("Problem creating prjections element file", ex);
         }
+        
+        entities.addAll(elecConnEntities);
 
         return entities;
 
@@ -1507,6 +1502,7 @@ public class GeneratedNetworkConnections
             
             proj = "osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx";
             simConfName = "TestSingleGapJunction";
+            simConfName = "PharyngealNeurons";
             
             Project testProj = Project.loadProject(new File(proj),
                                                    new ProjectEventListener()
