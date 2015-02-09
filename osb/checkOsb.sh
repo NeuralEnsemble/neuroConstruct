@@ -165,7 +165,7 @@ standardGHProject 'osb_vfb_showcase' 'showcase' 'jefferis'
 standardGHProject 'ghk-nernst' 'showcase'
 
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
-#standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
+standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
 
 standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
