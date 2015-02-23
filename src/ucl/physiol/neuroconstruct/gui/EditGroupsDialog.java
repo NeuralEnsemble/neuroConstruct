@@ -705,9 +705,17 @@ public class EditGroupsDialog
     {
         String newGroupName = jTextFieldNewGroup.getText().trim();
 
-
-        /** @todo Check for spaces, etc... */
-        if (newGroupName.length()==0) return;
+        if (newGroupName.contains(" ")) 
+        {
+            GuiUtils.showErrorMessage(logger, "No spaces are allowed in group names", null, this);
+            return;
+        }        
+        
+        if (newGroupName.length()==0)
+        {
+            GuiUtils.showWarningMessage(logger, "Please fill in the name of the new group in the text field", this);
+            return;
+        }
 
 
         for (int i = 0; i < jComboBoxGroupNames.getItemCount(); i++)
