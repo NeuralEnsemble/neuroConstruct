@@ -30,7 +30,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Vector;
-import org.neuroml.export.Utils;
+import org.neuroml.export.utils.Utils;
 import org.neuroml.model.BiophysicalProperties;
 import org.neuroml.model.ChannelDensity;
 import org.neuroml.model.Connection;

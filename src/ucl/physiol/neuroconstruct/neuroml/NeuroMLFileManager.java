@@ -31,7 +31,7 @@ import java.util.*;
 import org.lemsml.jlems.core.sim.Sim;
 import org.lemsml.jlems.core.type.Component;
 import org.lemsml.jlems.core.type.QuantityReader;
-import org.neuroml.export.Utils;
+import org.neuroml.export.utils.Utils;
 import org.neuroml.model.util.NeuroMLElements;
 
 import ucl.physiol.neuroconstruct.cell.*;
@@ -1456,9 +1456,10 @@ public class NeuroMLFileManager
                 for (MechParameter mp : chanMech.getExtraParameters()) {
                     String attrEquals = mp.getName()+"=\"";
                     int startAttr = newContents.indexOf(attrEquals);
-                    if (startAttr<0) 
+                    if (startAttr<0) {
                         throw new NeuroMLException("Problem substituting values for extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
                                 + "Not found:  "+attrEquals);
+                    }
                     int startVal = startAttr + mp.getName().length()+2;
                     int endVal = newContents.indexOf("\"", startVal);
                     String origVal = newContents.substring(startVal, endVal);
