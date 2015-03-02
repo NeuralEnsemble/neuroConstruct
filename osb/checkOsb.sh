@@ -180,6 +180,8 @@ standardBBProject 'nc_superdeep' 'hippocampus/networks' 'mbezaire'
 
 standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
 
+standardGHProject 'MiglioreEtAl14_OlfactoryBulb3D' 'olfactorybulb/networks'
+
 standardGHProject 'SolinasEtAl-GolgiCell' 'cerebellum/cerebellar_golgi_cell'
 
 standardGHProject 'CerebellarNucleusNeuron' 'cerebellum/cerebellar_nucleus_cell'
