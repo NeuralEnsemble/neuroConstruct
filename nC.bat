@@ -21,7 +21,7 @@ set NC_MAX_MEMORY=500M
 
 set NC_VERSION=1.7.1
 
-set JNEUROML_VERSION=0.7.0
+set JNEUROML_VERSION=0.7.1
 
 # Should no longer be used...
 set LIB_NEUROML_VERSION=2.0.0

@@ -58,7 +58,7 @@ import org.lemsml.sim.LemsProcess;
 
 import org.lemsml.jlems.core.sim.Sim;
 import org.lemsml.jlems.core.type.Component;
-import org.neuroml.export.Utils;
+import org.neuroml.export.utils.Utils;
 import org.neuroml.export.neuron.NeuronWriter;
 import org.neuroml.export.neuron.NeuronWriter.ChannelConductanceOption;
 import org.neuroml.model.util.NeuroMLConverter;
@@ -5930,10 +5930,6 @@ public class NeuronFileManager
     {
         try
         {
-            String str = "v < t";
-            System.out.println(org.neuroml.exporters.NeuronWriter.replaceInFunction(str, "v", "mmm"));
-            System.out.println(org.neuroml.exporters.NeuronWriter.replaceInFunction(str, "t", "ppp"));
-            //System.exit(0);
 
             int runMode  = RUN_HOC;
 
@@ -5944,6 +5940,7 @@ public class NeuronFileManager
             File pf = new File("/home/padraig/nC_projects/Project_1ppp/Project_1ppp.neuro.xml");
             pf = new File("lems/nCproject/LemsTest/LemsTest.ncx");
             pf = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            pf = new File("../git/SpinyStellateNMDA/SpinyStellateNMDA.ncx");
 
             //File pf = new File("models/PVMExample/PVMExample.neuro.xml");
 
@@ -5955,7 +5952,7 @@ public class NeuronFileManager
             
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
             
-            simConf = "Test NeuroML2 ionChannel";
+            simConf = "Synaptic Integration";
             
             frame.projManager.doGenerate(simConf, 1234);
 
@@ -5969,7 +5966,7 @@ public class NeuronFileManager
 
             System.out.println("done create...");
 
-            //System.exit(0);
+            System.exit(0);
 
             frame.projManager.getCurrentProject().neuronFileManager.runNeuronFile(
                 frame.projManager.getCurrentProject().neuronFileManager.getMainHocFile());

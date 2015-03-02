@@ -36,7 +36,7 @@ import org.lemsml.jlems.core.type.Component;
 
 import org.lemsml.sim.StringInclusionReader;
 
-import org.neuroml.export.Utils;
+import org.neuroml.export.utils.Utils;
 import org.neuroml.model.util.NeuroMLConverter;
 
 import ucl.physiol.neuroconstruct.cell.*;
