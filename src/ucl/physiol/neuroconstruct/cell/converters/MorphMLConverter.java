@@ -1024,7 +1024,7 @@ public class MorphMLConverter extends FormatImporter
                                         chanMech.getName() + "_" + group));
 
                                 mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
-                                        chanMech.getName()));
+                                        chanMech.getNML2Name()));
                             }
                             else if (cm.isIonConcMechanism()) 
                             {
@@ -2415,6 +2415,8 @@ public class MorphMLConverter extends FormatImporter
            f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
            f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
+           
+           f = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
            
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {

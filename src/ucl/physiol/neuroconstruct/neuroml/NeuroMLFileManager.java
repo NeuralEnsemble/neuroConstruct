@@ -71,7 +71,7 @@ public class NeuroMLFileManager
     /**
      * The time last taken to generate the main files
      */
-    private float genTime = -1;
+    //private float genTime = -1;
     boolean mainFileGenerated = false;
     private HashMap<String, Integer> nextColour = new HashMap<String, Integer>();
     
@@ -213,7 +213,7 @@ public class NeuroMLFileManager
 
             SimpleXMLDocument doc = new SimpleXMLDocument();
 
-            SimpleXMLElement rootElement = null;
+            SimpleXMLElement rootElement;
 
             boolean nml2 = version.isVersion2();
 
@@ -842,7 +842,7 @@ public class NeuroMLFileManager
 
                             File newCmlFile = new File(generateDir, cm.getInstanceName() + ".xml");
 
-                            if (cmlCm.getMechanismModel().indexOf("ChannelML") >= 0 && version.isVersion2())
+                            if (cmlCm.getMechanismModel().contains("ChannelML") && version.isVersion2())
                             {
                                 String extraExtn = "";
                                 if (cmlCm.isChannelMechanism()) 
@@ -1082,9 +1082,8 @@ public class NeuroMLFileManager
             if (simDir.exists())
             {
                 File[] files = simDir.listFiles();
-                for (int i = 0; i < files.length; i++)
-                {
-                    files[i].delete();
+                for (File file : files) {
+                    file.delete();
                 }
                 logger.logComment("Directory " + simDir + " being cleansed");
             }
@@ -1119,7 +1118,6 @@ public class NeuroMLFileManager
                 ArrayList<Integer> cellNumsToPlot = plot.cellNumsToPlot;
 
                 String displayId = plot.simPlot.getGraphWindow();
-                String value = convertValue(plot.simPlot.getValuePlotted());
 
                 logger.logComment("-+- Adding plot: " + plot.simPlot + " " + simConf.toLongString() + " with cells: " + cellNumsToPlot);
                 
@@ -1196,6 +1194,8 @@ public class NeuroMLFileManager
                             }
 
                             lineEl.addAttribute(LemsConstants.ID_ATTR, ref);
+                            
+                            String value = convertValue(plot.simPlot.getValuePlotted(), cell, segId);
 
                             String path = plot.simPlot.getCellGroup() + "[" + cellNum + "]/" + value;
                             if (version.isVersion2Latest())
@@ -1453,30 +1453,54 @@ public class NeuroMLFileManager
                 File epFile = new File(generateDir, newMechName + extraExtn + ".nml");
                 
                 String newContents = new String(origContents);
-                for (MechParameter mp : chanMech.getExtraParameters()) {
-                    String attrEquals = mp.getName()+"=\"";
-                    int startAttr = newContents.indexOf(attrEquals);
-                    if (startAttr<0) {
-                        throw new NeuroMLException("Problem substituting values for extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
-                                + "Not found:  "+attrEquals);
+                
+                if (cm.isIonConcMechanism()) {
+                    for (MechParameter mp : chanMech.getExtraParameters()) {
+                        String attrEquals = mp.getName()+"=\"";
+                        int startAttr = newContents.indexOf(attrEquals);
+                        if (startAttr<0) {
+                            throw new NeuroMLException("Problem substituting values for extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
+                                    + "Not found:  "+attrEquals+"\n---------------------\n"+newContents+"\n---------------------\n");
+                        }
+                        int startVal = startAttr + mp.getName().length()+2;
+                        int endVal = newContents.indexOf("\"", startVal);
+                        String origVal = newContents.substring(startVal, endVal);
+                        String[] val = QuantityReader.splitToMagnitudeAndUnit(origVal);
+                        String newVal = mp.getValue()+"";
+                        if (val.length>1)
+                            newVal = newVal + " " + val[1];
+
+                        newContents = newContents.substring(0,startVal)+newVal+newContents.substring(endVal);
+
+                        // Rename the component to the suffixed name
+                        newContents = newContents.replaceAll("\""+chanMech.getName()+"\"", "\""+newMechName+"\"");
+
                     }
-                    int startVal = startAttr + mp.getName().length()+2;
-                    int endVal = newContents.indexOf("\"", startVal);
-                    String origVal = newContents.substring(startVal, endVal);
-                    String[] val = QuantityReader.splitToMagnitudeAndUnit(origVal);
-                    String newVal = mp.getValue()+"";
-                    if (val.length>1)
-                        newVal = newVal + " " + val[1];
-                    
-                    newContents = newContents.substring(0,startVal)+newVal+newContents.substring(endVal);
-                    
-                    // Rename the component to the suffixed name
-                    newContents = newContents.replaceAll("\""+chanMech.getName()+"\"", "\""+newMechName+"\"");
-                    
+                    // knock out any ComponentType definitions as they will be in the original file
+                    newContents = newContents.replaceAll("<ComponentType ", "<!--<ComponentType ");
+                    newContents = newContents.replaceAll("</ComponentType>", "</ComponentType>-->");
+                } else if (cm.isChannelMechanism()) {
+                    for (MechParameter mp : chanMech.getExtraParameters()) {
+                        String match = mp.getName()+"\" dimension=\"none\" value=\"";
+                        int startMatch = newContents.indexOf(match);
+                        if (startMatch<0) {
+                            throw new NeuroMLException("Problem substituting values for extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
+                                    + "Not found:  "+startMatch+"\n---------------------\n"+newContents+"\n---------------------\n");
+                        }
+                        int startVal = startMatch + match.length();
+                        int endVal = newContents.indexOf("\"", startVal);
+                        String origVal = newContents.substring(startVal, endVal);
+                        String newVal = mp.getValue()+"";
+
+                        newContents = newContents.replaceAll(match+origVal, match+newVal);
+
+                        // Rename the component to the suffixed name
+                        newContents = newContents.replaceAll("\""+chanMech.getName()+"\"", "\""+newMechName+"\"");
+                        newContents = newContents.replaceAll("name=\""+chanMech.getName()+"_",  "name=\""+newMechName+"_");
+                        newContents = newContents.replaceAll("type=\""+chanMech.getName()+"_",  "type=\""+newMechName+"_");
+
+                    }
                 }
-                // knock out any ComponentType definitions as they will be in the original file
-                newContents = newContents.replaceAll("<ComponentType ", "<!--<ComponentType ");
-                newContents = newContents.replaceAll("</ComponentType>", "</ComponentType>-->");
                 
                 
                 String info = "\n<!--\n       This file has been generated by neuroConstruct because a cell mechanism ("+cm+")\n"+
@@ -1488,7 +1512,7 @@ public class NeuroMLFileManager
                 newContents = newContents.replace("<neuroml ", info+"<neuroml ");
 
                 GeneralUtils.writeShortFile(epFile, newContents);
-                System.out.println("Written: "+epFile.getAbsolutePath());
+                System.out.println("Written: "+epFile.getAbsolutePath()+"\n---------------------\n"+newContents+"\n---------------------\n");
                 epFiles.add(epFile);
             }
         }
@@ -1496,7 +1520,7 @@ public class NeuroMLFileManager
         return epFiles;
     }
 
-    private String convertValue(String val)
+    private String convertValue(String val, Cell cell, int segId)
     {
         logger.logComment("Converting val: " + val);
         if (val.equals(SimPlot.VOLTAGE))
@@ -1505,7 +1529,12 @@ public class NeuroMLFileManager
         }
         else if (val.split(":").length == 2)  // TODO: Make more general!!!!
         {
-            String cmName = val.split(":")[0];
+            String cmNameOrig = val.split(":")[0];
+            ChannelMechanism cm = null;
+            for (ChannelMechanism cm0: cell.getUniformChanMechsForSeg(cell.getSegmentWithId(segId))){
+                if (cm0.getName().equals(cmNameOrig))
+                    cm = cm0;
+            }
             String varName = val.split(":")[1];
             varName = varName.replaceAll("_", "/");
 
@@ -1522,11 +1551,16 @@ public class NeuroMLFileManager
                 varName = varName.replaceAll("tau", "/tau");
             }
 
-            return "biophys/membraneProperties/" + cmName + "_all/" + cmName + "/" + varName;
+            return "biophys/membraneProperties/" + cm.getName() + "_all/" + cm.getNML2Name() + "/" + varName;
         }
         else if (val.split(":").length == 3)  // TODO: Make more general!!!!
         {
-            String cmName = val.split(":")[0];
+            String cmNameOrig = val.split(":")[0];
+            ChannelMechanism cm = null;
+            for (ChannelMechanism cm0: cell.getUniformChanMechsForSeg(cell.getSegmentWithId(segId))){
+                if (cm0.getName().equals(cmNameOrig))
+                    cm = cm0;
+            }
             String type = val.split(":")[1];
             if (type.equals(SimPlot.CONCENTRATION))
             {
@@ -1539,21 +1573,21 @@ public class NeuroMLFileManager
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
-                return "biophys/membraneProperties/" + cmName + "_all/gDensity";
+                return "biophys/membraneProperties/" + cm.getName() + "_all/gDensity";
 
             }
             else if (type.equals(SimPlot.REV_POT))
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
-                return "biophys/membraneProperties/" + cmName + "_all/erev";
+                return "biophys/membraneProperties/" + cm.getName() + "_all/erev";
 
             }
             else if (type.equals(SimPlot.CURR_DENS))
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
-                return "biophys/membraneProperties/" + cmName + "_all/iDensity";
+                return "biophys/membraneProperties/" + cm.getName() + "_all/iDensity";
 
             }
         }
@@ -1566,10 +1600,6 @@ public class NeuroMLFileManager
         return this.randomSeed;
     }
 
-    public float getCurrentGenTime()
-    {
-        return this.genTime;
-    }
 
     public static String getFileHeader()
     {
@@ -1662,15 +1692,15 @@ public class NeuroMLFileManager
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
             projFile = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
-            projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
 
             projFile = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
-
+            projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
             
+            projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            LemsOption lo = LemsOption.NONE;
-            //LemsOption lo = LemsOption.EXECUTE_MODEL;
+            //LemsOption lo = LemsOption.NONE;
+            LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             Project p = Project.loadProject(projFile, null);
             //Proje
