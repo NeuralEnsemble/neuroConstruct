@@ -1,5 +1,13 @@
-<p><h3>Python package "xlrd"</h3>
-</p>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=us-ascii' />
+<title>The xlrd Module -- README</title>
+</head>
+<body>
+
+<h3>Python package "xlrd"</h3>
+
 <p><b>Purpose</b>: Provide a library for developers to use to extract data
     from Microsoft Excel (tm) spreadsheet files.
     It is not an end-user tool.
@@ -10,16 +18,13 @@
 </p>
 <p><b>Version of xlrd</b>: 0.7.1 -- 2009-05-31
 </p>
-<p><b>Versions of Python supported</b>: 2.1 to 2.6.
+<p><b>Versions of Python supported</b>: 2.6-2.7.
 </p>
 <p><b>External modules required</b>:
 </p>
 <dl><dd> The package itself is pure Python with no dependencies on modules or packages
     outside the standard Python distribution.
-
-<dd> To run the demo script runxlrd.py with
-    Python 2.2 or 2.1 requires the Optik module (version 1.4.1 or later) from
-    http://optik.sourceforge.net/
+</dd>
 </dl>
 <p><b>Versions of Excel supported</b>:
     2004, 2003, XP, 2000, 97, 95, 5.0, 4.0, 3.0, 2.1, 2.0.
@@ -39,6 +44,8 @@ if present in the file:
 <li> Comments
 </li>
 <li> Hyperlinks
+</li>
+<li> Autofilters, advanced filters, pivot tables, conditional formatting, data validation
 </li>
 </ul>
 <p><b>Unlikely to be done</b>:
@@ -77,8 +84,9 @@ if present in the file:
 <p><b>Another quick start</b>: This will show the first, second and last rows of each
     sheet in each file:
 </p>
-<p><pre><code>    OS-prompt>python PYDIR/scripts/runxlrd.py 3rows *blah*.xls</code></pre>
-</p>
+
+<pre><code>    OS-prompt>python PYDIR/scripts/runxlrd.py 3rows *blah*.xls</code></pre>
+
 <p><b>Installation</b>:
 </p>
 <ul><li> On Windows: use the installer.
@@ -88,7 +96,6 @@ if present in the file:
 </li>
 <li> If PYDIR is your Python installation directory:
     the main files are in PYDIR/Lib/site-packages/xlrd
-    (except for Python 2.1 where they will be in PYDIR/xlrd),
     the docs are in the doc subdirectory,
     and there's a sample script: PYDIR/Scripts/runxlrd.py
 </li>
@@ -123,3 +130,6 @@ timesheet and project accounting solutions (http://journyx.com/).
 </li>
 <li> &lt;&lt; a growing list of names; see HISTORY.html &gt;&gt;: feedback, testing, test files, ...
 </li></ul>
+
+</body>
+</html>
