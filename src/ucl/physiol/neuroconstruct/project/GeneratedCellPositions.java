@@ -563,7 +563,7 @@ public class GeneratedCellPositions
 
                             SimpleXMLElement instanceElement = new SimpleXMLElement(NetworkMLConstants.INSTANCE_ELEMENT);
 
-                            instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
+                            instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, posRec.cellNumber+""));
 
                             if (posRec.getNodeId()!=PositionRecord.NO_NODE_ID)
                             {
@@ -628,7 +628,7 @@ public class GeneratedCellPositions
 
                         SimpleXMLElement instanceElement = new SimpleXMLElement(NetworkMLConstants.INSTANCE_ELEMENT);
 
-                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
+                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, posRec.cellNumber+""));
 
                         if (posRec.getNodeId()!=PositionRecord.NO_NODE_ID)
                         {
