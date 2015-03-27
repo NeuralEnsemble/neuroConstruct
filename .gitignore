@@ -26,6 +26,7 @@ osb/dentate*
 osb/olfactory*
 
 logs/*.log
+logs/*.txt
 
 templates/SBML2NEURON
 templates/xmlTemplates/Examples

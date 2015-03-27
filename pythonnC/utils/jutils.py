@@ -4,6 +4,7 @@ import sys,os
 
 # Neuroconstruct stuff.  
 from constants import * # Neurounit constants.  
+sys.path.append(os.path.join(NC_HOME))
 sys.path.append(os.path.join(NC_HOME,
 	                         "pythonNeuroML",
 	                         "nCUtils"))

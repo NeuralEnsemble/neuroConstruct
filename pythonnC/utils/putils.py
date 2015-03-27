@@ -38,20 +38,31 @@ def is_socket_open(ip,port):
 
 def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
   global PROC 
+  #print("PROC is None?",PROC is None)
   if PROC is not None and (automatic_socket or PROC.poll() is None): 
     # A previous PROC is still running.  
-    print("Terminating subprocess used to create previous socket.")
-    PROC.terminate()
+    try:
+      print("Terminating subprocess used to create previous socket.")
+      PROC.terminate()
+    except ProcessLookupError:
+      pass
   if useSocket:
+    print(os.environ['PATH'],236246)
     if automatic_socket:
-      script_path = os.path.join(NC_HOME,"nCjython")
+      script_path = os.path.join(NC_HOME,"nCjython.sh")
       # Will need to close this later.
       now = int(time.time())
-      log = open(os.path.join(NC_HOME,"logs/%d.txt" % now),'w')
+      log = open(os.path.join(NC_HOME,"logs/%d.txt" % now),'w')  
       PROC = subprocess.Popen([script_path,"-socket"],
                               stdin=subprocess.PIPE,
                               stdout=log,
-                              stderr=subprocess.STDOUT)
+                              stderr=subprocess.STDOUT,
+                              env={'HOME':HOME,
+                                   'NC_HOME':NC_HOME,
+                                   'JYTHON_HOME':JYTHON_HOME,
+                                   'PATH':os.environ['PATH'],
+                                   'PYTHONPATH':os.environ['PYTHONPATH']})
+      print(PROC)
       #PROC = subprocess.call(script_path+" -socket",shell=True)  
     tries = 0
     while 1:
@@ -63,9 +74,9 @@ def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
         try:
           gw = execnet.makegateway("socket=127.0.0.1:%d" % EXECNET_SOCKET_PORT)
         except Exception as e:
-          if tries > 5:
-            raise e
-            print("Waiting for socket to be open on port %d..." % \
+          #if tries > 5:
+          #raise e
+          print("Waiting for socket to be open on port %d..." % \
                   EXECNET_SOCKET_PORT)
           time.sleep(1)
           tries += 1
@@ -110,6 +121,7 @@ def run_sim(project_path=None,
   jython code that wraps uses the NeuroConstruct simulation manager."""
   
   if JYTHON:
+    print("Running in Jython")
     channel = Channel()
     jython_side(channel,
                 project_path=project_path,
@@ -131,10 +143,12 @@ def run_sim(project_path=None,
                              runtime_methods=runtime_methods,
                              **kwargs)
     if useNeuroTools:
+      print("Receiving sim dir")
       simDir = channel.receive()
       if 'SimulationDataException:' in simDir:
         #print simDir
         raise IOError(simDir)
+      print("Received sim dir")
       data = simDir
     else:
       volts = channel.receive()
@@ -181,6 +195,7 @@ def jython_side(channel,
   import pythonnC.utils.jutils as j
 
   NC_HOME = os.environ["NC_HOME"] 
+  print('NC_HOME:%s' % NC_HOME)
   os.chdir(NC_HOME)
   # This path contains the .jar with all the nC java classes.  
   sys.path.append(NC_HOME)
@@ -229,6 +244,9 @@ def jython_side(channel,
       method(*args,**kwargs)
   '''
   print("About to run sim.")
+  import os
+  print(os.environ)
+  print(sys.path)
   j.sim.run()
   print("Just ran sim.")
 
@@ -251,6 +269,7 @@ def jython_side(channel,
       print("Sending sim dir.")
       channel.send(str(sim_dir))
       logger.logComment("Sent sim directory")
+      print("Sent sim dir.")
     if useNC:
       # If using direction communication with NeuroConstruct, return the 
       # voltage array directly.  
