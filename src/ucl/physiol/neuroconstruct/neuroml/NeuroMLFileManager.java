@@ -1495,7 +1495,7 @@ public class NeuroMLFileManager
                         newContents = newContents.replaceAll(match+origVal, match+newVal);
 
                         // Rename the component to the suffixed name
-                        newContents = newContents.replaceAll("\""+chanMech.getName()+"\"", "\""+newMechName+"\"");
+                        newContents = newContents.replaceAll("id=\""+chanMech.getName()+"\"", "id=\""+newMechName+"\"");
                         newContents = newContents.replaceAll("name=\""+chanMech.getName()+"_",  "name=\""+newMechName+"_");
                         newContents = newContents.replaceAll("type=\""+chanMech.getName()+"_",  "type=\""+newMechName+"_");
 
