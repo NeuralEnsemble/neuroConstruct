@@ -197,6 +197,7 @@ standardGHProject 'PurkinjeCell' 'cerebellum/cerebellar_purkinje_cell'
 
 standardGHProject 'GranCellLayer' 'cerebellum/networks'
 standardGHProject 'VervaekeEtAl-GolgiCellNetwork' 'cerebellum/networks'
+standardGHProject 'Cerebellum3DDemo' 'cerebellum/networks'
 
 standardGHProject 'MainenEtAl_PyramidalCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'RothmanEtAl_KoleEtAl_PyrCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
