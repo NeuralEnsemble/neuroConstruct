@@ -49,7 +49,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 
 public class GeneratedElecInputs
 {
-    private ClassLogger logger = new ClassLogger("GeneratedElecInputs");
+    private final ClassLogger logger = new ClassLogger("GeneratedElecInputs");
 
     private Hashtable<String, ArrayList<SingleElectricalInput>> myElecInputs = null;
 
@@ -124,7 +124,6 @@ public class GeneratedElecInputs
     }
 
 
-
     public void addSingleInput(String inputReference,
                                SingleElectricalInput oneInput)
     {
@@ -137,10 +136,6 @@ public class GeneratedElecInputs
 
         inputVector.add(oneInput);
     }
-
-
-
-
 
 
     public void saveToFile(File inputsFile) throws java.io.IOException
@@ -186,12 +181,9 @@ public class GeneratedElecInputs
 
             fw.write(input+":\n");
 
-            for (int i = 0; i < inputs.size(); i++)
-            {
-                fw.write(inputs.get(i)+"\n");
-
+            for (SingleElectricalInput input1 : inputs) {
+                fw.write(input1 + "\n");
             }
-
 
         }
         logger.logComment("Finished saving data to file: "+ inputsFile.getAbsolutePath());
@@ -208,7 +200,7 @@ public class GeneratedElecInputs
 
         Reader in = new FileReader(positionFile);
         LineNumberReader reader = new LineNumberReader(in);
-        String nextLine = null;
+        String nextLine;
 
         String  currentInputRef = null;
 
@@ -234,7 +226,6 @@ public class GeneratedElecInputs
     }
 
 
-
     public int getNumberSingleInputs()
     {
         int totalCount = 0;
@@ -250,6 +241,7 @@ public class GeneratedElecInputs
         return totalCount;
     }
 
+    
     public ArrayList<String> getNonEmptyInputRefs()
     {
         ArrayList<String> neir = new ArrayList<String>();
@@ -266,6 +258,7 @@ public class GeneratedElecInputs
 
         return neir;
     }
+    
 
     public int getNumberSingleInputs(String inputRef)
     {
@@ -281,6 +274,7 @@ public class GeneratedElecInputs
     {
         return myElecInputs.keySet().iterator();
     }    
+    
     
     @Override
     public String toString()
@@ -397,7 +391,6 @@ public class GeneratedElecInputs
                 }
             }
             
-
             Enumeration keys = myElecInputs.keys();
 
             while (keys.hasMoreElements())
@@ -447,9 +440,9 @@ public class GeneratedElecInputs
                         pulseGenElement.addAttribute(NetworkMLConstants.INPUT_DUR_ATTR, dur+timeUnits.getNeuroML2Symbol());
                         pulseGenElement.addAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+currentUnits.getNeuroML2Symbol());
 
-                        topLevelCompElement.addContent("\n\n    ");
+                        topLevelCompElement.addContent("\n    ");
                         topLevelCompElement.addChildElement(pulseGenElement);
-                        topLevelCompElement.addContent("\n\n    ");
+                        topLevelCompElement.addContent("\n    ");
                     }
 
                 }
@@ -462,8 +455,9 @@ public class GeneratedElecInputs
                    
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
                     float rate = (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
+                    
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, 
-                            (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                            rate+""));
                     
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
                     inputElement.addChildElement(inputTypeElement);
@@ -471,14 +465,17 @@ public class GeneratedElecInputs
                     
                     if (nml2 && !nml2alpha)
                     {
-                        SimpleXMLElement spikeGenElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_SPIKE_GEN_POISSON_ELEMENT);
+                        SimpleXMLElement spikeGenElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_POISSON_FIRING_SYNAPSE_ELEMENT);
                         spikeGenElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, inputReference);
-                        spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_SPIKE_GEN_POISSON_RATE_ATTR, rate+" "+UnitConverter.rateUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getNeuroML2Symbol()+"");
+                        spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_SPIKE_GEN_POISSON_RATE_ATTR, 
+                                                     rate+" "+UnitConverter.rateUnits[unitSystem].getNeuroML2Symbol()+"");
+                        spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_POISSON_FIRING_SYN_SYNAPSE_ATTR, rst.getSynapseType());
                         
-
-                        topLevelCompElement.addContent("\n\n    ");
+                        spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_POISSON_FIRING_SYN_SPIKE_TARGET_ATTR, "./"+rst.getSynapseType());
+                        
+                        topLevelCompElement.addContent("\n    ");
                         topLevelCompElement.addChildElement(spikeGenElement);
-                        topLevelCompElement.addContent("\n\n    ");
+                        topLevelCompElement.addContent("\n    ");
                     }
                 }
                 else
@@ -500,10 +497,8 @@ public class GeneratedElecInputs
 
                 inputTargetElement.addChildElement(inputTargetSitesElement);
                 
-                SimpleXMLElement stimProjElement = null;
 
                 if (version.isVersion2betaOrLater()) {
-
                     
                     if (myElectricalInput instanceof IClamp)
                     {
@@ -519,15 +514,14 @@ public class GeneratedElecInputs
                     }
                     else if (myElectricalInput instanceof RandomSpikeTrain)
                     {
-                        SimpleXMLElement popElement = new SimpleXMLElement(NetworkMLConstants.POPULATION_ELEMENT);
-                        entities.add(0, popElement);
-                        popElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference()+"_population");
-                        popElement.addAttribute(NetworkMLConstants.NEUROML2_POPULATION_COMPONENT, inputReference);
-                        popElement.addAttribute(NetworkMLConstants.NEUROML2_POPULATION_SIZE, inputsHere.size()+"");
-                        
-                        stimProjElement = new SimpleXMLElement(NetworkMLConstants.PROJECTION_ELEMENT);
-                        stimProjElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference()+"_projection");
-                        entities.add(stimProjElement);
+                        SimpleXMLElement inputListElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_LIST_ELEMENT);
+                        entities.add(inputListElement);
+                        inputListElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference());
+                        inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_COMPONENT, inputReference);
+                        inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_POPULATION, nextStim.getCellGroup());
+
+                        //inputElement.addContent("\n    ");
+                        inputTargetSitesElement = inputListElement;
                         
                     }
 
@@ -546,23 +540,8 @@ public class GeneratedElecInputs
                     inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, sei.getSegmentId()+""));
                     inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, sei.getFractionAlong()+""));
                     
-                    if (!nml2) inputTargetSitesElement.addChildElement(inputTargetSiteElement);
-                    
-                    if (nml2 && !nml2alpha)
-                    {
-                        if (myElectricalInput instanceof RandomSpikeTrain)
-                        {
-                            String connElName = NetworkMLConstants.CONNECTION_ELEMENT;
-
-                            SimpleXMLElement connElement = new SimpleXMLElement(connElName);
-
-                            connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CONNECTION_ID_ATTR, i+""));
-                            stimProjElement.addContent("\n    ");
-                            stimProjElement.addChildElement(connElement);
-                            stimProjElement.addContent("\n    ");
-                        }
-                            
-                    }
+                    if (!nml2) 
+                        inputTargetSitesElement.addChildElement(inputTargetSiteElement);
 
 
                     if(sei.getInstanceProps()!=null)
@@ -602,9 +581,9 @@ public class GeneratedElecInputs
                                 pulseGenElement.addAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+timeUnits.getNeuroML2Symbol());
                                 pulseGenElement.addAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+currentUnits.getNeuroML2Symbol());
 
-                                topLevelCompElement.addContent("\n\n    ");
+                                topLevelCompElement.addContent("\n    ");
                                 topLevelCompElement.addChildElement(pulseGenElement);
-                                topLevelCompElement.addContent("\n\n    ");
+                                topLevelCompElement.addContent("\n    ");
 
                                 if (version.isVersion2alpha())
                                 {
@@ -617,32 +596,96 @@ public class GeneratedElecInputs
                                 }
                                 else
                                 {
+                                    SimpleXMLElement inputListElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_LIST_ELEMENT);
+                                    entities.add(inputListElement);
+                                    inputListElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference()+"__"+i);
+                                    inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_COMPONENT, inputReference+"__"+i);
+                                    inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_POPULATION, nextStim.getCellGroup());
+                                    
                                     String target = "../"+nextStim.getCellGroup()+"/"+sei.getCellNumber()+"/"+project.cellGroupsInfo.getCellType(nextStim.getCellGroup());
-                                    SimpleXMLElement expInputElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_LIST_ELEMENT);
+                                    SimpleXMLElement expInputElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_ELEMENT);
+                                    expInputElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, i+"");
                                     expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
-                                    expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_INPUT_ATTR, inputReference+"__"+i);
+                                    expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_DESTINATION, NetworkMLConstants.NEUROML2_INPUT_DESTINATION_DEFAULT);
 
-                                    entities.add(expInputElement);
+                                    if (sei.getSegmentId()!=0) 
+                                    {
+                                        expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_SEGMENT_ID, sei.getSegmentId()+"");
+                                    }
+                                    if (sei.getFractionAlong()!=0.5f) 
+                                    {
+                                        expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_FRACTION_ALONG, sei.getFractionAlong()+"");
+                                    }
+
+                                    inputListElement.addChildElement(expInputElement);
+                                    inputListElement.addContent("\n        ");
                                 }
                             }
                         }
                         else if (sei.getInstanceProps() instanceof RandomSpikeTrainInstanceProps)
                         {
-                            RandomSpikeTrainInstanceProps rst = (RandomSpikeTrainInstanceProps)sei.getInstanceProps();
+                            RandomSpikeTrainInstanceProps rstip = (RandomSpikeTrainInstanceProps)sei.getInstanceProps();
 
-                            float stimFreq = rst.getRate();
+                            float stimFreq = rstip.getRate();
                             //String stimMech = rst.get;
+                            
+                            if (!nml2){
 
-                            SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_INSTANCE_ELEMENT);
+                                SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_INSTANCE_ELEMENT);
 
-                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR,
-                                    (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                                inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR,
+                                        (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
 
-                            //inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
+                                //inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
 
-                            inputTargetSiteElement.addContent("                    ");
-                            inputTargetSiteElement.addChildElement(inputTypeElement);
-                            inputTargetSiteElement.addContent("\n                ");
+                                inputTargetSiteElement.addContent("                    ");
+                                inputTargetSiteElement.addChildElement(inputTypeElement);
+                                inputTargetSiteElement.addContent("\n                ");
+                            }
+                            else
+                            {
+                                
+                                RandomSpikeTrain rst = (RandomSpikeTrain)myElectricalInput;
+                    
+                                SimpleXMLElement spikeGenElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_POISSON_FIRING_SYNAPSE_ELEMENT);
+                                spikeGenElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, inputReference+"__"+i);
+                                spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_SPIKE_GEN_POISSON_RATE_ATTR, 
+                                                             (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+" "+UnitConverter.rateUnits[unitSystem].getNeuroML2Symbol()+"");
+                                spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_POISSON_FIRING_SYN_SYNAPSE_ATTR, rst.getSynapseType());
+
+                                spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_POISSON_FIRING_SYN_SPIKE_TARGET_ATTR, "./"+rst.getSynapseType());
+
+                                topLevelCompElement.addContent("\n    ");
+                                topLevelCompElement.addChildElement(spikeGenElement);
+                                topLevelCompElement.addContent("\n    ");
+
+                                if (!version.isVersion2alpha())
+                                {
+                                    SimpleXMLElement inputListElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_LIST_ELEMENT);
+                                    entities.add(inputListElement);
+                                    inputListElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference()+"__"+i);
+                                    inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_COMPONENT, inputReference+"__"+i);
+                                    inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_POPULATION, nextStim.getCellGroup());
+                                    
+                                    String target = "../"+nextStim.getCellGroup()+"/"+sei.getCellNumber()+"/"+project.cellGroupsInfo.getCellType(nextStim.getCellGroup());
+                                    SimpleXMLElement expInputElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_ELEMENT);
+                                    expInputElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, i+"");
+                                    expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
+                                    expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_DESTINATION, NetworkMLConstants.NEUROML2_INPUT_DESTINATION_DEFAULT);
+
+                                    if (sei.getSegmentId()!=0) 
+                                    {
+                                        expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_SEGMENT_ID, sei.getSegmentId()+"");
+                                    }
+                                    if (sei.getFractionAlong()!=0.5f) 
+                                    {
+                                        expInputElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_FRACTION_ALONG, sei.getFractionAlong()+"");
+                                    }
+
+                                    inputListElement.addChildElement(expInputElement);
+                                    inputListElement.addContent("\n        ");
+                                }
+                            }
                            
                         }
                         else
@@ -750,13 +793,13 @@ public class GeneratedElecInputs
     {
         try
         {
+            /*
             Project p = Project.loadProject(new File(ProjectStructure.getnCExamplesDir(), "Ex5_Networks/Ex5_Networks.ncx"), null);
 
             GeneratedElecInputs gei = new GeneratedElecInputs(p);
 
             System.out.println("Internal info: \n"+ gei.toString());
 
-            //IClamp ic = new IClamp(2,3,4, true);
 
             gei.addSingleInput("Input_0", "IClamp", "cg1", 3, 3, 3, null);
             gei.addSingleInput("Input_0", "IClamp", "cg1", 38, 3, 3, null);
@@ -767,26 +810,61 @@ public class GeneratedElecInputs
             File f = new File("../temp/tempp.txt");
 
             gei.saveToFile(f);
+                    */
+            
+            String proj = "testProjects/TestNetworkML/TestNetworkML.neuro.xml";
+            String simConfName = "OneStimmed";
+            
+            Project testProj = Project.loadProject(new File(proj),
+                                                   new ProjectEventListener()
+            {
+                public void tableDataModelUpdated(String tableModelName)
+                {};
+
+                public void tabUpdated(String tabName)
+                {};
+                public void cellMechanismUpdated()
+                {
+                };
+
+            });
+            GeneratedElecInputs gei = testProj.generatedElecInputs;
 
 
-            GeneratedElecInputs cpr2 = new GeneratedElecInputs(null);
+            ProjectManager pm = new ProjectManager(null,null);
+            pm.setCurrentProject(testProj);
+
+
+            pm.doGenerate(simConfName, 123);
+
+            while(pm.isGenerating())
+            {
+                Thread.sleep(200);
+            }
+            System.out.println("Num cells generated: "+ testProj.generatedCellPositions.getAllPositionRecords().size());
+
+            
+            System.out.println("Ready...");
+
 
 
 
             System.out.println("----  v1.8.1: \n"+gei.getNetworkMLElement(UnitConverter.GENESIS_SI_UNITS).getXMLString("    ", false));
 
-            ArrayList<SimpleXMLEntity> els = gei.getNetworkMLEntities(UnitConverter.GENESIS_SI_UNITS, NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2_ALPHA, null);
+   
 
-            System.out.println("----  v2.0 alpha: ");
-            for (SimpleXMLEntity el: els)
+            SimpleXMLElement sxeHolder = new SimpleXMLElement("HOLDER");
+            NeuroMLConstants.NeuroMLVersion version = NeuroMLConstants.NeuroMLVersion.getLatestVersion();
+            ArrayList<SimpleXMLEntity> els = gei.getNetworkMLEntities(UnitConverter.GENESIS_SI_UNITS, version, sxeHolder);
+
+            System.out.println("----  v"+version+": ");
+            
+            System.out.println(sxeHolder.getXMLString("    ", false));
+            for (SimpleXMLEntity el: els) {
+                System.out.println("...");
                 System.out.println(el.getXMLString("    ", false));
-
-            els = gei.getNetworkMLEntities(UnitConverter.GENESIS_SI_UNITS, NeuroMLConstants.NeuroMLVersion.getLatestVersion(), null);
-
-            System.out.println("----  v2.0 beta: ");
-            for (SimpleXMLEntity el: els)
-                System.out.println(el.getXMLString("    ", false));
-
+            }
+/**/
             System.out.println("-------------- ");
 
         }

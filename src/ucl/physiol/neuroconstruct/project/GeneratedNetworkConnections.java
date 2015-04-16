@@ -1501,8 +1501,10 @@ public class GeneratedNetworkConnections
             String simConfName = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
             
             proj = "osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx";
+            proj = "testProjects/TestNetworkML/TestNetworkML.neuro.xml";
             simConfName = "TestSingleGapJunction";
             simConfName = "PharyngealNeurons";
+            simConfName = "OneStimmed";
             
             Project testProj = Project.loadProject(new File(proj),
                                                    new ProjectEventListener()

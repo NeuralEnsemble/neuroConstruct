@@ -44,8 +44,10 @@ import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLVersion;
 import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import ucl.physiol.neuroconstruct.simulation.SimulationsInfo;
+import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.XMLUtils;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -735,11 +737,22 @@ public class NeuroMLFileManager
 
                 }
             }
+            ArrayList<String> synsInInputs = new ArrayList<String>();
+            
+            
+            for (String elecInput : project.generatedElecInputs.getNonEmptyInputRefs()) {
+                StimulationSettings ss = project.elecInputInfo.getStim(elecInput);
+                if (ss.getElectricalInput() instanceof RandomSpikeTrain) {
+                    RandomSpikeTrain rst = (RandomSpikeTrain)ss.getElectricalInput();
+                    synsInInputs.add(rst.getSynapseType());
+                }
+            }
 
 
             for (Cell nextCell : generatedCells)
             {
                 ArrayList<String> cellMechs = new ArrayList<String>();
+                cellMechs.addAll(synsInInputs);
                 ArrayList<String> chanMechNames = nextCell.getAllChanMechNames(true);
 
                 for (String cm : chanMechNames)
@@ -1697,6 +1710,8 @@ public class NeuroMLFileManager
             projFile = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
             
             projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+            projFile = new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml");
+            
             
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
             //LemsOption lo = LemsOption.NONE;
@@ -1747,10 +1762,10 @@ public class NeuroMLFileManager
                 simConf = "TestSingleGapJunction";
                 lo = LemsOption.GENERATE_NEURON; // To get the LEMS_... file
             }
-            /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))
+            else if (projFile.getName().startsWith("TestNetworkML"))
             {
-                simConf = "Test NeuroML2 ionChannel";
-            }*/
+                simConf = "OneStimmed";
+            }
 
 
             String ref = "LEMS_test";

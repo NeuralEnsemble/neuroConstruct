@@ -262,6 +262,10 @@ public class NetworkMLConstants
     
     public static String NEUROML2_SPIKE_GEN_POISSON_ELEMENT = "spikeGeneratorPoisson";
     public static String NEUROML2_SPIKE_GEN_POISSON_RATE_ATTR = "averageRate";
+    
+    public static String NEUROML2_POISSON_FIRING_SYNAPSE_ELEMENT = "poissonFiringSynapse";
+    public static String NEUROML2_POISSON_FIRING_SYN_SYNAPSE_ATTR = "synapse";
+    public static String NEUROML2_POISSON_FIRING_SYN_SPIKE_TARGET_ATTR = "spikeTarget";
 
     public static String NEUROML2_EXP_INPUT_ELEMENT = "explicitInput";
 
