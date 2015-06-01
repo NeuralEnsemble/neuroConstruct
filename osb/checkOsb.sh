@@ -173,6 +173,7 @@ standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
+standardGHProject 'FergusonEtAl2014-CA1PyrCell' 'hippocampus/CA1_pyramidal_neuron'
 standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
 standardBBProject 'dentate' 'dentate_gyrus/networks' 'mbezaire'
 standardBBProject 'nc_ca1' 'hippocampus/networks' 'mbezaire'
