@@ -42,12 +42,12 @@ def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
   if PROC is not None and (automatic_socket or PROC.poll() is None): 
     # A previous PROC is still running.  
     try:
-      print("Terminating subprocess used to create previous socket.")
+      print("\r\rTerminating subprocess used to create previous socket.")
       PROC.terminate()
     except ProcessLookupError:
       pass
   if useSocket:
-    print(os.environ['PATH'],236246)
+    #print(os.environ['PATH'],236246)
     if automatic_socket:
       script_path = os.path.join(NC_HOME,"nCjython.sh")
       # Will need to close this later.
@@ -62,7 +62,7 @@ def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
                                    'JYTHON_HOME':JYTHON_HOME,
                                    'PATH':os.environ['PATH'],
                                    'PYTHONPATH':os.environ['PYTHONPATH']})
-      print(PROC)
+      #print(PROC)
       #PROC = subprocess.call(script_path+" -socket",shell=True)  
     tries = 0
     while 1:
@@ -195,7 +195,7 @@ def jython_side(channel,
   import pythonnC.utils.jutils as j
 
   NC_HOME = os.environ["NC_HOME"] 
-  print('NC_HOME:%s' % NC_HOME)
+  #print('NC_HOME:%s' % NC_HOME)
   os.chdir(NC_HOME)
   # This path contains the .jar with all the nC java classes.  
   sys.path.append(NC_HOME)

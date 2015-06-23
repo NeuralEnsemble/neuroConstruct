@@ -1,5 +1,7 @@
 import os
 
+import matplotlib.pyplot as plt
+
 # Must install NeuroTools from source.  
 # PyPI NeuroTools is out of date and does not have "analogs" module.
 from NeuroTools.signals import AnalogSignal
@@ -106,31 +108,27 @@ def get_data_file_names(sim_path):
     
 def plot_spike_trains(spike_trains):   
   '''Takes a dict from get_spike_trains and plots all the spike trains'''     
-  import pylab
-  import matplotlib.pyplot
-
+  
   for pop_name,spike_list in spike_trains.items():
     spike_trains[pop].raster_plot(kwargs={'label':pop_name})
-    pylab.ylabel('Neuron # in population '+pop_name)
+    plt.ylabel('Neuron # in population '+pop_name)
       
-  pylab.show()
+  plt.show()
 
 def plot_analog_signals(analog_signals):
   '''Takes a dict from get_analog_signals and plots all the analog signals'''     
-  import pylab
-  import matplotlib.pyplot
-
+  
   times = get_times()
   plots = {}
     
   for cell_ref in analog_signals.keys():  
     pop_name = cell_ref[:cell_ref.rfind('_')]
-    figure = matplotlib.pyplot.figure()
+    figure = plt.figure()
     figure.suptitle(pop_name)
     plots[pop_name] = figure.add_subplot(111)
     if '.' not in cell_ref: # The only signals that is likely to be Vm.  
-      pylab.ylabel('Membrane potential (mV)')
-    pylab.xlabel('Time (ms)')
+      plt.ylabel('Membrane potential (mV)')
+    plt.xlabel('Time (ms)')
     volts = analog_signals[cell_ref].signal
     plots[pop_name].plot(times,
                          volts,
@@ -138,4 +136,4 @@ def plot_analog_signals(analog_signals):
                          label=cell_ref, 
                          linewidth=1)
 
-  pylab.show()
+  plt.show()
