@@ -127,17 +127,26 @@ class Sim():
 		from ucl.physiol.neuroconstruct.utils import NumberGenerator
 		sim_config_info = self.manager.project.simConfigInfo
 		sim_config = sim_config_info.getSimConfig(self.sim_config_name)
+		print("Sim Config name is %s" % self.sim_config_name)
 		inputs = sim_config.getInputs()
+		print("%s has %d inputs" % (self.sim_config_name,len(inputs)))
 		if len(inputs) < 1:
 			err = "This sim config has no inputs"
 		else:
-			input_0 = inputs.get(0)
-			stim = self.manager.project.elecInputInfo.getStim(input_0)
-			if hasattr(stim,'setAmp'):
-				stim.setAmp(NumberGenerator(current_ampl))
-				self.manager.project.elecInputInfo.updateStim(stim)
-			else:
-				err = "This stim has no attribute 'setAmp'"
+			one_set = False
+			for inp in range(len(inputs)):
+				input_ = inputs.get(inp)
+				stim = self.manager.project.elecInputInfo.getStim(input_)
+				if hasattr(stim,'setAmp'):
+					stim.setAmp(NumberGenerator(current_ampl))
+					stim.setDur(NumberGenerator(200.0)) # Change pulse length to 400 ms.  
+					self.manager.project.elecInputInfo.updateStim(stim)
+					print("Stim amplitude set to %f" % current_ampl)
+					one_set = True
+				else:
+					err = "This stim has no attribute 'setAmp'"
+			if one_set:
+				err = ""
 		print err
 		return err
 
