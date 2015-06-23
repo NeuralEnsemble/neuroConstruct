@@ -2,12 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 
-# Must install NeuroTools from source.  
-# PyPI NeuroTools is out of date and does not have "analogs" module.
-from NeuroTools.signals import AnalogSignal
-from NeuroTools.signals import SpikeTrain
-from NeuroTools.signals import SpikeList
-#from NeuroTools.plotting import *
+from neo.core import AnalogSignal,SpikeTrain,SpikeList
 
 #SIM_PATH = '' # Must set this to use.  
 #SIM_PATH = '/Users/rgerkin/neuroConstruct/osb/hippocampus/'
