@@ -1172,7 +1172,7 @@ public class MorphMLConverter extends FormatImporter
                                     {
                                         revPot = mp.getValue();
                                         unitsUsedInt = UnitConverter.NEUROCONSTRUCT_UNITS;
-                                        logger.logComment("The reversal potential has been set as one of the extra params: "+revPot, true);
+                                        logger.logComment("The reversal potential has been set as one of the extra params: "+revPot);
                                                
                                         // remove from param list, as units dealt with here
                                         SimpleXMLElement toRemove = null;

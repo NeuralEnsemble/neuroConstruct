@@ -24,6 +24,7 @@ osb/hippo*
 osb/showcase
 osb/dentate*
 osb/olfactory*
+osb/thalamus
 
 logs/*.log
 logs/*.txt
@@ -36,6 +37,8 @@ nbproj/nbproject/private
 
 /testProjects/TEMP_PROJECTS
 /testProjects/*/savedNetworks
+testProjects/TestNetworkML/ggg/
+
 generatedNeuroML*
 generatedNEURON*
 generatedGENESIS*
