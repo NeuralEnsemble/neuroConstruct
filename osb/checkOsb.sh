@@ -158,6 +158,7 @@ standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
 standardGHProject 'NEURONShowcase' 'showcase' 
 standardGHProject 'SBMLShowcase' 'showcase'
 standardGHProject 'BrianShowcase' 'showcase'
+standardGHProject 'BlueBrainProjectShowcase' 'showcase'
 
 standardGHProject 'CSAShowcase' 'showcase'
 standardGHProject 'neuroConstructShowcase' 'showcase'
