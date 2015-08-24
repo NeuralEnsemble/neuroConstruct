@@ -3513,44 +3513,46 @@ public class GenesisFileManager
 
                     ArrayList<String> mechsPassingIon = ionCurrentSources.get(ip.getName());
 
-                    for (String mech: mechsPassingIon)
-                    {
-                        addComment(response, "    "+ip.getName()+" is present on "+groups+" and reversal potential of this through "+mech+" is: "+ip.getReversalPotential()+" mV\n");
-
-
-                        for(String group: groups)
+                    if (mechsPassingIon!=null) {
+                        for (String mech: mechsPassingIon)
                         {
-                            ArrayList<String> compsToDo = new ArrayList<String>();
+                            addComment(response, "    "+ip.getName()+" is present on "+groups+" and reversal potential of this through "+mech+" is: "+ip.getReversalPotential()+" mV\n");
 
-                            if (group.equals(Section.ALL))
+
+                            for(String group: groups)
                             {
-                                compsToDo.add("#");
-                            }
-                            else
-                            {
-                                for (Segment seg : mappedCell.getSegmentsInGroup(group))
+                                ArrayList<String> compsToDo = new ArrayList<String>();
+
+                                if (group.equals(Section.ALL))
                                 {
-                                    compsToDo.add(seg.getSegmentName());
+                                    compsToDo.add("#");
+                                }
+                                else
+                                {
+                                    for (Segment seg : mappedCell.getSegmentsInGroup(group))
+                                    {
+                                        compsToDo.add(seg.getSegmentName());
+                                    }
+
                                 }
 
+                                for (String comp: compsToDo)
+                                {
+
+                                    response.append("    foreach tempChanName ({el  {tempCellName}/"+comp+"/"+mech+"})\n");
+
+
+                                    response.append("        setfield {tempChanName} Ek "+UnitConverter.getVoltage(ip.getReversalPotential(),
+                                                                                         UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                         project.genesisSettings.getUnitSystemToUse())+"\n");
+
+
+
+                                    response.append("    end\n\n");
+                                }
+
+
                             }
-
-                            for (String comp: compsToDo)
-                            {
-
-                                response.append("    foreach tempChanName ({el  {tempCellName}/"+comp+"/"+mech+"})\n");
-
-
-                                response.append("        setfield {tempChanName} Ek "+UnitConverter.getVoltage(ip.getReversalPotential(),
-                                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                                     project.genesisSettings.getUnitSystemToUse())+"\n");
-
-
-
-                                response.append("    end\n\n");
-                            }
-
-
                         }
                     }
 
