@@ -1,8 +1,7 @@
 import os
-
 import matplotlib.pyplot as plt
-
-from neo.core import AnalogSignal,SpikeTrain,SpikeList
+import quantities as pq
+from neo.core import AnalogSignal,SpikeTrain
 
 #SIM_PATH = '' # Must set this to use.  
 #SIM_PATH = '/Users/rgerkin/neuroConstruct/osb/hippocampus/'
@@ -10,8 +9,10 @@ from neo.core import AnalogSignal,SpikeTrain,SpikeList
 #SIM_PATH += 'simulations/DefaultSimulationConfiguration__N'
 
 def get_times(sim_path):
-  '''Reads a time.dat file in neuroConstruct format and returns 
-  a list of times corresponding to simulation time steps.'''
+  '''
+  Reads a time.dat file in neuroConstruct format and returns 
+  a list of times corresponding to simulation time steps.
+  '''
   file_path = os.path.join(sim_path,"time.dat")
   time_file = open(file_path, 'r')
   times = []
@@ -21,7 +22,6 @@ def get_times(sim_path):
           t = float(line)
           times.append(t)
         
-  dt = times[1]-times[0]
   return times
 
 def get_dt(sim_path):
@@ -29,8 +29,10 @@ def get_dt(sim_path):
   return times[1]-times[0]
 
 def get_spike_train(sim_path,file_name):
-  '''Reads a spike train from a file in neuroConstruct format and returns
-  a SpikeTrain object'''
+  '''
+  Reads a spike train from a file in neuroConstruct format and returns
+  a SpikeTrain object
+  '''
   if not file_name.endswith('.spike'):
     file_name += '.spike'
   file_path = os.path.join(sim_path,file_name)
@@ -46,8 +48,10 @@ def get_spike_train(sim_path,file_name):
   return SpikeTrain(spike_times,t_start = times[0], t_stop=times[-1])
 
 def get_spike_trains(sim_path):
-  '''Finds spike trains in the SIM_PATH and organizes them by cell,
-  returning a dict of SpikeLists.'''
+  '''
+  Finds spike trains in the SIM_PATH and organizes them by cell,
+  returning a dict of dicts of SpikeTrains.
+  '''
   all_spike_lists = {}
   spike_file_names = [i for i in get_data_file_names(sim_path) if i.endswith('.spike')]
   for file_name in spike_file_names:
@@ -56,17 +60,17 @@ def get_spike_trains(sim_path):
     pop_name = cell_ref[:cell_ref.rfind('_')] # Cell population name.  
     sig = get_spike_train(file_name) # The spike train.  
     if not all_spike_lists.has_key(pop_name):
-        all_spike_lists[pop_name] = SpikeList([], [], t_start = times[0], 
-                                                      t_stop = times[-1])
-    all_spike_lists[pop_name].append(id, sig)
+        all_spike_lists[pop_name] = {}
+    all_spike_lists[pop_name][id] = sig
   for popName in all_spike_lists.keys():
-    print("Spikes found for cell ids in population %s: %s" % \
-          (popName, all_spike_lists[popName].id_list()))
+    pass
   return all_spike_lists
 
 def get_analog_signal(sim_path,file_name):
-  '''Reads a analog signal from a file in neuroConstruct format and returns
-  an AnalogSignal object'''
+  '''
+  Reads a analog signal from a file in neuroConstruct format and returns
+  an AnalogSignal object
+  '''
   if not file_name.endswith('.dat'):
     file_name += '.dat'
   file_path = os.path.join(sim_path,file_name)
@@ -79,11 +83,13 @@ def get_analog_signal(sim_path,file_name):
           volts.append(v)
 
   dt = get_dt(sim_path)
-  return AnalogSignal(volts,dt)
+  return AnalogSignal(volts*pq.mV, sampling_period=dt*pq.ms)
 
 def get_analog_signals(sim_path):
-  '''Finds analog signals in the SIM_PATH and organizes them by cell,
-  returning a dict of AnalogSignals.'''
+  '''
+  Finds analog signals in the SIM_PATH and organizes them by cell,
+  returning a dict of AnalogSignals.
+  '''
   all_analog_signals = {}
   analog_file_names = [i for i in get_data_file_names(sim_path) if i.endswith('.dat')] 
   for file_name in analog_file_names:
@@ -102,7 +108,9 @@ def get_data_file_names(sim_path):
   return data_file_names
     
 def plot_spike_trains(spike_trains):   
-  '''Takes a dict from get_spike_trains and plots all the spike trains'''     
+  '''
+  Takes a dict from get_spike_trains and plots all the spike trains
+  '''     
   
   for pop_name,spike_list in spike_trains.items():
     spike_trains[pop].raster_plot(kwargs={'label':pop_name})
@@ -111,7 +119,9 @@ def plot_spike_trains(spike_trains):
   plt.show()
 
 def plot_analog_signals(analog_signals):
-  '''Takes a dict from get_analog_signals and plots all the analog signals'''     
+  '''
+  Takes a dict from get_analog_signals and plots all the analog signals
+  '''     
   
   times = get_times()
   plots = {}

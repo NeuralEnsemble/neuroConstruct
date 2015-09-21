@@ -35,3 +35,8 @@ POPULATION_NAME = "CG_CML_0"
 EXECNET_SOCKET_PORT = 8889
 AUTOMATIC_SOCKET = True
 MAX_TRIES = 100
+PRINT_DEBUG = False
+
+def print_debug(str):
+  if PRINT_DEBUG:
+    print(str)

@@ -1,10 +1,11 @@
-from .constants import *
-import neurotools as nc_neurotools# Interface to NeuralEnsemble NeuroTools.  
-
 import os,subprocess,time,socket,platform,types
-import execnet # From PyPI; for communication with jython.  
-IMPLEMENTATION = platform.python_implementation()
 
+import execnet # From PyPI; for communication with jython.  
+
+from .constants import *
+from .neurotools import get_times
+
+IMPLEMENTATION = platform.python_implementation()
 JYTHON = IMPLEMENTATION == 'Jython'
 # True if this module is loaded in Jython, False if CPython.
 # If it is being run in Jython, we can use NeuroConstruct's python 
@@ -42,7 +43,7 @@ def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
   if PROC is not None and (automatic_socket or PROC.poll() is None): 
     # A previous PROC is still running.  
     try:
-      print("\r\rTerminating subprocess used to create previous socket.")
+      print_debug("\r\rTerminating subprocess used to create previous socket.")
       PROC.terminate()
     except ProcessLookupError:
       pass
@@ -67,7 +68,7 @@ def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
     tries = 0
     while 1:
       if tries>MAX_TRIES:
-        print("Reached maximum number of tries. Socket not open.")
+        print_debug("Reached maximum number of tries. Socket not open.")
         gw = None
         break
       else:
@@ -76,7 +77,7 @@ def open_gateway(useSocket=True,automatic_socket=AUTOMATIC_SOCKET):
         except Exception as e:
           #if tries > 5:
           #raise e
-          print("Waiting for socket to be open on port %d..." % \
+          print_debug("Waiting for socket to be open on port %d..." % \
                   EXECNET_SOCKET_PORT)
           time.sleep(1)
           tries += 1
@@ -130,7 +131,7 @@ def run_sim(project_path=None,
                 runtime_methods=runtime_methods,
                 **kwargs)
   else:
-    print("Runtime methods are %s" % runtime_methods)
+    print_debug("Runtime methods are %s" % runtime_methods)
     global PROC
     if gw is None:
       gw = open_gateway(useSocket=useSocket)
@@ -143,12 +144,12 @@ def run_sim(project_path=None,
                              runtime_methods=runtime_methods,
                              **kwargs)
     if useNeuroTools:
-      print("Receiving sim dir")
+      print_debug("Receiving sim dir")
       simDir = channel.receive()
       if 'SimulationDataException:' in simDir:
         #print simDir
         raise IOError(simDir)
-      print("Received sim dir")
+      print_debug("Received sim dir")
       data = simDir
     else:
       volts = channel.receive()
@@ -245,8 +246,8 @@ def jython_side(channel,
   '''
   print("About to run sim.")
   import os
-  print(os.environ)
-  print(sys.path)
+  #print(os.environ)
+  #print(sys.path)
   j.sim.run()
   print("Just ran sim.")
 
@@ -308,7 +309,7 @@ def plot_vm(vm=None):
 
   if vm is None:
     vm = get_vm()
-  times = nc_neurotools.get_times()
+  times = get_times()
   pop_name = POPULATION_NAME
 
   figure = matplotlib.pyplot.figure()
