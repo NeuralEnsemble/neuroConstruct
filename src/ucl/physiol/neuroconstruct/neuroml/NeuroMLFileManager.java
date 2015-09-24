@@ -163,6 +163,12 @@ public class NeuroMLFileManager
                                         null);
     }
     
+    //TODO: move to utils class?
+    private static String getNeuroML2NetworkId(Project project){
+        
+       return NetworkMLConstants.NEUROML2_NETWORK_ID_PREFIX + project.getProjectName().replace("-", "_");
+    }
+    
     public static File saveNetworkStructureXML(Project project,
                                                File neuroMLFile,
                                                boolean zipped,
@@ -264,7 +270,7 @@ public class NeuroMLFileManager
             }
             else
             {
-                rootElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, "network_" + project.getProjectName());
+                rootElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, getNeuroML2NetworkId(project));
             }
 
             doc.addRootElement(rootElement);
@@ -323,6 +329,8 @@ public class NeuroMLFileManager
             //SimpleXMLElement popRoot = rootElement;
 
             SimpleXMLElement topLevelCompElement = null;
+                
+            String nml2NetId = null;
 
             if (nml2)
             {
@@ -342,7 +350,8 @@ public class NeuroMLFileManager
                 }
                 
                 SimpleXMLElement networkNml2 = new SimpleXMLElement(NetworkMLConstants.NEUROML2_NETWORK_ELEMENT);
-                networkNml2.addAttribute(NeuroMLConstants.NEUROML_ID_V2, NetworkMLConstants.NEUROML2_NETWORK_ID_PREFIX + project.getProjectName());
+                
+                networkNml2.addAttribute(NeuroMLConstants.NEUROML_ID_V2, getNeuroML2NetworkId(project));
 
                 topLevelCompElement = rootElement;
 
@@ -1071,7 +1080,7 @@ public class NeuroMLFileManager
 
             simEl.addAttribute(LemsConstants.LENGTH_ATTR, simConf.getSimDuration() + "ms");
             simEl.addAttribute(LemsConstants.STEP_ATTR, project.simulationParameters.getDt() + "ms");
-            simEl.addAttribute(LemsConstants.TARGET_ATTR, NetworkMLConstants.NEUROML2_NETWORK_ID_PREFIX + project.getProjectName());
+            simEl.addAttribute(LemsConstants.TARGET_ATTR, getNeuroML2NetworkId(project));
 
 
 
