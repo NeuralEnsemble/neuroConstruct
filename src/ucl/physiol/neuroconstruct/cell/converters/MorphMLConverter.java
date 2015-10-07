@@ -970,6 +970,9 @@ public class MorphMLConverter extends FormatImporter
                     // Because the generated <channelDensity> elements are added at the start of membPropsElement
                     allUniformChanMechs = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(allUniformChanMechs, false);
                 }
+                else {
+                    allUniformChanMechs = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(allUniformChanMechs, true);
+                }
 
                 Units condDensUnit = UnitConverter.conductanceDensityUnits[preferredExportUnits];
                 Units permeabilityUnit = UnitConverter.permeabilityUnits[preferredExportUnits];
@@ -1522,6 +1525,7 @@ public class MorphMLConverter extends FormatImporter
                 ArrayList<Float> specAxReses = cell.getDefinedSpecAxResistances();
                 logger.logComment("specAxReses: " + specAxReses);
 
+                //System.out.println("-----   Adding: Axial resistance..."+cell.getInstanceName());
 
                 for (Float specAxRes : specAxReses)
                 {
@@ -1540,9 +1544,11 @@ public class MorphMLConverter extends FormatImporter
                     specAxResElement.addContent("\n                ");
 
                     Vector<String> groups = cell.getGroupsWithSpecAxRes(specAxRes);
+                    List<String> lgroups = GeneralUtils.reorderAlphabetically(groups, false);
 
-                    for (String group : groups)
+                    for (String group : lgroups)
                     {
+                        //System.out.println("           Adding: "+group);
                         SimpleXMLElement groupElement3 = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                         paramElement.addContent("\n                        ");
                         paramElement.addChildElement(groupElement3);
@@ -1616,11 +1622,11 @@ public class MorphMLConverter extends FormatImporter
                 //***********    Ion Properties   ************
 
                Enumeration<IonProperties> e = cell.getIonPropertiesVsGroups().keys();
+               ArrayList<IonProperties> ea = GeneralUtils.getOrderedList(e, true);
                
                //System.out.println("cell.getIonPropertiesVsGroups(): "+cell.getIonPropertiesVsGroups());
-               while (e.hasMoreElements())
+               for (IonProperties ip: ea)
                {
-                    IonProperties ip = e.nextElement();
 
                     SimpleXMLElement ionPropEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.ION_PROPS_ELEMENT);
                     ionPropEl.addAttribute(BiophysicsConstants.ION_PROPS_NAME_ATTR, ip.getName());
