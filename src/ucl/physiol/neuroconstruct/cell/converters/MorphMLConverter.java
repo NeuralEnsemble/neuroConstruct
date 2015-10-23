@@ -1462,10 +1462,8 @@ public class MorphMLConverter extends FormatImporter
                 }
 
                 ArrayList<Float> specCaps = cell.getDefinedSpecCaps();
-                logger.logComment("    ....... "+cell.getInstanceName()+"   specCaps: " + specCaps);
                 
                 specCaps = (ArrayList<Float>)GeneralUtils.reorderAlphabetically(specCaps, true);
-                logger.logComment("    .......  "+cell.getInstanceName()+"  specCaps: " + specCaps);
 
                 for (Float specCap : specCaps)
                 {
@@ -1491,7 +1489,7 @@ public class MorphMLConverter extends FormatImporter
                         SimpleXMLElement groupElement2 = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                         paramElement.addContent("\n                        ");
                         paramElement.addChildElement(groupElement2);
-                        paramElement.addContent("\n     ...               ");
+                        paramElement.addContent("\n                    ");
                         groupElement2.addContent(group);
 
                         if (nml2)
@@ -1528,6 +1526,7 @@ public class MorphMLConverter extends FormatImporter
 
                 ArrayList<Float> specAxReses = cell.getDefinedSpecAxResistances();
                 logger.logComment("specAxReses: " + specAxReses);
+                specAxReses = (ArrayList<Float>)GeneralUtils.reorderAlphabetically(specAxReses, true);
 
                 //System.out.println("-----   Adding: Axial resistance..."+cell.getInstanceName());
 
