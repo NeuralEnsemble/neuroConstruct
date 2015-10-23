@@ -7,9 +7,18 @@ jdk:
 
 script: 
   - mkdir temp
+  
+  # Pull other repos, e.g. NeuroML v1 examples from SourceForge
   - ./updatenC.sh
+  
+  # Get one OSB project required for running tests
   - mkdir osb/cerebellum
   - mkdir osb/cerebellum/cerebellar_granule_cell
   - git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
+  
+  # Test building project with nC.sh
+  - ./nC.sh -make
+  
+  # Rebuild & perform a number of tests with ant
   - ant testcore
 
