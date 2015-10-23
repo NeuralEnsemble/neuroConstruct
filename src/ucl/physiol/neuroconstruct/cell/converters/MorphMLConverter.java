@@ -2056,8 +2056,20 @@ public class MorphMLConverter extends FormatImporter
                 mechElement.addAttribute(new SimpleXMLAttribute("ion", ion));
 
                 mechElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2, chanMech.getNML2Name()));
-
+                
                 ionSpeciesV2.put(ion+"_"+group, mechElement);
+                    
+                boolean ionPropsSet = false;
+                for (IonProperties ip: cell.getIonPropertiesVsGroups().keySet()) {
+                    if (ip.getName().equals(ion))
+                        ionPropsSet = true;
+                }
+                if (!ionPropsSet) {
+                    GuiUtils.showWarningMessage(logger, "A species element will be added to the NeuroML2 exported cell for ion: "+ion+", "
+                            + "which will specify a concentration model to manage the concentration changes.\n"
+                            + " However, there are no ion properties (i.e. initial internal/external concentrations) set for "
+                            + "the ion in this cell in neuroConstruct!", null);
+                }
 
             }
         }
@@ -2408,76 +2420,68 @@ public class MorphMLConverter extends FormatImporter
 
 
     @SuppressWarnings("UnusedAssignment")
-    public static void main(String[] args)
+    public static void main(String[] args) throws ProjectFileParsingException, MorphologyException, IOException
     {
-        try
+        //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
+        //File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
+
+        File f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
+        f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+        f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
+        f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+        f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
+
+        f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
+        f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+        f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
+
+        f = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+
+        Project testProj = Project.loadProject(f,new ProjectEventListener()
         {
-           //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
-           //File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
-           
-           File f = new File("osb/invertebrate/lobster/PyloricNetwork/neuroConstruct/PyloricPacemakerNetwork.ncx");
-           f = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
-           f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
-           f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
-           f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
-           
-           f = new File("testProjects/TestMorphs/TestMorphs.neuro.xml");
-           f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
-           f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
-           
-           f = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-           
-           Project testProj = Project.loadProject(f,new ProjectEventListener()
-           {
-               public void tableDataModelUpdated(String tableModelName)
-               {};
+            public void tableDataModelUpdated(String tableModelName)
+            {};
 
-               public void tabUpdated(String tabName)
-               {};
-                public void cellMechanismUpdated()
-                {
-                };
+            public void tabUpdated(String tabName)
+            {};
+             public void cellMechanismUpdated()
+             {
+             };
 
-           });
+        });
 
-           Vector<Cell> cells = testProj.cellManager.getAllCells();
-           cells = (Vector<Cell>)GeneralUtils.reorderAlphabetically(cells, true);
-            System.out.println("Cells: "+cells);
-           Cell cell = cells.get(0);
+        Vector<Cell> cells = testProj.cellManager.getAllCells();
+        cells = (Vector<Cell>)GeneralUtils.reorderAlphabetically(cells, true);
+         System.out.println("Cells: "+cells);
+        Cell cell = cells.get(0);
 
-            System.out.println("Found a cell: "+ cell);
+         System.out.println("Found a cell: "+ cell);
 
-           //cell.getFirstSomaSegment().setComment("This is the cell root...");
+        //cell.getFirstSomaSegment().setComment("This is the cell root...");
 
-           File nml_l1File = new File("../temp/cell_l1.xml");
-           File nml_l2File = new File("../temp/cell_l2.xml");
-           File nml2File = new File("../temp/cell2.xml");
+        File nml_l1File = new File("../temp/cell_l1.xml");
+        File nml_l2File = new File("../temp/cell_l2.xml");
+        File nml2File = new File("../temp/cell2.xml");
 
-           /*
+        /*
 
-           System.out.println("Cell details: " + CellTopologyHelper.printDetails(cell, null));
+        System.out.println("Cell details: " + CellTopologyHelper.printDetails(cell, null));
 
-           logger.logComment("Saving the file as: " + neuroMLFile.getAbsolutePath());
+        logger.logComment("Saving the file as: " + neuroMLFile.getAbsolutePath());
 
-           MorphMLConverter.saveCellInNeuroMLFormat(cell, neuroMLFile, NeuroMLConstants.NeuroMLLevel_2);
-           */
+        MorphMLConverter.saveCellInNeuroMLFormat(cell, neuroMLFile, NeuroMLConstants.NeuroMLLevel_2);
+        */
 
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l1File, NeuroMLLevel.NEUROML_LEVEL_1, NeuroMLVersion.NEUROML_VERSION_1);
-          System.out.println("Saved MML file as: " + nml_l1File.getCanonicalPath());
+       MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l1File, NeuroMLLevel.NEUROML_LEVEL_1, NeuroMLVersion.NEUROML_VERSION_1);
+       System.out.println("Saved MML file as: " + nml_l1File.getCanonicalPath());
 
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l2File, NeuroMLLevel.NEUROML_LEVEL_2, NeuroMLVersion.NEUROML_VERSION_1);
-          System.out.println("Saved MML file as: " + nml_l2File.getCanonicalPath());
-          
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.getLatestVersion());
-          System.out.println("Saved MML file as: " + nml2File.getCanonicalPath());
+       MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l2File, NeuroMLLevel.NEUROML_LEVEL_2, NeuroMLVersion.NEUROML_VERSION_1);
+       System.out.println("Saved MML file as: " + nml_l2File.getCanonicalPath());
+
+       MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.getLatestVersion());
+       System.out.println("Saved MML file as: " + nml2File.getCanonicalPath());
 
 
-
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
     }
 
 }

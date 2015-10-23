@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.util.*;
+import org.lemsml.jlems.core.sim.LEMSException;
 import org.lemsml.jlems.core.sim.Sim;
 import org.lemsml.jlems.core.type.Component;
 import org.lemsml.jlems.core.type.QuantityReader;
@@ -782,7 +783,7 @@ public class NeuroMLFileManager
 
                 for (String cellMech : cellMechs)
                 {
-                    String mechExtension = lastExtension;
+                    String mechExtension;
 
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
 
@@ -830,10 +831,12 @@ public class NeuroMLFileManager
                                     if (comp.getComponentType().isOrExtends("basePyNNCell"))
                                         pynnCellsPresent = true;
                                 }
-                                catch (Exception ce)
+                                catch (IOException ce)
                                 {
                                     throw new IOException("Problem reading LEMS description...", ce);
-                                    // Ignore, assume it's not a valid LEMS file...
+                                } catch (LEMSException ce)
+                                {
+                                    throw new IOException("Problem reading LEMS description...", ce);
                                 } 
                              }
 
@@ -1118,14 +1121,13 @@ public class NeuroMLFileManager
             ArrayList<SimpleXMLElement> outputFilesAdded = new ArrayList<SimpleXMLElement>();
 
             String timescale;
-            float xscale = 1;
-            float yscale = 1;
+            float xscale;
+            float yscale;
 
             if (preferredUnits==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) 
             {
                 timescale = "1ms";
                 xscale = 1;
-                yscale = 1;
             }
             else
             {
@@ -1459,7 +1461,10 @@ public class NeuroMLFileManager
                             Thread.sleep(5000);
                             GuiUtils.showImage(imageFile);
                         }
-                        catch (Exception ex)
+                        catch (FileNotFoundException ex)
+                        {
+                            GuiUtils.showErrorMessage(logger, "Problem displaying file: " + imageFile, ex, null);
+                        } catch (InterruptedException ex)
                         {
                             GuiUtils.showErrorMessage(logger, "Problem displaying file: " + imageFile, ex, null);
                         }
@@ -1479,12 +1484,12 @@ public class NeuroMLFileManager
                 chanMech.getExtraParameters().size() > 0 && 
                 !(chanMech.getExtraParameters().size()==1 && (chanMech.getExtraParameters().get(0).isReversalPotential()))) {
 
-                System.out.println("--- Handling: "+cm+", for "+cell.getInstanceName()+", "+chanMech.getExtraParameters());
+                System.out.println("---------- Handling: "+cm+", for "+cell.getInstanceName()+", "+chanMech.getExtraParameters());
 
                 String newMechName = chanMech.getNML2Name();
                 File epFile = new File(generateDir, newMechName + extraExtn + ".nml");
 
-                String newContents = new String(origContents);
+                String newContents = origContents;
 
                 if (cm.isIonConcMechanism()) {
                     for (MechParameter mp : chanMech.getExtraParameters()) {
@@ -1513,23 +1518,25 @@ public class NeuroMLFileManager
                     newContents = newContents.replaceAll("</ComponentType>", "</ComponentType>-->");
                 } else if (cm.isChannelMechanism()) {
                     for (MechParameter mp : chanMech.getExtraParameters()) {
-                        String match = mp.getName()+"\" dimension=\"none\" value=\"";
-                        int startMatch = newContents.indexOf(match);
-                        if (startMatch<0) {
-                            throw new NeuroMLException("Problem substituting values for extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
-                                    + "Not found:  "+startMatch+"\n---------------------\n"+newContents+"\n---------------------\n");
+                        if (!mp.getName().equals("erev")) {
+                            String match = mp.getName()+"\" dimension=\"none\" value=\"";
+                            int startMatch = newContents.indexOf(match);
+                            if (startMatch<0) {
+                                throw new NeuroMLException("Problem substituting values for the extra parameters "+chanMech.getExtraParamsBracket()+" in cell mechanism ("+cm+")\n"
+                                        + "Not found:  ("+match+")\n---------------------\n"+newContents+"\n---------------------\n");
+                            }
+                            int startVal = startMatch + match.length();
+                            int endVal = newContents.indexOf("\"", startVal);
+                            String origVal = newContents.substring(startVal, endVal);
+                            String newVal = mp.getValue()+"";
+
+                            newContents = newContents.replaceAll(match+origVal, match+newVal);
+
+                            // Rename the component to the suffixed name
+                            newContents = newContents.replaceAll("id=\""+chanMech.getName()+"\"", "id=\""+newMechName+"\"");
+                            newContents = newContents.replaceAll("name=\""+chanMech.getName()+"_",  "name=\""+newMechName+"_");
+                            newContents = newContents.replaceAll("type=\""+chanMech.getName()+"_",  "type=\""+newMechName+"_");
                         }
-                        int startVal = startMatch + match.length();
-                        int endVal = newContents.indexOf("\"", startVal);
-                        String origVal = newContents.substring(startVal, endVal);
-                        String newVal = mp.getValue()+"";
-
-                        newContents = newContents.replaceAll(match+origVal, match+newVal);
-
-                        // Rename the component to the suffixed name
-                        newContents = newContents.replaceAll("id=\""+chanMech.getName()+"\"", "id=\""+newMechName+"\"");
-                        newContents = newContents.replaceAll("name=\""+chanMech.getName()+"_",  "name=\""+newMechName+"_");
-                        newContents = newContents.replaceAll("type=\""+chanMech.getName()+"_",  "type=\""+newMechName+"_");
 
                     }
                 }
@@ -1544,7 +1551,7 @@ public class NeuroMLFileManager
                 newContents = newContents.replace("<neuroml ", info+"<neuroml ");
 
                 GeneralUtils.writeShortFile(epFile, newContents);
-                System.out.println("Written: "+epFile.getAbsolutePath()+"\n---------------------\n"+newContents+"\n---------------------\n");
+                //System.out.println("Written: "+epFile.getAbsolutePath()+"\n---------------------\n"+newContents+"\n---------------------\n");
                 epFiles.add(epFile);
             }
         }
@@ -1787,6 +1794,7 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("Thalamocortical"))
             {
                 simConf = "TestNML2";
+                //simConf = "Cell2-suppyrFRB-FigA1FRB";
                 lo = LemsOption.LEMS_WITHOUT_EXECUTE_MODEL; // To get the LEMS_... file
             }
 
