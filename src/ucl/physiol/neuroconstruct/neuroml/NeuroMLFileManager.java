@@ -1731,6 +1731,7 @@ public class NeuroMLFileManager
             projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
             projFile = new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml");
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+            projFile = new File("osb/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
 
 
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
@@ -1782,6 +1783,11 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("TestNetworkML"))
             {
                 simConf = "OneStimmed";
+            }
+            else if (projFile.getName().startsWith("Thalamocortical"))
+            {
+                simConf = "TestNML2";
+                lo = LemsOption.LEMS_WITHOUT_EXECUTE_MODEL; // To get the LEMS_... file
             }
 
 
