@@ -1627,28 +1627,31 @@ public class MorphMLConverter extends FormatImporter
                Enumeration<IonProperties> e = cell.getIonPropertiesVsGroups().keys();
                ArrayList<IonProperties> ea = GeneralUtils.getOrderedList(e, true);
                
-               //System.out.println("cell.getIonPropertiesVsGroups(): "+cell.getIonPropertiesVsGroups());
+               //System.out.println(cell.getInstanceName()+": cell.getIonPropertiesVsGroups(): "+cell.getIonPropertiesVsGroups());
                for (IonProperties ip: ea)
                {
-
-                    SimpleXMLElement ionPropEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.ION_PROPS_ELEMENT);
-                    ionPropEl.addAttribute(BiophysicsConstants.ION_PROPS_NAME_ATTR, ip.getName());
-
-                    if (!nml2)
-                    {
-                        intraCellPropsElement.addContent("\n\n                ");
-                        intraCellPropsElement.addChildElement(ionPropEl);
-                        intraCellPropsElement.addContent("\n            ");
-                    }
-                    else
-                    {
-                        //ionPropEl = ionSpeciesV2.get(ip.getName());
-                    }
+                   //System.out.println("  Adding " +ip);
 
                     Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
+                    //System.out.println("  grps "+groups);
 
                     for(String grp: groups)
                     {
+
+                        SimpleXMLElement ionPropEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.ION_PROPS_ELEMENT);
+                        ionPropEl.addAttribute(BiophysicsConstants.ION_PROPS_NAME_ATTR, ip.getName());
+
+                        if (!nml2)
+                        {
+                            intraCellPropsElement.addContent("\n\n                ");
+                            intraCellPropsElement.addChildElement(ionPropEl);
+                            intraCellPropsElement.addContent("\n            ");
+                        }
+                        else
+                        {
+                            //ionPropEl = ionSpeciesV2.get(ip.getName());
+                        }
+                    
                         SimpleXMLElement grpEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.GROUP_ELEMENT);
                         grpEl.addContent(grp);
 
