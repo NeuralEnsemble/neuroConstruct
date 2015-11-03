@@ -670,13 +670,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JButton jButtonNeuroML1Export = new JButton();
     JButton jButtonNeuroML2aExport = new JButton();
-    JButton jButtonNeuroML2bExport = new JButton();
+    
+    JButton jButtonNeuroML2bExportNoRun = new JButton();
+    JButton jButtonNeuroML2bExportjNeuroML = new JButton();
+    JButton jButtonNeuroML2bExportjnmlNeuron = new JButton();
+    JButton jButtonNeuroML2ExportjnmlGraph = new JButton();
 
     JCheckBox jCheckBoxSedMl = new JCheckBox("Include SED-ML");
 
-    JButton jButtonNeuroML2Lems = new JButton();
-    JButton jButtonNeuroML2Graph = new JButton();
-    JButton jButtonNeuroML2NineML = new JButton();
+    //JButton jButtonNeuroML2Lems = new JButton();
+    ///JButton jButtonNeuroML2NineML = new JButton();
     
     JRadioButton jRadioButtonNeuroMLLevel1 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel2 = new JRadioButton();
@@ -1358,12 +1361,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             }
         });
-        jButtonNeuroML2bExport.setEnabled(false);
-        jButtonNeuroML2bExport.setText("Export all to NeuroML v"+NeuroMLVersion.getLatestVersion());
+        
+        jButtonNeuroML2bExportNoRun.setEnabled(false);
+        jButtonNeuroML2bExportNoRun.setText("Export to NeuroML v"+NeuroMLVersion.getLatestVersion()+"");
 
-        jButtonNeuroML2bExport.setToolTipText("<html>...</html>");
+        jButtonNeuroML2bExportNoRun.setToolTipText("<html>Export to v"+NeuroMLVersion.getLatestVersion()+", but don't run in any simulator</html>");
 
-        jButtonNeuroML2bExport.addActionListener(new java.awt.event.ActionListener()
+        jButtonNeuroML2bExportNoRun.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.getLatestVersion(), LemsOption.LEMS_WITHOUT_EXECUTE_MODEL);
+                    //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
+
+            }
+        });
+
+        jButtonNeuroML2bExportjNeuroML.setEnabled(false);
+        jButtonNeuroML2bExportjNeuroML.setText("Export to NeuroML v"+NeuroMLVersion.getLatestVersion()+"; run with jNeuroML");
+
+        jButtonNeuroML2bExportjNeuroML.setToolTipText("<html>Generate NeuroML 2 Components for the structure of the network and execute using jNeuroML</html>");
+
+        jButtonNeuroML2bExportjNeuroML.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
@@ -1373,49 +1393,38 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             }
         });
+        
 
-        jButtonNeuroML2Lems.setEnabled(false);
-        jButtonNeuroML2Lems.setText("Generate NeuroML v2alpha & run with LEMS");
+        jButtonNeuroML2bExportjnmlNeuron.setEnabled(false);
+        jButtonNeuroML2bExportjnmlNeuron.setText("Export to NeuroML v"+NeuroMLVersion.getLatestVersion()+"; generate NEURON & execute");
 
-        jButtonNeuroML2Lems.setToolTipText("<html>Generate NeuroML 2 Components for the structure of the network and execute using the LEMS interpreter</html>");
+        jButtonNeuroML2bExportjnmlNeuron.setToolTipText("<html>Generate NeuroML 2 Components for the structure of the network, convert to NEURON using jNeuroML, execute model in NEURON</html>");
 
-        jButtonNeuroML2Lems.addActionListener(new java.awt.event.ActionListener()
+        jButtonNeuroML2bExportjnmlNeuron.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
 
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.EXECUTE_MODEL);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.getLatestVersion(), LemsOption.GENERATE_NEURON);
                     //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
 
             }
         });
 
-        jButtonNeuroML2Graph.setEnabled(false);
-        jButtonNeuroML2Graph.setText("Generate Graph of network");
+        /*
+        jButtonNeuroML2ExportjnmlGraph.setEnabled(false);
+        jButtonNeuroML2ExportjnmlGraph.setText("Generate Graph of network");
 
 
-        jButtonNeuroML2Graph.addActionListener(new java.awt.event.ActionListener()
+        jButtonNeuroML2ExportjnmlGraph.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.GENERATE_GRAPH);
 
             }
-        });
+        });*/
 
-        jButtonNeuroML2NineML.setEnabled(false);
-        jButtonNeuroML2NineML.setText("Generate NineML v0.1 equivalent of network");
-
-
-        jButtonNeuroML2NineML.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.GENERATE_NINEML);
-
-                refreshTabNeuroML();
-            }
-        });
         
 
 
@@ -2326,8 +2335,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //nmlV2.add(jButtonNeuroML2aExport);
         //nmlV2.add(jButtonNeuroML2Lems);
-        nmlV2.add(jButtonNeuroML2bExport);
-        nmlV2.add(jButtonNeuroML2Graph);
+        nmlV2.add(jButtonNeuroML2bExportNoRun);
+        nmlV2.add(jButtonNeuroML2bExportjNeuroML);
+        nmlV2.add(jButtonNeuroML2bExportjnmlNeuron);
         
         
         nmlV2.add(jRadioButtonNMLSI);
@@ -3112,9 +3122,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         ArrayList<NativeCodeLocation> hocLocs = NativeCodeLocation.getAllKnownLocations();
 
-        for (int i = 0; i < hocLocs.size(); i++)
+        for (NativeCodeLocation hocLoc : hocLocs)
         {
-            jComboBoxNeuronExtraBlocks.addItem(hocLocs.get(i));
+            jComboBoxNeuronExtraBlocks.addItem(hocLoc);
         }
 
         jComboBoxGenesisExtraBlocks.setEnabled(false);
@@ -3130,9 +3140,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         ArrayList<ScriptLocation> scriptlocs = ScriptLocation.getAllKnownLocations();
 
-        for (int i = 0; i < scriptlocs.size(); i++)
+        for (ScriptLocation scriptloc : scriptlocs)
         {
-            jComboBoxGenesisExtraBlocks.addItem(scriptlocs.get(i));
+            jComboBoxGenesisExtraBlocks.addItem(scriptloc);
         }
 
 
@@ -6860,10 +6870,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             projManager.getCurrentProject().genesisFileManager.generateTheGenesisFiles(this.getSelectedSimConfig(), multiRunManager, mc, seed);
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
 
+            return;
+        } catch (GenesisException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
+            
             return;
         }
 
@@ -7229,10 +7244,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             
             projManager.getCurrentProject().pynnFileManager.generateThePynnFiles(this.getSelectedSimConfig(), sim, seed);
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
 
+            return;
+        } catch (PynnException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
+            
             return;
         }
         
@@ -10196,10 +10216,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        {
            jButtonNeuroML1Export.setEnabled(false);
            jButtonNeuroML2aExport.setEnabled(false);
-           jButtonNeuroML2bExport.setEnabled(false);
-           jButtonNeuroML2Lems.setEnabled(false);
-           jButtonNeuroML2Graph.setEnabled(false);
-           jButtonNeuroML2NineML.setEnabled(false);
+           jButtonNeuroML2bExportNoRun.setEnabled(false);
+           jButtonNeuroML2bExportjNeuroML.setEnabled(false);
+           jButtonNeuroML2bExportjnmlNeuron.setEnabled(false);
+           
            //jButtonNeuroMLExportLevel2.setEnabled(false);
            //jButtonNeuroMLExportCellLevel3.setEnabled(false);
            //jButtonNeuroMLExportNetLevel3.setEnabled(false);
@@ -10214,10 +10234,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        {
            jButtonNeuroML1Export.setEnabled(true);
            jButtonNeuroML2aExport.setEnabled(true);
-           jButtonNeuroML2bExport.setEnabled(true);
-           jButtonNeuroML2Lems.setEnabled(true);
-           jButtonNeuroML2Graph.setEnabled(true);
-           jButtonNeuroML2NineML.setEnabled(true);
+           jButtonNeuroML2bExportNoRun.setEnabled(true);
+           jButtonNeuroML2bExportjNeuroML.setEnabled(true);
+           jButtonNeuroML2bExportjnmlNeuron.setEnabled(true);
            //jButtonNeuroMLExportLevel2.setEnabled(true);
            //jButtonNeuroMLExportCellLevel3.setEnabled(true);
          //  jButtonNeuroMLExportNetLevel3.setEnabled(true);
@@ -13392,7 +13411,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 {
                     GuiUtils.showErrorMessage(logger, "Problem comparing the Cell", ex2, this);
 
-                    return;
                 }
             }
 
@@ -13736,7 +13754,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                                                       mc,
                                                                                       1234,
                                                                                       genSingleFile,
-                                                                                      nCannots, neuroMLDir, units, false);
+                                                                                      nCannots, 
+                                                                                      neuroMLDir, 
+                                                                                      units, 
+                                                                                      false);
 
             if (jCheckBoxSedMl.isSelected())
             {
@@ -14759,12 +14780,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        if (cellMechanismName.indexOf(" ")>=0 ||
-            cellMechanismName.indexOf(".")>=0 ||
-            cellMechanismName.indexOf(",")>=0 ||
-            cellMechanismName.indexOf("-")>=0 ||
-            cellMechanismName.indexOf("/")>=0 ||
-            cellMechanismName.indexOf("\\")>=0)
+        if (cellMechanismName.contains(" ") ||
+            cellMechanismName.contains(".") ||
+            cellMechanismName.contains(",") ||
+            cellMechanismName.contains("-") ||
+            cellMechanismName.contains("/") ||
+            cellMechanismName.contains("\\"))
         {
             GuiUtils.showErrorMessage(logger,
                                       "Please type a Cell Mechanism name with just "

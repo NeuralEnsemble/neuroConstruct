@@ -1378,6 +1378,10 @@ public class NeuroMLFileManager
             {
                 runScript.append(" -neuron");
             }
+            else if (lemsOption.equals(LemsOption.GENERATE_RUN_NEURON))
+            {
+                runScript.append(" -neuron -run -nogui");
+            }
 
             if (runInBackground)
             {
@@ -1794,7 +1798,7 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("Thalamocortical"))
             {
                 simConf = "TestNML2";
-                //simConf = "Cell2-suppyrFRB-FigA1FRB";
+                simConf = "Cell2-suppyrFRB-FigA1FRB";
                 lo = LemsOption.LEMS_WITHOUT_EXECUTE_MODEL; // To get the LEMS_... file
             }
 

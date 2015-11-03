@@ -142,6 +142,14 @@ public class LemsConstants
             {
                 return "Generate NEURON scripts";
             }
+        },
+        GENERATE_RUN_NEURON
+        {
+            @Override
+            public String toString()
+            {
+                return "Generate and run NEURON scripts";
+            }
         };
 
         public boolean doSomething()
