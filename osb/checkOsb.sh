@@ -220,6 +220,7 @@ standardGHProject 'Brunel2000' 'cerebral_cortex/networks'
 standardGHProject 'VogelsEtAl2011' 'cerebral_cortex/networks'
 standardGHProject 'PospischilEtAl2008' 'cerebral_cortex/multiple'
 standardGHProject 'WeilerEtAl08-LaminarCortex' 'cerebral_cortex/networks'
+standardGHProject 'PotjansDiesmann2014' 'cerebral_cortex/networks'
 
 cd $startDir
 

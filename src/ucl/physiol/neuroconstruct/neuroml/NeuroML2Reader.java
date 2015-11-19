@@ -383,8 +383,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         int preSeg = conn.getPreSegmentId();
                         int postSeg = conn.getPostSegmentId();
 
-                        float preFract = (float)conn.getPreFractionAlong();
-                        float postFract = (float)conn.getPostFractionAlong();
+                        float preFract = (new Double(conn.getPreFractionAlong())).floatValue();
+                        float postFract = (new Double(conn.getPostFractionAlong())).floatValue();
 
                         this.netConns.addSynapticConnection(netConn, 
                                                             GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
