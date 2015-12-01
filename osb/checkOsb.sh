@@ -159,6 +159,7 @@ standardGHProject 'NEURONShowcase' 'showcase'
 standardGHProject 'SBMLShowcase' 'showcase'
 standardGHProject 'BrianShowcase' 'showcase'
 standardGHProject 'BlueBrainProjectShowcase' 'showcase'
+standardGHProject 'AllenInstituteNeuroML' 'showcase'
 
 standardGHProject 'CSAShowcase' 'showcase'
 standardGHProject 'neuroConstructShowcase' 'showcase'
