@@ -161,6 +161,9 @@ standardGHProject 'BrianShowcase' 'showcase'
 standardGHProject 'BlueBrainProjectShowcase' 'showcase'
 standardGHProject 'AllenInstituteNeuroML' 'showcase'
 
+standardGHProject 'FitzHugh-Nagumo' 'generic'
+standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
+
 standardGHProject 'CSAShowcase' 'showcase'
 standardGHProject 'neuroConstructShowcase' 'showcase'
 standardGHProject 'osb_vfb_showcase' 'showcase' 'jefferis'
@@ -174,8 +177,11 @@ standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
 standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 
+
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 standardGHProject 'FergusonEtAl2014-CA1PyrCell' 'hippocampus/CA1_pyramidal_neuron'
+standardGHProject 'PinskyRinzelModel' 'hippocampus/CA3_pyramidal_neuron'
+
 standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
 standardBBProject 'dentate' 'dentate_gyrus/networks' 'mbezaire'
 standardBBProject 'nc_ca1' 'hippocampus/networks' 'mbezaire'
@@ -203,6 +209,7 @@ standardGHProject 'GranCellLayer' 'cerebellum/networks'
 standardGHProject 'VervaekeEtAl-GolgiCellNetwork' 'cerebellum/networks'
 standardGHProject 'Cerebellum3DDemo' 'cerebellum/networks'
 standardGHProject 'GranularLayerSolinasNieusDAngelo2010' 'cerebellum/networks'
+standardGHProject 'BillingsEtAl2014_GCL_Models' 'cerebellum/networks' 'epiasini'
 
 standardGHProject 'MainenEtAl_PyramidalCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'RothmanEtAl_KoleEtAl_PyrCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
@@ -216,6 +223,9 @@ standardGHProject 'dLGNinterneuronHalnesEtAl2011' 'thalamus/lgn_interneuron'
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
 standardGHProject 'V1NetworkModels' 'cerebral_cortex/networks'
+
+standardGHProject 'VERTEXShowcase' 'cerebral_cortex/networks'
+
 standardGHProject 'ACnet2' 'cerebral_cortex/networks'
 standardGHProject 'Brunel2000' 'cerebral_cortex/networks'
 standardGHProject 'VogelsEtAl2011' 'cerebral_cortex/networks'

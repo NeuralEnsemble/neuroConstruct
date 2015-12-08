@@ -25,6 +25,7 @@ osb/showcase
 osb/dentate*
 osb/olfactory*
 osb/thalamus
+osb/generic
 
 logs/*.log
 logs/*.txt
