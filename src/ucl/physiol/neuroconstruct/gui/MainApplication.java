@@ -40,6 +40,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import org.python.util.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
+import ucl.physiol.neuroconstruct.cell.converters.*;
 
 /**
  * Starts the main neuroConstruct application

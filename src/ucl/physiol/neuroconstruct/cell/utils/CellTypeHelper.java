@@ -31,6 +31,8 @@ import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.cell.converters.GenesisMorphReader;
+import ucl.physiol.neuroconstruct.cell.converters.NeuronMorphReader;
 
 
 /**

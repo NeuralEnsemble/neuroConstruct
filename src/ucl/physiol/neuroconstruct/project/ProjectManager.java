@@ -43,7 +43,7 @@ import javax.xml.transform.stream.*;
 import javax.xml.validation.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.cell.converters.MorphMLConverter;
+import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.genesis.GenesisException;
