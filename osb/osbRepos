@@ -1,4 +1,8 @@
 
+BlueBrainProjectShowcase showcase -
+AllenInstituteNeuroML showcase -
+neuroConstructShowcase showcase -
+
 PyloricNetwork invertebrate lobster 
 MorrisLecarModel invertebrate barnacle
 Drosophila_Projection_Neuron invertebrate drosophila
@@ -20,11 +24,20 @@ PurkinjeCell cerebellum cerebellar_purkinje_cell
 
 GranCellLayer cerebellum networks
 VervaekeEtAl-GolgiCellNetwork cerebellum networks
+Cerebellum3DDemo cerebellum networks
 
 MainenEtAl_PyramidalCell cerebral_cortex neocortical_pyramidal_neuron
 RothmanEtAl_KoleEtAl_PyrCell cerebral_cortex neocortical_pyramidal_neuron
 L5bPyrCellHayEtAl2011 cerebral_cortex neocortical_pyramidal_neuron
+LarkumEtAl2009 cerebral_cortex neocortical_pyramidal_neuron
+FarinellaEtAl_NMDAspikes cerebral_cortex neocortical_pyramidal_neuron
+korngreen-pyramidal cerebral_cortex neocortical_pyramidal_neuron
+SmithEtAl2013-L23DendriticSpikes cerebral_cortex neocortical_pyramidal_neuron
+
 
 IzhikevichModel cerebral_cortex networks
 Thalamocortical cerebral_cortex networks
 Brunel2000 cerebral_cortex networks
+ACnet2 cerebral_cortex networks
+PospischilEtAl2008 cerebral_cortex networks
+VogelsEtAl2011 cerebral_cortex networks
