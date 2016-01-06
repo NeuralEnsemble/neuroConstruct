@@ -607,18 +607,11 @@ public class MorphMLConverter extends FormatImporter
                         segGroupElement.addContent("\n            ");
                         segGroupElement.addComment("This 'Section' has number of internal divisions (nseg) = "+nextSection.getNumberInternalDivisions());
                         
-                        
-                        SimpleXMLElement annotation = new SimpleXMLElement(MetadataConstants.ANNOTATION_ELEMENT_V2);
-                        segGroupElement.addContent("\n                ");
-                        segGroupElement.addChildElement(annotation);
-                        MetadataConstants.addProperty(annotation,
+                        MetadataConstants.addProperty(segGroupElement,
                                                   MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP_V2,
                                                   nextSection.getNumberInternalDivisions()+"",
-                                                  "                    ",
+                                                  "                ",
                                                   version);
-                        annotation.addContent("                ");
-                        
-                        segGroupElement.addContent("\n            ");
                         
                     }
                     
@@ -1017,6 +1010,13 @@ public class MorphMLConverter extends FormatImporter
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PERMEABILITY_ATTR_V2,
                                             permeability + " " + permeabilityUnit.getNeuroML2Symbol()));
                                 } else {
+                                    if (condDens<0) {
+                                        GuiUtils.showWarningMessage(logger, "The conductance density for channel mechanism: "+chanMech+"\n"
+                                            + "is negative. This convention is usually used in neuroConstruct to specify that a mechanism should be placed on a \n"
+                                            + "large group of sections in the cell, which all share the same extra parameters (e.g. voltage shift, erev), and that\n"
+                                            + "sub groups of this will have different conductance densities. This convention is not currently supported in NML2 however.\n\n"
+                                            + "It is better to explicitly state the conductance density & extra parameters for each sub group.", null);
+                                    }
                                     mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.COND_DENS_ATTR_V2,
                                             condDens + " " + condDensUnit.getNeuroML2Symbol()));

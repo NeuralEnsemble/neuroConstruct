@@ -2337,7 +2337,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //nmlV2.add(jButtonNeuroML2Lems);
         nmlV2.add(jButtonNeuroML2bExportNoRun);
         nmlV2.add(jButtonNeuroML2bExportjNeuroML);
-        nmlV2.add(jButtonNeuroML2bExportjnmlNeuron);
+        //nmlV2.add(jButtonNeuroML2bExportjnmlNeuron);
         
         
         nmlV2.add(jRadioButtonNMLSI);

@@ -60,7 +60,7 @@ public class GenesisFileManagerTest
     }
     
 
-
+/*
     @Test public void testGenerateMooseScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
         assumeTrue(MainTest.testMOOSE());
@@ -68,7 +68,7 @@ public class GenesisFileManagerTest
         System.out.println("---  testGenerateMooseScripts...");
 
         generateScripts(true);
-    }
+    }*/
 
     @Test public void testGenerateGenesisScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {

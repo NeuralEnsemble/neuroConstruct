@@ -583,7 +583,7 @@ class SimulationManager():
 
         self.updateSimsRunning()
 
-        self.printver( "Trying to check simulations: %s against: %s, with threshold: %s" % (str(self.allFinishedSims), str(spikeTimesToCheck), str(threshold)))
+        self.printver( "Trying to check simulations: %s against: %s, with a threshold: %s" % (str(self.allFinishedSims), str(spikeTimesToCheck), str(threshold)))
 
         report = ""
         numPassed = 0
@@ -605,7 +605,7 @@ class SimulationManager():
 
                 for dataStore in simData.getAllLoadedDataStores():
 
-                    self.printver("Checking dataStore: "+str(dataStore))
+                    self.printver("Checking dataStore: "+str(dataStore)+" ("+dataStore.getCellSegRef()+")")
                     ds = simData.getDataSet(dataStore.getCellSegRef(), dataStore.getVariable(), False)
 
                     if dataStore.getVariable() == SimPlot.VOLTAGE:
