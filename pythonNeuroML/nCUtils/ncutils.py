@@ -51,6 +51,29 @@ from ucl.physiol.neuroconstruct.pynn.PynnFileManager import PynnSimulator
 from ucl.physiol.neuroconstruct.neuroml import NeuroMLFileManager
 
 
+def loadMepFile(mepFile):
+    # Load an OMV mep file, see https://github.com/OpenSourceBrain/osb-model-validation
+    spike_times = {}
+    mep_file = open(mepFile)
+    exp_name = ""
+    for line in mep_file:
+        line = line.strip()
+        if line.startswith('system:'):
+            pass
+        elif line.startswith('expected:'):
+            pass
+        elif line.startswith('spike times: ['):
+            times = line[14:-1].split(',')
+            tt = []
+            for time in times:
+                tt.append(float(time.strip()))
+            spike_times[exp_name] = tt
+        else:
+            exp_name = line[:-1]
+    return spike_times
+                
+    
+
 def generateNeuroML2(projFile, 
                      simConfigs, 
                      neuroConstructSeed = 1234,
