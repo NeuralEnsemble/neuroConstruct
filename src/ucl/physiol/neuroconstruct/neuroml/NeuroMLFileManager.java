@@ -779,8 +779,8 @@ public class NeuroMLFileManager
                     }
                 }
 
-                logger.logComment("cellMechs: " + cellMechs, true);
-                logger.logComment("cellMechFilesHandled: " + cellMechFilesHandled, true);
+                logger.logComment("cellMechs: " + cellMechs);
+                logger.logComment("cellMechFilesHandled: " + cellMechFilesHandled);
                 
                 for (String cellMech : cellMechs)
                 {
