@@ -1438,8 +1438,48 @@ public class MorphMLConverter extends FormatImporter
 
                 if (nml2)
                 {
+                    double spikeThresh = -0;
+                    Double uniqueThresh = Double.NaN;
+                    ArrayList<String> cellGroupsWithCell = new ArrayList<String>();
+                    for (String cellGroup: project.generatedCellPositions.getNonEmptyCellGroups())
+                    {
+                        if(project.cellGroupsInfo.getCellType(cellGroup).equals(cell.getInstanceName())) 
+                        {
+                            cellGroupsWithCell.add(cellGroup);
+                        }
+                    }
+                    logger.logComment("cellGroupsWithCell: "+cell+" " + cellGroupsWithCell);
+                    for (String netConn: project.generatedNetworkConnections.getNamesNonEmptyNetConns()) 
+                    {
+                        Vector<SynapticProperties> syns = new Vector<SynapticProperties>();
+                        if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConn) &&
+                            cellGroupsWithCell.contains(project.morphNetworkConnectionsInfo.getSourceCellGroup(netConn))) {
+                            syns.addAll(project.morphNetworkConnectionsInfo.getSynapseList(netConn));
+                        }
+                        if (project.volBasedConnsInfo.isValidVolBasedConn(netConn) &&
+                            cellGroupsWithCell.contains(project.volBasedConnsInfo.getSourceCellGroup(netConn))) {
+                            syns.addAll(project.volBasedConnsInfo.getSynapseList(netConn));
+                        }
+                        logger.logComment("syns: "+syns);
+                        for (SynapticProperties sp: syns) {
+                            spikeThresh = sp.getThreshold();
+                            if (uniqueThresh.isNaN())
+                                uniqueThresh = spikeThresh;
+                            else 
+                            {
+                                if (spikeThresh!=uniqueThresh) {
+                                    throw new NeuroMLException("Error in export to NeuroML2. There are multiple different values for the spiking threshold\n"
+                                        + "in the various network connections using cell "+cell.getInstanceName()+", e.g. "+spikeThresh+" for "+netConn+
+                                        ", "+uniqueThresh+" elsewhere...\n\nNeuroML2 currently specifies the spike threshold as a property of the cell so this needs\n"
+                                        + "to be the same for all network connections.");
+                                    
+                                }
+                            }
+                        }
+                    }
                     SimpleXMLElement el = new SimpleXMLElement(BiophysicsConstants.SPIKE_THRESHOLD_v2);
-                    el.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR, 0+ " "+voltUnit.getNeuroML2Symbol()));
+                    
+                    el.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR, spikeThresh + " "+voltUnit.getNeuroML2Symbol()));
                     membPropsElement.addContent("\n\n                ");
                     membPropsElement.addChildElement(el);
                 }
@@ -2068,7 +2108,7 @@ public class MorphMLConverter extends FormatImporter
                         ionPropsSet = true;
                 }
                 if (!ionPropsSet) {
-                    GuiUtils.showWarningMessage(logger, "A species element will be added to the NeuroML2 exported cell for ion: "+ion+", "
+                    GuiUtils.showWarningMessage(logger, "A species element will be added to the NeuroML2 exported cell ("+cell.getInstanceName()+") for ion: "+ion+", "
                             + "which will specify a concentration model to manage the concentration changes.\n"
                             + " However, there are no ion properties (i.e. initial internal/external concentrations) set for "
                             + "the ion in this cell in neuroConstruct!", null);

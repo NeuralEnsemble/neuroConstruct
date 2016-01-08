@@ -27,9 +27,18 @@
 package ucl.physiol.neuroconstruct.cell;
  
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import ucl.physiol.neuroconstruct.cell.examples.*;
+import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
+import ucl.physiol.neuroconstruct.project.Project;
+import ucl.physiol.neuroconstruct.project.ProjectEventListener;
+import ucl.physiol.neuroconstruct.project.ProjectManager;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 
@@ -271,42 +280,6 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
         this.extraParameters.add(mp);
     }
 
-    public static void main(String[] args) throws CloneNotSupportedException
-    {
-        Cell cell = new SimpleCell("hh");
-
-
-        ChannelMechanism cm = new ChannelMechanism("na", 0);
-        ChannelMechanism cm2 = new ChannelMechanism("na", 0);
-
-        System.out.println("ChannelMechanism: "+ cm);
-        
-        MechParameter mp1 = new MechParameter("shift", -2.5f);
-        MechParameter mp2 = new MechParameter("aaa", 111);
-        cm.getExtraParameters().add(mp1);
-        cm2.getExtraParameters().add(mp2);
-        
-        cm.getExtraParameters().add(new MechParameter("a", 0));
-        cm.getExtraParameters().add(new MechParameter("b", 0));
-        cm.getExtraParameters().add(new MechParameter("c", 0));
-        cm.getExtraParameters().add(new MechParameter("d", 0));
-        
-        
-        System.out.println("ChannelMechanism: "+ cm);
-        System.out.println("ChannelMechanism: "+ cm.getUniqueName());
-        
-        
-        System.out.println("ChannelMechanism: "+ cm.hashCode());
-        
-        
-        ChannelMechanism cm3 = (ChannelMechanism)cm.clone();
-        
-        System.out.println("ChannelMechanism 3: "+ cm3);
-        System.out.println("ChannelMechanism 3: "+ cm3.hashCode());
-        
-
-
-    }
     public float getDensity()
     {
         return density;
@@ -356,6 +329,93 @@ public class ChannelMechanism implements Serializable, Comparable<ChannelMechani
     {
         this.extraParameters = params;
     }
+    
+    public boolean hasExtraParameters() 
+    {
+        return !this.extraParameters.isEmpty();
+    }
 
+    public static void main(String[] args)
+    {
+        try{
+            File projFile = new File("osb/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
+
+            Project proj = Project.loadProject(projFile, new ProjectEventListener()
+            {
+                public void tableDataModelUpdated(String tableModelName)
+                {};
+                public void tabUpdated(String tabName)
+                {};
+                public void cellMechanismUpdated()
+                {};
+
+            });
+            System.out.println("Project "+proj.getProjectFullFileName()+" loaded");
+            
+            String[] cells = new String[]{"DeepAxAx", "L23PyrFRB", "L23PyrRS_trim", "L5TuftedPyrRS", "nRT", "SupAxAx", "TCR", "DeepBasket", 
+                "L23PyrFRB_varInit", "L4SpinyStellate", "L6NonTuftedPyrRS", "pyrFRB_orig", "SupBasket", 
+                "DeepLTSInter", "L23PyrRS", "L5TuftedPyrIB", "nRT_minus75init", "SupLTSInter"};
+            //cells = new String[]{"SupAxAx", "L23PyrFRB"};
+            
+            for (String cellname: cells) {
+                Cell cell = proj.cellManager.getCell(cellname);
+                //System.out.println(CellTopologyHelper.printDetails(cell, proj, false, false, false));
+                System.out.println("----------------\nLooking at: "+cell);
+                HashSet<String> cadGroups = new HashSet<String>();
+                HashMap<String, ArrayList<MechParameter>> cmEp = new HashMap<String, ArrayList<MechParameter>>();
+                for (ChannelMechanism cm: cell.getAllUniformChanMechs(false)) {
+                    System.out.println("  Contains: "+cm+" on "+cell.getGroupsWithChanMech(cm));
+                    CellMechanism cellm = proj.cellMechanismInfo.getCellMechanism(cm.getName());
+                    if (cellm.isChannelMechanism() && cm.getDensity()<0) {
+                        System.out.println("    Negative...");
+                        cmEp.put(cm.getName(), cm.getExtraParameters());
+                    } 
+                    if (cm.getName().equals("cad"))
+                        cadGroups.addAll(cell.getGroupsWithChanMech(cm));
+                }
+                System.out.println("cmEp: "+cmEp);
+                for (ChannelMechanism cm: cell.getAllUniformChanMechs(false)) {
+                    CellMechanism cellm = proj.cellMechanismInfo.getCellMechanism(cm.getName());
+                    if (cmEp.containsKey(cm.getName())) {
+                        System.out.println("    Changing: "+cm);
+                        if (cm.getDensity()>0) {
+                            cm.setExtraParameters(cmEp.get(cm.getName()));
+                            System.out.println("    Now:      "+cm);
+                        } else {
+                            for (String grp: cell.getGroupsWithChanMech(cm)){
+                                cell.dissociateGroupFromChanMech(grp, cm);
+                                System.out.println("    Removed from group: "+grp);
+                            }
+                        }
+                        //cmEp.put(cm.getName(), cm.getExtraParameters());
+                    } 
+                }
+                
+                //System.out.println(CellTopologyHelper.printDetails(cell, proj, false, false, false));
+                
+                System.out.println(cell.getIonPropertiesVsGroups());
+                System.out.println(cadGroups);
+                if (!cell.getIonPropertiesVsGroups().containsKey("ca") && !cadGroups.isEmpty()) {
+                    for (String grp: cadGroups) {
+                        IonProperties ip = new IonProperties("ca", 1.0E-20f,2.0E-18f);
+                        cell.associateGroupWithIonProperties(grp, ip);
+                    }
+                }
+                System.out.println(cell.getIonPropertiesVsGroups());
+            }
+            
+            proj.markProjectAsEdited();
+            proj.saveProject();
+            System.out.println("Saved project");
+            
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        
+
+
+    }
 
 }

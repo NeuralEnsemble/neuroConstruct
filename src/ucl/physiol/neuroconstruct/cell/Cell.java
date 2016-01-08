@@ -1195,6 +1195,15 @@ public class Cell implements Serializable
         }
         return ips;
     }
+    
+    public boolean hasExtraParametersOnChannelMechanism(String chanMech) 
+    {
+        for (ChannelMechanism cm: chanMechsVsGroups.keySet()) {
+            if (cm.getName().equals(chanMech) && cm.hasExtraParameters())
+                return true;
+        }
+        return false;
+    }
 
 
     public ArrayList<ChannelMechanism> getChanMechsForGroup(String group)
