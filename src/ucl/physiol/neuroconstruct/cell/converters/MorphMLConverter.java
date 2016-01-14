@@ -2299,13 +2299,23 @@ public class MorphMLConverter extends FormatImporter
             {
                 HashMap<String, String> allChanMechsVsOrigName = new HashMap<String, String>();
                 
-                for (ChannelMechanism cm: cell.getChanMechsVsGroups().keySet()) {
+                for (ChannelMechanism cm: cell.getChanMechsVsGroups().keySet()) { 
                     String cmNml2Name = cm.getNML2Name();
                     if (!allChanMechsVsOrigName.containsKey(cmNml2Name))
                         allChanMechsVsOrigName.put(cmNml2Name, cm.getName());
                 }
+                
+
+                Set<VariableMechanism> varMechEnum = cell.getVarMechsVsParaGroups().keySet();
+                for (VariableMechanism vm: varMechEnum) 
+                {
+                    String cmNml2Name = vm.getNML2Name();
+                    if (!allChanMechsVsOrigName.containsKey(cmNml2Name))
+                        allChanMechsVsOrigName.put(cmNml2Name, vm.getName());
+                }
                 ArrayList<String> allChanMechs = new ArrayList<String>();
                 allChanMechs.addAll(allChanMechsVsOrigName.keySet());
+                
                 allChanMechs = (ArrayList<String>)GeneralUtils.reorderAlphabetically(allChanMechs, true);
 
                 for(String chan: allChanMechs)                    
