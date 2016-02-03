@@ -741,10 +741,21 @@ public class NeuroMLFileManager
 
             for (String netConn : project.generatedNetworkConnections.getNamesNonEmptyNetConns())
             {
-                for (SynapticProperties sp : project.morphNetworkConnectionsInfo.getSynapseList(netConn))
+                if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConn)) 
                 {
-                    synsToInc.add(sp.getSynapseType());
+                    for (SynapticProperties sp : project.morphNetworkConnectionsInfo.getSynapseList(netConn))
+                    {
+                        synsToInc.add(sp.getSynapseType());
 
+                    }
+                } 
+                else if (project.volBasedConnsInfo.isValidVolBasedConn(netConn))
+                {
+                    for (SynapticProperties sp : project.volBasedConnsInfo.getSynapseList(netConn))
+                    {
+                        synsToInc.add(sp.getSynapseType());
+
+                    }
                 }
             }
             ArrayList<String> synsInInputs = new ArrayList<String>();
@@ -1760,6 +1771,7 @@ public class NeuroMLFileManager
             projFile = new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml");
             projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             projFile = new File("osb/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
+            projFile = new File("osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl-GolgiCell.ncx");
             projFile = new File("osb/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
 
 
@@ -1822,7 +1834,12 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("GranCellLayer"))
             {
                 simConf = "TestSingleGranNet";
-                simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+                //simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+                lo = LemsOption.LEMS_WITHOUT_EXECUTE_MODEL; // To get the LEMS_... file
+            }
+            else if (projFile.getName().startsWith("SolinasEtAl"))
+            {
+                simConf = "TestNML2";
                 lo = LemsOption.LEMS_WITHOUT_EXECUTE_MODEL; // To get the LEMS_... file
             }
 

@@ -389,14 +389,12 @@ public class GeneratedNetworkConnections
 
         /** @todo Do this quicker with collections... */
         ArrayList<SingleSynapticConnection> allConns = new ArrayList<SingleSynapticConnection> ();
-        for (int i = 0; i < synConns.size(); i++)
+        for (SingleSynapticConnection conn : synConns)
         {
-            SingleSynapticConnection conn = synConns.get(i);
-
             if (conn.targetEndPoint.cellNumber == targetCellIndex)
             {
-                    allConns.add(conn);
-
+                allConns.add(conn);
+                
             }
         }
         return allConns;
@@ -866,12 +864,10 @@ public class GeneratedNetworkConnections
        
         SimpleXMLElement projectionsElement;
 
-
         boolean nml2 = version.isVersion2();
         boolean nml2betaPlus = version.isVersion2betaOrLater();
         //boolean nml2alpha = version.isVersion2alpha();
                 
-
         String metadataPrefix = MetadataConstants.PREFIX + ":";
         if (nml2) metadataPrefix = "";
 
@@ -986,7 +982,7 @@ public class GeneratedNetworkConnections
                 {
                     boolean useWDconn = false;
                     if (synConn.props!=null && synConn.props.size()>0)
-                        useWDconn = false;//true;
+                        useWDconn = true;
                     
                     if (nml2 && !nml2betaPlus)
                     {
@@ -1203,7 +1199,8 @@ public class GeneratedNetworkConnections
                         {
                             if (useWDconn) 
                             {
-                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_DELAY_ATTR, totalDelayMs + "ms"));
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_DELAY_ATTR, totalDelayMs 
+                                                                     + " " + UnitConverter.timeUnits[unitSystem].getNeuroML2Symbol()));
                                 connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_WEIGHT_ATTR, weight+""));
                             }
                             for (SimpleXMLElement projectionElement: projectionElements)  
@@ -1537,6 +1534,11 @@ public class GeneratedNetworkConnections
 
             for (NeuroMLVersion version: versions) {
                 ArrayList<SimpleXMLEntity> networkMLElements = gnc.getNeuroMLElements(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, false, version);
+
+                for (SimpleXMLEntity sxe: networkMLElements) {
+                    System.out.println("--- conns in "+version+":\n        "+sxe.getXMLString("", false));
+                }
+                networkMLElements = gnc.getNeuroMLElements(UnitConverter.GENESIS_SI_UNITS, false, version);
 
                 for (SimpleXMLEntity sxe: networkMLElements) {
                     System.out.println("--- conns in "+version+":\n        "+sxe.getXMLString("", false));
