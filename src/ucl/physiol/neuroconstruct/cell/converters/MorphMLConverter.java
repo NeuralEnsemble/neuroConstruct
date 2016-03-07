@@ -1002,6 +1002,9 @@ public class MorphMLConverter extends FormatImporter
                             //boolean addAtEndMembPropsElement = false;
 
                             SimpleXMLElement mechElement = null;
+                            if (cm.isPointProcess()){
+                                GuiUtils.showWarningMessage(logger, "Currently, point processes placed into cells (" + chanMech + ") cannot be exported to NeuroML2.", null);
+                            }
                             if (cm.isChannelMechanism()) {
                                 //addAtStartMembPropsElement = true;
 
@@ -1037,10 +1040,12 @@ public class MorphMLConverter extends FormatImporter
                                 intraCellPropsElement.addChildElement(mechElement);
 
                             }
-
-                            String comm = handleNml2ChannelDensityAttrs(project, cell, chanMech, mechElement, group, null, bioPrefix, ionSpeciesV2);
-                            boolean isNernst = comm!= null && comm.contains("Nernst");
-                            boolean isGHK = comm!= null && comm.contains("GHK");
+                            String comm = null;
+                            if(mechElement != null){
+                                comm = handleNml2ChannelDensityAttrs(project, cell, chanMech, mechElement, group, null, bioPrefix, ionSpeciesV2);
+                            }
+                            boolean isNernst = comm != null && comm.contains("Nernst");
+                            boolean isGHK = comm != null && comm.contains("GHK");
                             
                             comment  = comm;
                             if (!cm.isIonConcMechanism()) {
