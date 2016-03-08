@@ -1132,11 +1132,11 @@ public class GeneratedNetworkConnections
 
                         //UnitConverter.getTime(XXX, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)
                         float totalDelayMs = 0;
-                        float weight = 1;
+                        HashMap<String, Float> weights = new HashMap<String, Float>();
 
                         if (synConn.props!=null && synConn.props.size()>0)
                         {
-                            for (ConnSpecificProps prop:synConn.props)
+                            for (ConnSpecificProps prop: synConn.props)
                             {
                                 SimpleXMLElement propElement = new SimpleXMLElement(NetworkMLConstants.CONN_PROP_ELEMENT);
                                 if (!nml2)
@@ -1163,7 +1163,7 @@ public class GeneratedNetworkConnections
                                 } 
                                 else
                                 {
-                                    weight = prop.weight;
+                                    weights.put(prop.synapseType, prop.weight);
                                     
                                     totalDelayMs = totalDelayMs + (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem);
                                     totalDelayMs = totalDelayMs + (float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem);
@@ -1197,16 +1197,22 @@ public class GeneratedNetworkConnections
                         }
                         else
                         {
-                            if (useWDconn) 
+                            for (SimpleXMLElement projectionElement : projectionElements)  
                             {
-                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_DELAY_ATTR, totalDelayMs 
-                                                                     + " " + UnitConverter.timeUnits[unitSystem].getNeuroML2Symbol()));
-                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_WEIGHT_ATTR, weight+""));
-                            }
-                            for (SimpleXMLElement projectionElement: projectionElements)  
-                            {
+                                SimpleXMLElement connEl = new SimpleXMLElement(connElement.getName());
+                                for (SimpleXMLAttribute att: connElement.getAttributes())  {
+                                    connEl.addAttribute(att);
+                                }
+                                System.out.println("Weights: "+weights);
+                                if (useWDconn) 
+                                {
+                                    connEl.setOrAddAttributeValue(NetworkMLConstants.NEUROML2_DELAY_ATTR, totalDelayMs
+                                        + " " + UnitConverter.timeUnits[unitSystem].getNeuroML2Symbol());
+                                    connEl.setOrAddAttributeValue(NetworkMLConstants.NEUROML2_WEIGHT_ATTR, weights.get(projectionElement.getAttributeValue(NetworkMLConstants.NEUROML2_PROJ_SYNAPSE))+"");
+                                }
+                                
                                 projectionElement.addContent("\n            ");
-                                projectionElement.addChildElement(connElement);
+                                projectionElement.addChildElement(connEl);
                             }
                         }
                     }

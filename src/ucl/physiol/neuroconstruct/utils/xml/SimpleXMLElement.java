@@ -88,8 +88,8 @@ public class SimpleXMLElement extends SimpleXMLEntity
         this(name);
         addContent(simpleContents);
     }
-
-
+    
+    
     public void addAttribute(SimpleXMLAttribute attr)
     {
         clearCache();
@@ -180,6 +180,23 @@ public class SimpleXMLElement extends SimpleXMLEntity
             {
                 attributes.get(i).setValue(attrVal);
             }
+        }
+
+    }
+    
+    public void setOrAddAttributeValue(String attrName, String attrVal)
+    {
+        boolean set = false;
+        for (int i = 0; i < attributes.size(); i++)
+        {
+            if (attributes.get(i).getName().equals(attrName))
+            {
+                attributes.get(i).setValue(attrVal);
+                set = true;
+            }
+        }
+        if (!set) {
+            addAttribute(attrName, attrVal);
         }
 
     }
