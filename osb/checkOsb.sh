@@ -182,6 +182,10 @@ standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 standardGHProject 'FergusonEtAl2014-CA1PyrCell' 'hippocampus/CA1_pyramidal_neuron'
 standardGHProject 'PinskyRinzelModel' 'hippocampus/CA3_pyramidal_neuron'
+standardGHProject 'FergusonEtAl2013-PVFastFiringCell' 'hippocampus/interneurons'
+standardGHProject 'WangBuzsaki1996' 'hippocampus/interneurons'
+
+
 
 standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
 standardBBProject 'dentate' 'dentate_gyrus/networks' 'mbezaire'
