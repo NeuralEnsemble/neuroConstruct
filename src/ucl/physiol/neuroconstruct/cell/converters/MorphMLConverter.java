@@ -992,6 +992,18 @@ public class MorphMLConverter extends FormatImporter
 
                     } else {
                         condDens = (float) UnitConverter.getConductanceDensity(chanMech.getDensity(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
+                        
+                        if (nml2 && condDens<0) {
+                            
+                        GuiUtils.showWarningMessage(logger, "A negative conductance density ("+chanMech.getDensity()+") has been "
+                                + "found for channel mechanism: "+chanMech.getName()+" in "+cell.getInstanceName()+".\n"
+                                + "Such negative channel densities are normally used in neuroConstruct for specifying extra parameters \n"
+                                + "(e.g. erev, shift) across multiple 'real' channel density specifications, which have different values \n"
+                                + "for cond density on soma, axon, dends, etc. This convention is not supported in the export to NeuroML2. \n\n"
+                                + "The solution is to remove the channel mechanism with negative value/extra params, and add the \n"
+                                + "extra parameters to EACH real channel mechanism specification.", null);
+                        }
+                        
                     }
                     List<String> groups = cell.getGroupsWithChanMech(chanMech);
                     if (nml2) {
