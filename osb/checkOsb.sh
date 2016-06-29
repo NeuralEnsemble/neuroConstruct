@@ -162,6 +162,8 @@ standardGHProject 'SBMLShowcase' 'showcase'
 standardGHProject 'BrianShowcase' 'showcase'
 standardGHProject 'BlueBrainProjectShowcase' 'showcase'
 standardGHProject 'AllenInstituteNeuroML' 'showcase'
+standardGHProject 'StochasticityShowcase' 'showcase'
+
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
