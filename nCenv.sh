@@ -19,7 +19,7 @@ export NC_MAX_MEMORY=450M
 # The rest of the settings below shouldn't have to change
 
 # Current version of neuroConstruct
-export NC_VERSION=1.7.1
+export NC_VERSION=1.7.2
 
 export JNEUROML_VERSION=0.8.0
 
