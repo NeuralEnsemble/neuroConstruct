@@ -1,4 +1,5 @@
-
+#!/bin/bash
+#    
 #  As neuroConstruct requires files from the NeuroML repository as well as from its own 
 #  Subversion repository, use the following script to keep all of the necessary code up 
 #  to date. Note this script may change as the location of the repositories change
