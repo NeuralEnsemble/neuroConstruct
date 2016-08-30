@@ -30,6 +30,9 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.Random;
+import java.awt.Color;
+import java.util.ArrayList;
 import org.neuroml.export.utils.Utils;
 import org.neuroml.model.BiophysicalProperties;
 import org.neuroml.model.ChannelDensity;
@@ -62,9 +65,27 @@ import ucl.physiol.neuroconstruct.cell.Section;
 import ucl.physiol.neuroconstruct.cell.Segment;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
+import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
+import ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
+import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
+import ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
+import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
+import ucl.physiol.neuroconstruct.simulation.IClampSettings;
+import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
+import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
+import ucl.physiol.neuroconstruct.gui.MainFrame;
+import ucl.physiol.neuroconstruct.project.ProjectEventListener;
+import java.util.regex.*;
+import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
 
 
 /**
@@ -90,6 +111,32 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     private GeneratedElecInputs elecInputs = null;    
     
     private Project project = null;
+    
+    private String currentPopulation = null;
+    
+    private String groupCellType = "";
+    
+    private RectangularBox region = new RectangularBox(0, 0, 0, 100, 100, 100);
+    
+    private Integer priority = 0;
+    
+    private String currentElecInput = null;
+    
+    private String currentInputType = null;
+    
+    private String currentInputCellGroup = null;
+    
+    private String currentInputName = null;
+
+    private ElectricalInput currentElectricalInput = null;
+    
+    private SingleElectricalInput currentSingleInput = null;
+    
+    private IClampInstanceProps iip=null;
+    
+    private int inputUnitSystem = -1;
+    
+    private SimConfig simConfigToUse = new SimConfig();
     
     public boolean testMode = false;
 
@@ -120,6 +167,35 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         return this.foundRandomSeed;
     }
     
+    public HashMap getValueAndUnits(String delay) throws NeuroMLException
+    {
+        HashMap<String,String> delay_dict = new HashMap<String,String>();
+        
+        Pattern unit_string= Pattern.compile("[a-zA-Z&&[^E-]]+");
+        
+        Matcher match_delay=unit_string.matcher(delay);
+        
+        if(match_delay.find())
+        {
+           int letter_index = match_delay.start();
+           
+           String sep_delay = new StringBuffer(delay).insert(letter_index, "_").toString();
+           
+           String[] split_delay = sep_delay.split("_",2);
+        
+           delay_dict.put("value",split_delay[0].trim());
+        
+           delay_dict.put("units",split_delay[1].trim());
+        }
+        else
+        {
+           throw new NeuroMLException("neuroConstruct cannot find units inside parameter string");
+        }
+        
+        return delay_dict;
+        
+    }
+    
     public void parse(File nml2File) throws NeuroMLException
     {
         parse(nml2File, "");
@@ -145,10 +221,25 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     + "      GO:0043025 == soma_group\n"
                     + "      GO:0030425 == dendrite_group\n"
                     + "      GO:0030424 == axon_group\n";
-            
-            for (org.neuroml.model.Cell nml2Cell: neuroml.getCell()) {
+            if (neuroml.getCell().isEmpty())
+            {
+                System.out.println("No NeuroML2 cell definitions found inside the NeuroML2 file; "
+                        + "will test whether cell definitions are included with includeType");
+               
+                for (org.neuroml.model.IncludeType includeInstance: neuroml.getInclude())
+                {
+                    String include_ref= includeInstance.getHref();
+                    System.out.println("Print include reference: "+include_ref);
+                    
+                }
+            }
+            else
+            {
+             for (org.neuroml.model.Cell nml2Cell: neuroml.getCell()) {
                 
                 String newCellId = idPrefix+nml2Cell.getId();
+                
+                System.out.println("Found a NeuroML2 cell with id = "+nml2Cell.getId());
                 
                 if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
                 {
@@ -306,8 +397,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 
                 logger.logComment("Read in NeuroML 2 cell: "+ CellTopologyHelper.printDetails(nCcell, project), true);
                 
+                }
             }
-            
             HashMap<String, PulseGenerator> pulseGenerators = new HashMap<String, PulseGenerator>();
             for (PulseGenerator pg: neuroml.getPulseGenerator()) 
             {
@@ -315,7 +406,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             }
             
             /// Networks
-
+            
             if (neuroml.getNetwork().size()>1)
             {
                 GuiUtils.showErrorMessage(logger, "Currently it is only possible to load a NeuroML file containing a single <network> element.\n"
@@ -339,12 +430,72 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
                     }
                 }
-
+                
+                this.foundSimConfig = network.getId();
+                
+                String simName = getSimConfig();
+                
+                simConfigToUse = new SimConfig(simName, "");
+                   
+                project.simConfigInfo.add(simConfigToUse);
+                     
+                logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
+                
                 for (Population population: network.getPopulation())
                 {
                     if (!project.cellGroupsInfo.getAllCellGroupNames().contains(population.getId())) 
                     {
-                        throw new NeuroMLException("neuroConstruct can only import populations from networks when a Cell Group with that name already exists!");
+                        //throw new NeuroMLException("neuroConstruct can only import populations from networks when a Cell Group with that name already exists!");
+                        
+                        currentPopulation = population.getId();
+                        
+                        groupCellType=population.getComponent();
+                        
+                        logger.logComment("Going to add a group "+currentPopulation+" for the new cell type "+groupCellType);
+                        
+                        Integer popNumber = population.getSize();
+                        
+                        try
+                        {
+                           Random rand= new  Random();
+                           Color col = new Color(rand.nextInt(256),
+                                                 rand.nextInt(256),
+                                                 rand.nextInt(256));
+
+                           project.regionsInfo.addRow(currentPopulation+"_region", region, col);
+
+                           CellPackingAdapter cp = new RandomCellPackingAdapter();
+                           try
+                           {
+                              cp.setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, popNumber);
+                              cp.setParameter(RandomCellPackingAdapter.EDGE_POLICY, 0);
+                              cp.setParameter(RandomCellPackingAdapter.SELF_OVERLAP_POLICY, 1);
+                              cp.setParameter(RandomCellPackingAdapter.OTHER_OVERLAP_POLICY, 1);
+
+
+                              if (popNumber==1)
+                              {
+                                 cp =  new SinglePositionedCellPackingAdapter(0,0,0);
+                              }
+
+                           }
+                           catch (CellPackingException ex)
+                           {
+                             logger.logError("Error: "+ex.getMessage(), ex);
+                           }
+                           project.cellGroupsInfo.addRow(currentPopulation, groupCellType, currentPopulation+"_region", col, cp, priority++);
+                           simConfigToUse.addCellGroup(currentPopulation);
+
+                           logger.logComment("simConfigToUse "+simConfigToUse.toLongString());
+
+                           project.markProjectAsEdited();
+                        }
+                        catch (NamingException ex)
+                        {
+                           GuiUtils.showErrorMessage(logger, "Problem creating a new cell group...", ex, null);
+
+                        } 
+                        
                     }
                     for (Instance instance: population.getInstance()) 
                     {
@@ -359,11 +510,29 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     String netConn = projection.getId();
                     String source = projection.getPresynapticPopulation();
                     String target = projection.getPostsynapticPopulation();
+                    String synapse = projection.getSynapse();
                     
                     if (! (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn) ||
                            project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)))
                     {
-                        throw new NeuroMLException("neuroConstruct can only import network connections from networks when a Network Connection with that name already exists!");
+                        //throw new NeuroMLException("neuroConstruct can only import network connections from networks when a Network Connection with that name already exists!");
+                        
+                        SynapticProperties synProp = new SynapticProperties(synapse);
+                        Vector<SynapticProperties> synList = new Vector<SynapticProperties>();
+                        synList.add(synProp);
+                        SearchPattern sp = SearchPattern.getRandomSearchPattern();
+                        MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
+                        ConnectivityConditions connConds = new ConnectivityConditions();
+                        float jumpSpeed = Float.MAX_VALUE;
+
+                        logger.logComment("Going to add a volume based network connection "+netConn+" from group "+source+" to group "+target);
+                        
+                        try {
+                             project.morphNetworkConnectionsInfo.addRow(netConn, source, target, synList, sp, mml, connConds, jumpSpeed);
+                        } catch (NamingException ex) {
+                          logger.logComment("Problem creating volume based network connection...");
+                        }
+                        
                     }
                     if (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn)) {
                         if (!project.morphNetworkConnectionsInfo.getSourceCellGroup(netConn).equals(source) ||
@@ -399,48 +568,150 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     }
                 }
                 
-                
                 for (InputList inputList: network.getInputList()) 
                 {
                     String inputId = inputList.getId();
                     
+                    currentInputCellGroup=inputList.getPopulation();
+                    
+                    if (pulseGenerators.containsKey(inputList.getComponent()))
+                    {
+                        currentInputType = IClamp.TYPE;
+                        
+                    }
+                    else 
+                    {
+                       throw new NeuroMLException("Can not determine the type of the electrical input to "+inputId+" (no <pulseGenerator> with that id)!");
+                    }
+                    
+                    boolean annotate_inputs = false;
+                    
                     if (!project.elecInputInfo.getAllStimRefs().contains(inputId)) 
                     {
-                        throw new NeuroMLException("neuroConstruct can only import inputLists from NeuroML when an electrical input with that name already exists in the project!");
+                        //throw new NeuroMLException("neuroConstruct can only import inputLists from NeuroML when an electrical input with that name already exists in the project!");
+                        annotate_inputs=true;
+                        
+                        if (currentInputType.equals(IClamp.TYPE))
+                        {
+                           PulseGenerator pg = pulseGenerators.get(inputList.getComponent()); 
+                           
+                           String delay= pg.getDelay();
+                           
+                           String duration = pg.getDuration();
+                           
+                           String amplitude = pg.getAmplitude();
+                           
+                           HashMap delay_map;
+                           
+                           HashMap duration_map;
+                           
+                           HashMap amplitude_map;
+                           
+                           delay_map= getValueAndUnits(delay);
+                           
+                           duration_map= getValueAndUnits(duration);
+                           
+                           amplitude_map= getValueAndUnits(amplitude);
+                           
+                           if(((String)delay_map.get("units")).equals("ms") && ((String)duration_map.get("units")).equals("ms")
+                                   && ((String)amplitude_map.get("units")).equals("uA"))
+                           {
+                                inputUnitSystem = UnitConverter.getUnitSystemIndex("Physiological Units");
+                               
+                           }
+                           else if (((String)delay_map.get("units")).equals("s") && ((String)duration_map.get("units")).equals("s")
+                                   && ((String)amplitude_map.get("units")).equals("A"))
+                           {
+                               inputUnitSystem = UnitConverter.getUnitSystemIndex("SI Units");
+                           }
+                           else
+                           {
+                              throw new NeuroMLException("neuroConstruct can only import PulseGenertors when all of the parameter values are specified in Physiological Units or SI Units");
+                           }
+                           
+                           Float currentPulseDelay = 
+                         (float)UnitConverter.getTime(Float.parseFloat((String)delay_map.get("value")), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                 Float currentPulseDur = 
+                         (float)UnitConverter.getTime(Float.parseFloat ((String)duration_map.get("value")), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                 Float currentPulseAmp = 
+                         (float)UnitConverter.getCurrent(Float.parseFloat((String)amplitude_map.get("value")), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                           currentElectricalInput = new IClamp(currentPulseDelay, currentPulseDur, currentPulseAmp, false); 
+                           
+                           iip = new IClampInstanceProps();
+
+                           iip.setDelay(currentPulseDelay);
+                           iip.setDuration(currentPulseDur);
+                           iip.setAmplitude(currentPulseAmp);  
+                           
+                           logger.logComment("New PulseGenerator props: "+" ("+currentPulseDelay+", "+currentPulseDur+", "+currentPulseAmp+")");
+                        }
                     }
                     
                     for (Input input: inputList.getInput()) 
                     {
-                        String inputType = null;
-                        
-                        if (pulseGenerators.containsKey(inputId))
-                            inputType = IClamp.TYPE;
-                        else 
-                        {
-                            throw new NeuroMLException("Can not determine the type of the electrical input to "+inputId+" (no <pulseGenerator> with that id)!");
-                        }
-                        
                         int segmentId = input.getSegmentId()!=null ? input.getSegmentId() : 0;
 
                         float fractAlong = input.getFractionAlong()!=null ? input.getFractionAlong().floatValue() : 0.5f;
                         
-                        elecInputs.addSingleInput(inputId, 
-                                                  inputType, 
-                                                  inputList.getPopulation(), 
-                                                  parseForCellNumber(input.getTarget()), 
-                                                  segmentId, 
-                                                  fractAlong);
+                        if (annotate_inputs)
+                        {
+                            StimulationSettings stim = null;
+                            
+                            String cell_id =Integer.toString(parseForCellNumber(input.getTarget()));
+                            
+                            CellChooser cellChoose = new IndividualCells(cell_id);
+                            
+                            ArrayList<Integer> segs = new ArrayList<Integer>();
+                            
+                            segs.add(input.getSegmentId());
+
+                            SegmentLocationChooser segChoose = new IndividualSegments(segs);
+                            
+                            if (currentInputType.equals(IClamp.TYPE))
+                            {
+                              IClamp iClamp = (IClamp)currentElectricalInput;
+                              stim = new IClampSettings(inputId, currentInputCellGroup, cellChoose, segChoose, iClamp.getDel(), iClamp.getDur(), iClamp.getAmp(), false);
+                              project.elecInputInfo.addStim(stim);
+                              simConfigToUse.addInput(stim.getReference());
+                              
+                            }
+                            if (currentInputType.equals(RandomSpikeTrain.TYPE))
+                            {
+                              RandomSpikeTrain rst = (RandomSpikeTrain)currentElectricalInput;
+                              stim = new RandomSpikeTrainSettings(inputId, currentInputCellGroup, cellChoose, segChoose,  rst.getRate(), rst.getSynapseType());
+                              project.elecInputInfo.addStim(stim);
+                              simConfigToUse.addInput(stim.getReference());
+                              
+                            }
+                            logger.logComment(currentInputType+" electrical input "+inputId+" on the cell group "+ currentInputCellGroup+" added to the project.");
+                            
+                        }
+                        currentSingleInput = new SingleElectricalInput(currentInputType, currentInputCellGroup,parseForCellNumber(input.getTarget()) , segmentId, fractAlong, null);
+                        logger.logComment("New instance: "+ currentSingleInput);
+
+                        if (currentInputType.equals(IClamp.TYPE))
+                        {   
+                           currentSingleInput.setInstanceProps(iip);
+                        }
+                        elecInputs.addSingleInput(inputId, currentSingleInput);
+                        
+                        //elecInputs.addSingleInput(inputId, 
+                                                  //currentInputType, 
+                                                  //currentInputCellGroup, 
+                                                  //parseForCellNumber(input.getTarget()), 
+                                                  //segmentId, 
+                                                  //fractAlong);
                     }
                 }
             }
         }
         catch (MalformedURLException e) 
         {
-            throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
+            throw new NeuroMLException("Problem parsing NeuroML2 file: "+nml2File, e);
         } 
         catch (org.neuroml.model.util.NeuroMLException e) 
         {
-            throw new NeuroMLException("Problem parsing NeuroML file: "+nml2File, e);
+            throw new NeuroMLException("Problem parsing NeuroML2 file: "+nml2File, e);
         }
         
         
@@ -453,6 +724,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         int secondLastSlash = cellIdString.substring(0, lastSlash).lastIndexOf("/");
         return Integer.parseInt(cellIdString.substring(secondLastSlash+1, lastSlash));
     }
+    
+    
 
 
     public static void main(String args[])
@@ -478,20 +751,44 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
                 ProjectManager pm = new ProjectManager(null, null);
 
-                pm.setCurrentProject(testProj);
+                //pm.setCurrentProject(testProj);
 
-
-                pm.doLoadNeuroML2Network(f, false);
-
+                if (!f.exists())
+                {
+                  System.out.println("Error! File not found: "+f.getAbsolutePath());
+                  System.exit(1);
+                }
+                
+                if (pm.getCurrentProject()==null)
+                {  
+                   System.out.println("Will make a new project");
+                   String projectName = f.getName().indexOf(".")>1 ? f.getName().substring(0, f.getName().indexOf(".")) : f.getName();
+                   
+                   Project testNeuroML2Proj;
+                           
+                   testNeuroML2Proj=Project.createNewProject(System.getProperty("user.home")+"/nC_projects/",
+                                           projectName,
+                                           Project.getDummyProjectEventListener());
+                   
+                   pm.setCurrentProject(testNeuroML2Proj);
+                   
+                }
+                
+                if (pm.getCurrentProject() != null)
+                {
+                   System.out.println("Test project is set in "+System.getProperty("user.home")+"/nC_projects/");
+                   pm.doLoadNeuroML2Network(f, false);
+                }
 
                 while (pm.isGenerating())
                 {
                     Thread.sleep(2);
                     System.out.println("Waiting...");
                 }
-
-                System.out.println(testProj.generatedCellPositions.details());
-                System.out.println(testProj.generatedNetworkConnections.details());
+                
+                System.out.println(pm.getCurrentProject().generatedCellPositions.details());
+                System.out.println(pm.getCurrentProject().generatedNetworkConnections.details());
+                
             }
             else 
             {

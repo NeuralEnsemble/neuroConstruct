@@ -281,7 +281,7 @@ public class GeneratedElecInputs
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("GeneratedElecInputs with " + this.getNumberSingleInputs() + " inputs in total\n");
+        sb.append("GeneratedElecInputs with ").append(this.getNumberSingleInputs()).append(" inputs in total\n");
 
         Enumeration keys = this.myElecInputs.keys();
 
@@ -290,14 +290,13 @@ public class GeneratedElecInputs
             String input = (String) keys.nextElement();
             ArrayList<SingleElectricalInput> singleInputList = myElecInputs.get(input);
             StimulationSettings ss = project.elecInputInfo.getStim(input);
-            sb.append(input + " ("+ss.toLongString()+") has " + singleInputList.size()
-                      + " entries.\n");
+            sb.append(input).append(" (").append(ss.toLongString()).append(") has ").append(singleInputList.size()).append(" entries.\n");
             for (int i = 0; (i < singleInputList.size() && i < 9); i++)
             {
                 SingleElectricalInput sei = singleInputList.get(i);
-                sb.append("   Input "+i+": "+sei.toString());
+                sb.append("   Input ").append(i).append(": ").append(sei.toString());
                 if (sei.getInstanceProps()!=null)
-                    sb.append(" ("+sei.getInstanceProps().details(false)+")");
+                    sb.append(" (").append(sei.getInstanceProps().details(false)).append(")");
                     
                 sb.append("\n");
             }
