@@ -34,38 +34,21 @@ import java.util.Random;
 import java.awt.Color;
 import java.util.ArrayList;
 import org.neuroml.export.utils.Utils;
-import org.neuroml.model.BiophysicalProperties;
-import org.neuroml.model.ChannelDensity;
 import org.neuroml.model.Connection;
-import org.neuroml.model.Include;
-import org.neuroml.model.InitMembPotential;
 import org.neuroml.model.Input;
 import org.neuroml.model.InputList;
 import org.neuroml.model.Instance;
-import org.neuroml.model.IntracellularProperties;
 import org.neuroml.model.Location;
-import org.neuroml.model.Member;
-import org.neuroml.model.MembraneProperties;
 import org.neuroml.model.Network;
 import org.neuroml.model.NeuroMLDocument;
-import org.neuroml.model.Point3DWithDiam;
 import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
 import org.neuroml.model.PulseGenerator;
-import org.neuroml.model.Resistivity;
-import org.neuroml.model.SegmentGroup;
-import org.neuroml.model.SegmentParent;
-import org.neuroml.model.SpecificCapacitance;
-import org.neuroml.model.SpikeThresh;
 import org.neuroml.model.util.NeuroMLConverter;
-import org.neuroml1.model.bio.InitialMembPotential;
 import ucl.physiol.neuroconstruct.cell.Cell;
-import ucl.physiol.neuroconstruct.cell.ChannelMechanism;
-import ucl.physiol.neuroconstruct.cell.Section;
-import ucl.physiol.neuroconstruct.cell.Segment;
+import ucl.physiol.neuroconstruct.cell.converters.NeuroML2CellReader;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
 import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 import ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
@@ -82,9 +65,10 @@ import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
 import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
-import ucl.physiol.neuroconstruct.gui.MainFrame;
-import ucl.physiol.neuroconstruct.project.ProjectEventListener;
 import java.util.regex.*;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.NeuroML2Component;
+import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
 import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
 
 
@@ -93,12 +77,12 @@ import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
  *
  * @author Padraig Gleeson
  *  
- * 
+ * @author Rokas Stanislovas
  */
 
 public class NeuroML2Reader implements NetworkMLnCInfo
 {
-    private static ClassLogger logger = new ClassLogger("NeuroML2Reader");
+    public static ClassLogger logger = new ClassLogger("NeuroML2Reader");
 
     private long foundRandomSeed = Long.MIN_VALUE;
 
@@ -139,6 +123,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     private SimConfig simConfigToUse = new SimConfig();
     
     public boolean testMode = false;
+    
+    private boolean foundCell= false;
 
     public NeuroML2Reader(Project project)
     {
@@ -211,16 +197,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
             logger.logComment("Reading in NeuroML 2: "+ neuroml.getId(), true);
             
-            
             /// Cells
-            String infoOnnCCellSupport = "Currently, neuroConstruct import of NeuroML2 files is geared towards files it has generated itself.\n"
-                    + "Restrictions on files it can import include:\n"
-                    + " - &lt;segmentGroup&gt; should have only &lt;member&gt; elements (interpreted as unbranched Sections)\n"
-                    + "   OR only &lt;include&gt; elements (interpreted as Section groups)\n"
-                    + " - Recognised neuroLexIds: \n"
-                    + "      GO:0043025 == soma_group\n"
-                    + "      GO:0030425 == dendrite_group\n"
-                    + "      GO:0030424 == axon_group\n";
+            
             if (neuroml.getCell().isEmpty())
             {
                 System.out.println("No NeuroML2 cell definitions found inside the NeuroML2 file; "
@@ -229,13 +207,123 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 for (org.neuroml.model.IncludeType includeInstance: neuroml.getInclude())
                 {
                     String include_ref= includeInstance.getHref();
-                    System.out.println("Print include reference: "+include_ref);
+                    
+                    if(include_ref.contains(".cell."))
+                    {
+                      File cell_file = new File(nml2File.getParentFile(),include_ref);  
+                        
+                      NeuroMLDocument neuroml2_cell_doc = neuromlConverter.urlToNeuroML(cell_file.toURI().toURL());
+
+                      logger.logComment("Reading in NeuroML2: "+ neuroml2_cell_doc.getId(), true);
+                      
+                      for (org.neuroml.model.Cell nml2Cell: neuroml2_cell_doc.getCell()) 
+                      {
+                         
+                         String newCellId = idPrefix+nml2Cell.getId();
+                
+                         System.out.println("Found a NeuroML2 cell with id = "+nml2Cell.getId());
+                
+                         if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
+                         {
+                           throw new NeuroMLException("The project "+project.getProjectName() +" already contains a cell with ID "+ newCellId);
+                         } 
+                         
+                         //for(String cellTypeId: project.cellManager.getAllCellTypeNames())
+                         //{
+                             //if(nml2Cell.getId().equals(cellTypeId))
+                             //{
+                                 /// newly found cellType will overide the existent cell type in the project
+                                // project.cellManager.deleteCellType(project.cellManager.getCell(cellTypeId));
+                             //}
+                             
+                         //}
+                         NeuroML2CellReader cellReader= new NeuroML2CellReader(nml2Cell,newCellId);
+                         
+                         cellReader.parse();
+                         
+                         Cell imported_cell= cellReader.getBuiltCell();
+                      
+                         try
+                         {
+                            project.cellManager.addCellType(imported_cell);
+                         
+                            project.markProjectAsEdited();
+                             
+                            logger.logComment(imported_cell.getInstanceName() + " added to the project");
+                         }
+                         catch (Exception ex)
+                         {
+                            GuiUtils.showErrorMessage(logger, "Problem importing the cell  id ="+nml2Cell.getId()+" from "+ cell_file.getAbsolutePath(), ex, null);
+                         }
+                         
+                      }
+                      for (org.neuroml.model.IncludeType includeInCell: neuroml2_cell_doc.getInclude())
+                      {
+                        String included_in_cell_ref= includeInCell.getHref();
+                        
+                        File includedFile = new File(nml2File.getParentFile(),included_in_cell_ref);  
+                        
+                        NeuroMLDocument neuroml2_included_doc = neuromlConverter.urlToNeuroML(includedFile.toURI().toURL());
+
+                        logger.logComment("Reading in NeuroML2: "+ neuroml2_included_doc.getId(), true);
+                        
+                        if(!neuroml2_included_doc.getIonChannel().isEmpty())
+                        {
+                          for(org.neuroml.model.IonChannel ionChannel: neuroml2_included_doc.getIonChannel())
+                          {
+                            String ionChannelId= ionChannel.getId();
+                            
+                            String ionChannelNotes=null;
+                            
+                            if(neuroml2_included_doc.getIonChannel().size() >1)
+                            {
+                                ionChannelNotes=ionChannel.getNotes();
+                            }
+                            else
+                            {
+                                ionChannelNotes=neuroml2_included_doc.getNotes();
+                            }
+                            String pathToIonChannel= new File(nml2File.getParentFile(),includedFile.getName()).getPath();
+                            
+                            // only testing; might require another class for NeuroML2
+                            
+                            NeuroML2Component cmlMech = new NeuroML2Component();
+                            
+                            cmlMech.setInstanceName(ionChannelId);
+                            
+                            cmlMech.setMechanismType(CellMechanism.CHANNEL_MECHANISM);
+                            
+                            cmlMech.setDescription(ionChannelNotes);
+                            cmlMech.setMechanismModel("NeuroML2 channel mechanism imported from a network");
+                            
+                            cmlMech.setXMLFile(pathToIonChannel);
+
+                            project.cellMechanismInfo.addCellMechanism(cmlMech);
+                          }
+                        }
+                        //else if (!neuroml2_included_doc.getIonChannel().isEmpty())
+                        //{
+                                    
+                        //}
+                          
+                      } 
+                    }
                     
                 }
             }
             else
             {
-             for (org.neuroml.model.Cell nml2Cell: neuroml.getCell()) {
+            for (org.neuroml.model.Cell nml2Cell: neuroml.getCell()) {
+                  
+                //for(String cellTypeId: project.cellManager.getAllCellTypeNames())
+                //{
+                   // if(nml2Cell.getId().equals(cellTypeId))
+                    //{
+                        /// newly found cellType will overide the existent cell type in the project
+                      //  project.cellManager.deleteCellType(project.cellManager.getCell(cellTypeId));
+                    //}
+                             
+                //}
                 
                 String newCellId = idPrefix+nml2Cell.getId();
                 
@@ -245,157 +333,27 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 {
                     throw new NeuroMLException("The project "+project.getProjectName() +" already contains a cell with ID "+ newCellId);
                 }
-                Cell nCcell = new Cell();
-                nCcell.setInstanceName(newCellId);
-                if (nml2Cell.getNotes()!=null)
-                    nCcell.setCellDescription(nml2Cell.getNotes());
                 
-                HashMap<Integer, Segment> segIdVsSegments = new HashMap<Integer, Segment>();
-                HashMap<String, Section> secNameVsSections = new HashMap<String, Section>();
+                NeuroML2CellReader cellReader= new NeuroML2CellReader(nml2Cell,newCellId);
                 
-                for (org.neuroml.model.Segment nml2Segment: nml2Cell.getMorphology().getSegment())
+                cellReader.parse();
+                      
+                Cell imported_cell= cellReader.getBuiltCell();
+                      
+                try
                 {
-                    logger.logComment("Adding Segment: "+ nml2Segment.getId(), true);
-                    Point3DWithDiam dist = nml2Segment.getDistal();
-                    SegmentParent parent = nml2Segment.getParent();
-                    Point3DWithDiam prox = nml2Segment.getProximal();
-                    
-                    
-                    Segment nCsegment = new Segment();
-                    nCsegment.setSegmentId(nml2Segment.getId());
-                    nCsegment.setSegmentName(nml2Segment.getName());
-                    
-                    nCsegment.setEndPointPositionX((float)dist.getX());
-                    nCsegment.setEndPointPositionY((float)dist.getY());
-                    nCsegment.setEndPointPositionZ((float)dist.getZ());
-                    nCsegment.setRadius((float)dist.getDiameter()/2);
-                    
-                    segIdVsSegments.put(nml2Segment.getId(), nCsegment);
-                    
+                    project.cellManager.addCellType(imported_cell);
+                         
+                    project.markProjectAsEdited();
+                             
+                    logger.logComment(imported_cell.getInstanceName() + " added to the project");
                 }
-                Vector<Segment> allSegments = new Vector<Segment>();
-                allSegments.addAll(segIdVsSegments.values());
-                nCcell.setAllSegments(allSegments);
-                
-                for (SegmentGroup segGroup: nml2Cell.getMorphology().getSegmentGroup())
+                catch (Exception ex)
                 {
-                    String grpName = segGroup.getId();
-                    
-                    if (segGroup.getMember().size()>0 && segGroup.getInclude().isEmpty()) 
-                    {
-                        Section sec = new Section(grpName);
-                        secNameVsSections.put(grpName, sec);
-                        for (Member memb: segGroup.getMember()) {
-                            Segment seg = segIdVsSegments.get(memb.getSegment());
-                            seg.setSection(sec);
-                        }
-                    }
-                    else if (segGroup.getInclude().size()>0 && segGroup.getMember().isEmpty()) 
-                    {
-                        for (Include inc: segGroup.getInclude()) {
-                            Section sec = secNameVsSections.get(inc.getSegmentGroup());
-                            sec.addToGroup(grpName);
-                        }
-                    }
-                    else 
-                    {
-                        GuiUtils.showErrorMessage(logger, infoOnnCCellSupport, null, null);
-                    }
+                    GuiUtils.showErrorMessage(logger, "Problem importing the cell  id ="+nml2Cell.getId()+" from "+ nml2File.getAbsolutePath(), ex, null);
                 }
                 
-                // To set section start points
-                for (org.neuroml.model.Segment nml2Segment: nml2Cell.getMorphology().getSegment())
-                {
-                    logger.logComment("Checking Segment: "+ nml2Segment.getId(), true);
-                    SegmentParent parent = nml2Segment.getParent();
-                    Point3DWithDiam prox = nml2Segment.getProximal();
-                            
-                    Segment seg = segIdVsSegments.get(nml2Segment.getId());
-                    
-                    if (prox!=null) 
-                    {
-                        Section section = seg.getSection();
-                        section.setStartPointPositionX((float)prox.getX());
-                        section.setStartPointPositionY((float)prox.getY());
-                        section.setStartPointPositionZ((float)prox.getZ());
-                        section.setStartRadius((float)prox.getDiameter()/2);
-                    }
-                    
-                    if (parent!=null) 
-                    {
-                        Segment parentSeg = segIdVsSegments.get(parent.getSegment());
-                        seg.setParentSegment(parentSeg);
-                    }
-                    
-                }
-                if (nml2Cell.getBiophysicalProperties()!=null) {
-                    
-                    BiophysicalProperties bp = nml2Cell.getBiophysicalProperties();
-                    MembraneProperties mp = bp.getMembraneProperties();
-                    
-                    for (SpecificCapacitance specCap: mp.getSpecificCapacitance()) {
-                        
-                        String group = (specCap.getSegmentGroup()==null || specCap.getSegmentGroup().length()==0) ? Section.ALL : specCap.getSegmentGroup();
-                        float valInSI = Utils.getMagnitudeInSI(specCap.getValue());
-                        float valInnC = (float)UnitConverter.getSpecificCapacitance(valInSI, UnitConverter.GENESIS_SI_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
-                        nCcell.associateGroupWithSpecCap(group, valInnC);
-                    }
-                    
-                    for (InitMembPotential imp: mp.getInitMembPotential()) {
-                        
-                        String group = (imp.getSegmentGroup()==null || imp.getSegmentGroup().length()==0) ? Section.ALL : imp.getSegmentGroup();
-                        if (!group.equals(Section.ALL)) 
-                        {
-                            throw new NeuroMLException("neuroConstruct can only import cells with the same initial membrane potential across all segments!");
-                        }
-                        float valInSI = Utils.getMagnitudeInSI(imp.getValue());
-                        float valInnC = (float)UnitConverter.getVoltage(valInSI, UnitConverter.GENESIS_SI_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
-                        nCcell.setInitialPotential(new NumberGenerator(valInnC));
-                    }
-                    
-                    for(ChannelDensity cd: mp.getChannelDensity()) {
-                        
-                        String group = (cd.getSegmentGroup()==null || cd.getSegmentGroup().length()==0) ? Section.ALL : cd.getSegmentGroup();
-                        float valInSI = Utils.getMagnitudeInSI(cd.getCondDensity());
-                        float valInnC = (float)UnitConverter.getConductanceDensity(valInSI, UnitConverter.GENESIS_SI_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
-                        ChannelMechanism cm = new ChannelMechanism(cd.getIonChannel(), valInnC);
-                        nCcell.associateGroupWithChanMech(group, cm);
-                        
-                    }
-                    if (!mp.getChannelDensityGHK().isEmpty()) {
-                        throw new NeuroMLException("Import of NeuroML2 with channelDensityGHK not yet implemented! Ask and it shall be done...");
-                    }
-                    if (!mp.getChannelDensityNernst().isEmpty()) {
-                        throw new NeuroMLException("Import of NeuroML2 with channelDensityNernst not yet implemented! Ask and it shall be done...");
-                    }
-                    if (!mp.getChannelDensityNonUniform().isEmpty()) {
-                        throw new NeuroMLException("Import of NeuroML2 with channelDensityNonUniform not yet implemented! Ask and it shall be done...");
-                    }
-                    /*
-                    for (SpikeThresh st: mp.getSpikeThresh()) {
-                        
-                        String group = (st.getSegmentGroup()==null || st.getSegmentGroup().length()==0) ? Section.ALL : st.getSegmentGroup();
-                        if (!group.equals(Section.ALL)) 
-                        {
-                            throw new NeuroMLException("neuroConstruct can only import cells with the same spike threshold across all segments!");
-                        }
-                        float valInSI = Utils.getMagnitudeInSI(st.getValue());
-                        float valInnC = (float)UnitConverter.getVoltage(valInSI, UnitConverter.GENESIS_SI_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
-                        //nCcell.set(new NumberGenerator(valInnC));
-                    }*/
-                    
-                    IntracellularProperties ip = bp.getIntracellularProperties();
-                    
-                    for (Resistivity res: ip.getResistivity()) 
-                    {
-                        String group = (res.getSegmentGroup()==null || res.getSegmentGroup().length()==0) ? Section.ALL : res.getSegmentGroup();
-                        float valInSI = Utils.getMagnitudeInSI(res.getValue());
-                        float valInnC = (float)UnitConverter.getSpecificAxialResistance(valInSI, UnitConverter.GENESIS_SI_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
-                        nCcell.associateGroupWithSpecAxRes(group, valInnC);
-                    }
-                }
-                
-                logger.logComment("Read in NeuroML 2 cell: "+ CellTopologyHelper.printDetails(nCcell, project), true);
+                logger.logComment("Read in NeuroML 2 cell: "+ CellTopologyHelper.printDetails(imported_cell, project), true);
                 
                 }
             }

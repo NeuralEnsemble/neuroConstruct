@@ -241,6 +241,9 @@ public abstract class XMLCellMechanism extends CellMechanism
         }
 
         logger.logComment("XML Mechanism "+currentInstanceName+" being initialised in project: "+ project.getProjectName());
+        
+        //System.out.println("XML Mechanism "+currentInstanceName+" being initialised in project: "+ project.getProjectName());
+        
         FileInputStream instream = null;
         InputSource is = null;
         File fileUsed = null;

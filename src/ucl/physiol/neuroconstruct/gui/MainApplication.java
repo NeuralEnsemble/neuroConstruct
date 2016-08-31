@@ -175,9 +175,11 @@ public class MainApplication
         }
         if (!neuroml2)
         {frame.doImportNeuroML(nmlFile, true, true);
+         frame.NeuroML2Import(false);
         }
         else {
          frame.doImportNeuroML2(nmlFile,true,true);
+         frame.NeuroML2Import(true);
         }
     }
 
