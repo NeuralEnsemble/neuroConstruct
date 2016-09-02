@@ -38,6 +38,7 @@ public class BasicProjectInfo
     private String projectName = null;
     private String projectDescription = null;
     private String projectFileVersion = null;
+    private boolean NeuroML2Project = false;
 
     public BasicProjectInfo()
     {
@@ -81,6 +82,19 @@ public class BasicProjectInfo
     public void setProjectDescription(String projectDescription)
     {
         this.projectDescription = projectDescription;
+    }
+    
+    public void setNeuroML2()
+            
+    {
+        this.NeuroML2Project= true;
+        
+    }
+    
+    public boolean getNeuroML2()
+    {
+        return this.NeuroML2Project;
+        
     }
 
 }

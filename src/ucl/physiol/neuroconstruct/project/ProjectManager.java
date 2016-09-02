@@ -587,8 +587,10 @@ public class ProjectManager implements GenerationReport
     
     
     
-    public NetworkMLnCInfo doLoadNeuroML2Network(File nml2File, boolean acceptDefaults) throws NeuroMLException
+    public NetworkMLnCInfo doLoadNeuroML2Network(File nml2File, boolean acceptDefaults) throws NeuroMLException, IOException
     {
+        getCurrentProject().setNeuroML2Project();
+        
         NeuroML2Reader nml2Reader = new NeuroML2Reader(getCurrentProject());
         
         nml2Reader.parse(nml2File);

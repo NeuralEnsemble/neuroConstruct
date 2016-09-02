@@ -806,6 +806,14 @@ public class GeneralProperties
         return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
                 +"/Level2/ChannelML_"+getNeuroMLVersionString()+"_HTML.xsl");
     }
+    
+    //// added to test creation of NeuroML2 channel summary
+    
+    public static File getNeuroML2ChannelReadableXSL()
+    {
+        return new File("templates/xmlTemplates/Schemata/v2.0/Channels/"+"NeuroML2ChannelTest.xsl");
+        
+    }
 
 
 

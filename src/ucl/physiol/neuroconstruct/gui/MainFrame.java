@@ -14833,42 +14833,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         else if (cellMech instanceof XMLCellMechanism)
         {
-            if(!NeuroML2)
-            {
-                ChannelMLEditor cmlEditor
-                   = new ChannelMLEditor( (XMLCellMechanism) cellMech,
+            ChannelMLEditor cmlEditor
+                 = new ChannelMLEditor( (XMLCellMechanism) cellMech,
                                       projManager.getCurrentProject(),
                                       this);
 
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-                Dimension frameSize = cmlEditor.getSize();
-                if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
-                if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
-                cmlEditor.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+            Dimension frameSize = cmlEditor.getSize();
+            if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
+            if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
+            cmlEditor.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
-                cmlEditor.setVisible(true);
+            cmlEditor.setVisible(true);
 
-                //System.out.println("Shown the dialog");
-            }
-            else
-            {   
-                NeuroML2ChannelEditor cmlEditor
-                   = new NeuroML2ChannelEditor( (XMLCellMechanism) cellMech,
-                                      projManager.getCurrentProject(),
-                                      this);
-
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-                Dimension frameSize = cmlEditor.getSize();
-                if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
-                if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
-                cmlEditor.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-
-                cmlEditor.setVisible(true);
-                
-            }
-
+            //System.out.println("Shown the dialog");
+            
         }
     }
 
@@ -17023,15 +17003,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         frame.setVisible(true);
 
     }
-    
-    void NeuroML2Import(boolean neuroml2)
-    
-    {
-        this.NeuroML2= neuroml2;
-        
-    }
-
-
 
 
 }

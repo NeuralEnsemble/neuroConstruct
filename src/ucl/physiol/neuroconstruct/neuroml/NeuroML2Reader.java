@@ -27,12 +27,15 @@
 package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
+import java.nio.file.*;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.Random;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.logging.Level;
 import org.neuroml.export.utils.Utils;
 import org.neuroml.model.Connection;
 import org.neuroml.model.Input;
@@ -67,6 +70,7 @@ import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import java.util.regex.*;
 import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanismHelper;
 import ucl.physiol.neuroconstruct.mechanisms.NeuroML2Component;
 import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
 import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
@@ -182,12 +186,12 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
     }
     
-    public void parse(File nml2File) throws NeuroMLException
+    public void parse(File nml2File) throws NeuroMLException, IOException
     {
         parse(nml2File, "");
     }
     
-    public void parse(File nml2File, String idPrefix) throws NeuroMLException
+    public void parse(File nml2File, String idPrefix) throws NeuroMLException, IOException
     {
         try 
         {
@@ -223,20 +227,20 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 
                          System.out.println("Found a NeuroML2 cell with id = "+nml2Cell.getId());
                 
-                         if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
-                         {
-                           throw new NeuroMLException("The project "+project.getProjectName() +" already contains a cell with ID "+ newCellId);
-                         } 
-                         
-                         //for(String cellTypeId: project.cellManager.getAllCellTypeNames())
+                         //if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
                          //{
-                             //if(nml2Cell.getId().equals(cellTypeId))
-                             //{
-                                 /// newly found cellType will overide the existent cell type in the project
-                                // project.cellManager.deleteCellType(project.cellManager.getCell(cellTypeId));
-                             //}
-                             
-                         //}
+                          // throw new NeuroMLException("The project "+project.getProjectName() +" already contains a cell with ID "+ newCellId);
+                         //} 
+                         
+                         for(String cellTypeId: project.cellManager.getAllCellTypeNames())
+                         {
+                            if(nml2Cell.getId().equals(cellTypeId))
+                            {
+                              // newly found cellType will overide the existent cell type in the project
+                                
+                              project.cellManager.deleteCellType(project.cellManager.getCell(cellTypeId));
+                            }
+                         }
                          NeuroML2CellReader cellReader= new NeuroML2CellReader(nml2Cell,newCellId);
                          
                          cellReader.parse();
@@ -264,7 +268,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         File includedFile = new File(nml2File.getParentFile(),included_in_cell_ref);  
                         
                         NeuroMLDocument neuroml2_included_doc = neuromlConverter.urlToNeuroML(includedFile.toURI().toURL());
-
+                        
                         logger.logComment("Reading in NeuroML2: "+ neuroml2_included_doc.getId(), true);
                         
                         if(!neuroml2_included_doc.getIonChannel().isEmpty())
@@ -283,21 +287,120 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             {
                                 ionChannelNotes=neuroml2_included_doc.getNotes();
                             }
-                            String pathToIonChannel= new File(nml2File.getParentFile(),includedFile.getName()).getPath();
                             
+                            System.out.println("Includec channel name: "+includedFile.getName());
+                            
+                            File IonChannelFile=new File(nml2File.getParentFile(),includedFile.getName());
+                            
+                            String PathToIonChannel= IonChannelFile.getPath();
+                            
+                            System.out.println("Full NeuroML2 channel path: "+PathToIonChannel);
+                            
+                            File CMLDir = ProjectStructure.getCellMechanismDir(project.getProjectMainDirectory());
+                            
+                            System.out.println("Cell Mechanism dir: "+CMLDir.getPath());
+                            
+                            File newChannelDir = new File(CMLDir, ionChannelId);
+                            
+                            System.out.println("Cell mechanism will be copied to: "+newChannelDir.getPath());
+                            
+                            newChannelDir.mkdirs();
+                            
+                            File ChannelFile = new File(newChannelDir,ionChannelId+ ".xml");
+                            
+                            FileWriter fw;
+                            try
+                            {
+                               fw = new FileWriter(ChannelFile);
+                               fw.close();
+                            }
+                            catch (IOException ex)
+                            {
+                               logger.logComment("Problem creating a new file: " +ChannelFile);
+                            }
+                            
+                            Path CopyIonChannel = FileSystems.getDefault().getPath(PathToIonChannel);
+                            
+                            String FullSavedPath=ChannelFile.getPath();
+                            
+                            Path CopyIonChannelTo= FileSystems.getDefault().getPath(FullSavedPath);
+                            
+                            System.out.println("A full path of a saved channel:"+FullSavedPath);
+                            try
+                            {
+                              Files.copy(CopyIonChannel, CopyIonChannelTo, StandardCopyOption.REPLACE_EXISTING);
+                            }
+                            catch (IOException ex) 
+                            {
+                                GuiUtils.showErrorMessage(logger,"Problem copying a cell mechanism "
+                                    +ionChannelId+" from "+PathToIonChannel+" to "+FullSavedPath , ex, null);
+                            }
                             // only testing; might require another class for NeuroML2
                             
                             NeuroML2Component cmlMech = new NeuroML2Component();
                             
                             cmlMech.setInstanceName(ionChannelId);
                             
-                            cmlMech.setMechanismType(CellMechanism.CHANNEL_MECHANISM);
+                            cmlMech.setMechanismType(CellMechanism.NEUROML2_ION_CHANNEL);
                             
                             cmlMech.setDescription(ionChannelNotes);
+                            
                             cmlMech.setMechanismModel("NeuroML2 channel mechanism imported from a network");
                             
-                            cmlMech.setXMLFile(pathToIonChannel);
+                            cmlMech.setXMLFile(ChannelFile.getName());
+                            
+                            File propsFile = new File(newChannelDir, CellMechanismHelper.PROPERTIES_FILENAME);
+                            
+                            Properties cellMechProps = new Properties();
+                            
+                            cellMechProps.setProperty(CellMechanismHelper.PROP_CELL_MECH_MODEL, cmlMech.getMechanismModel());
+                            
+                            cellMechProps.setProperty(CellMechanismHelper.PROP_CELL_MECH_TYPE, cmlMech.getMechanismType());
+                            
+                            cellMechProps.setProperty(CellMechanismHelper.PROP_CHANNELML_FILE, cmlMech.getXMLFile());
+                            
+                            cellMechProps.setProperty(CellMechanismHelper.PROP_IMPL_METHOD,CellMechanism.NEUROML2_BASED_CELL_MECHANISM);
+                            
+                            cellMechProps.setProperty(CellMechanismHelper.PROP_CELL_MECH_NAME, cmlMech.getInstanceName());
+                            
+                            cellMechProps.setProperty(CellMechanismHelper.PROP_CELL_MECH_DESCRIPTION, cmlMech.getDescription());
+                            
+                            try
+                            {
+                                FileOutputStream fos2 = new FileOutputStream(propsFile);
+                                
+                                cellMechProps.storeToXML(fos2,
+                                "\nProperties associated with the Cell Mechanism which allow it to be loaded into neuroConstruct.\n\n"
+                                             + "Note the following: \n" +
+                                             "   The Cell Mechanism name should not contain spaces and should match the name of the directory it's in\n" +
+                                             "   The name and description here will be replaced by the corresponding values in a ChannelML file if found\n" +
+                                             "   The filenames for the mappings are relative to the cellMechanism/(cellMechInstanceName) directory\n" +
+                                             "   Mechanism Type should only have values: " +
+                                             CellMechanism.CHANNEL_MECHANISM + ", " + CellMechanism.SYNAPTIC_MECHANISM
+                                             + ", " + CellMechanism.ION_CONCENTRATION + ", " + CellMechanism.POINT_PROCESS + ", " + CellMechanism.GAP_JUNCTION + "\n\n");
+                                fos2.close();
 
+                            }
+                            
+                            catch (Exception ex2)
+                            {
+                               GuiUtils.showErrorMessage(logger, "Error storing information on NeuroML2 Cell Mechanism: " + cmlMech.getInstanceName(), ex2, null);
+                            }
+                            
+                            try
+                            {
+                             
+                             cmlMech.initPropsFromPropsFile(propsFile);
+                             
+                            }
+                            catch (IOException ex4)
+                            {
+                               GuiUtils.showErrorMessage(logger,
+                                                  "Error initiating cell mechanism properties in: " +
+                                                   newChannelDir, ex4, null);
+
+                             }
+                            
                             project.cellMechanismInfo.addCellMechanism(cmlMech);
                           }
                         }
@@ -719,16 +822,21 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 
                 if (pm.getCurrentProject()==null)
                 {  
-                   System.out.println("Will make a new project");
                    String projectName = f.getName().indexOf(".")>1 ? f.getName().substring(0, f.getName().indexOf(".")) : f.getName();
-                   
+                   System.out.println("Will make a new project: "+projectName);
                    Project testNeuroML2Proj;
+                   
+                   File projDir = new File(ProjectStructure.getDefaultnCProjectsDir().getPath(), projectName);
+                   
+                   System.out.println("Project in: "+projDir.getAbsolutePath());
                            
-                   testNeuroML2Proj=Project.createNewProject(System.getProperty("user.home")+"/nC_projects/",
+                   testNeuroML2Proj=Project.createNewProject(projDir.getAbsolutePath(),
                                            projectName,
                                            Project.getDummyProjectEventListener());
                    
                    pm.setCurrentProject(testNeuroML2Proj);
+                   
+                   pm.getCurrentProject().saveProject();
                    
                 }
                 
