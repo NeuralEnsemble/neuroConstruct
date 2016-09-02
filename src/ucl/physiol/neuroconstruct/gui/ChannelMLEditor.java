@@ -71,6 +71,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     XMLCellMechanism xmlMechanism = null;
 
     private final static String CHANNELML = "ChannelML";
+    private final static String NEUROML2 = "NeuroML2";
     private final static String SBML = "SBML";
 
     private String xmlDialect = CHANNELML;
@@ -194,6 +195,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             xmlDialect = CHANNELML;
         else if (xmlMechanism instanceof SBMLCellMechanism)
             xmlDialect = SBML;
+        else if (xmlMechanism instanceof NeuroML2Component)
+            xmlDialect = NEUROML2;
 
 
         CML_CONTENTS_TAB = xmlDialect+" file";
@@ -513,7 +516,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         else
         {
           xslDoc = GeneralProperties.getNeuroML2ChannelReadableXSL();
-          System.out.println("Testing display of NeuroML2 channel summary in the text format");
+          //System.out.println("Testing display of NeuroML2 channel summary in the text format");
         }
 
         if (this.isSBMLMechanism())

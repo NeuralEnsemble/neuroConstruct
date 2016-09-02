@@ -811,7 +811,7 @@ public class GeneralProperties
     
     public static File getNeuroML2ChannelReadableXSL()
     {
-        return new File("templates/xmlTemplates/Schemata/v2.0/Channels/"+"NeuroML2ChannelTest.xsl");
+        return new File("templates/xmlTemplates/NeuroML2/v2.0/Channels/"+"NeuroML2ChannelTest.xsl");
         
     }
 
