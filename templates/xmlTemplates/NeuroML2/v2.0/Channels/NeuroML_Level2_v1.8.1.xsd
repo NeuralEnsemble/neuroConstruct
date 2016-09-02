@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    The main NeuroML Level 2 Schema file
+    This schema links MorphML.xsd/Metadata.xsd from Level 1 with Biophysics.xsd (specifying
+    placement of channels on cells) and ChannelML.xsd (specifying the channel mechanism)
+
+    Funding for this work has been received from the Medical Research Council and the 
+    Wellcome Trust. This file was initially developed as part of the neuroConstruct project
+    
+    Author: Padraig Gleeson
+    Copyright 2009 University College London
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+-->
+
+<xs:schema targetNamespace="http://morphml.org/neuroml/schema"
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:mml="http://morphml.org/morphml/schema"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xmlns:bio="http://morphml.org/biophysics/schema"
+    xmlns:cml="http://morphml.org/channelml/schema"
+    xmlns="http://morphml.org/neuroml/schema"
+
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://morphml.org/morphml/schema"
+        schemaLocation="../Level1/MorphML_v1.8.1.xsd"/>
+    <xs:import namespace="http://morphml.org/biophysics/schema"
+        schemaLocation="../Level2/Biophysics_v1.8.1.xsd"/>
+    <xs:import namespace="http://morphml.org/channelml/schema"
+        schemaLocation="../Level2/ChannelML_v1.8.1.xsd"/>
+    <xs:import namespace="http://morphml.org/metadata/schema"
+        schemaLocation="../Level1/Metadata_v1.8.1.xsd"/>
+
+
+    <xs:element name="neuroml" type="NeuroMLLevel2">
+        <xs:annotation>
+                <xs:documentation>The root NeuroML element.</xs:documentation>
+            </xs:annotation>
+    </xs:element>
+
+
+    <xs:complexType name="NeuroMLLevel2">
+            <xs:annotation>
+                <xs:documentation>Description of neuronal models, including biophysics and channel mechanisms (NeuroML Level 2).</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:group ref="meta:referencedata"/>
+
+                <xs:element name="cells" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Collection of all Level 2 cells.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="cell" type="Level2Cell" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation>A single cell specified in MorphML extended to include channel density info.</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="channels" type="cml:ChannelML" minOccurs="0"/>
+
+            </xs:sequence>
+
+
+            <xs:attribute name="name" type="xs:string" use="optional"/>
+
+
+
+            <xs:attribute name="lengthUnits" type="meta:LengthUnits" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Unit of all length measurements. Usually has the value &lt;b&gt;micrometer&lt;/b&gt;. Note: length_units will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+            <xs:attribute name="length_units" type="meta:LengthUnits" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Unit of all length measurements. Usually has the value &lt;b&gt;micrometer&lt;/b&gt;. Note: length_units will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+            <xs:attribute name="volumeUnits" type="meta:VolumeUnits" use="optional" default="cubic_millimeter"> <!-- Note: changed to the American English spelling in v1.8.1...-->
+                    <xs:annotation>
+                            <xs:documentation>Unit of all volume measurements.</xs:documentation>
+                    </xs:annotation>
+            </xs:attribute>
+
+    </xs:complexType>
+
+
+        <!-- Definition of Cell extended with biophysics follows. -->
+    <xs:complexType name="Level2Cell">
+        <xs:annotation>
+            <xs:documentation>Cell with extensions for biophysics.</xs:documentation>
+        </xs:annotation>
+                <xs:complexContent>
+                    <xs:extension base="mml:Cell">
+                        <xs:sequence>
+                            <xs:element name="biophysics" type="bio:Biophysics" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+        </xs:complexType>
+
+
+
+
+
+</xs:schema>

@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema targetNamespace="http://morphml.org/biophysics/schema" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns="http://morphml.org/biophysics/schema" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+<!--
+    This file specifies a number of elements needed by NeuroML Level 2 compliant cell description file
+
+    Funding for this work has been received from the Medical Research Council and the 
+    Wellcome Trust. This file was initially developed as part of the neuroConstruct project
+    
+    Author: Padraig Gleeson
+    Copyright 2009 University College London
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+-->
+
+    <xs:import namespace="http://morphml.org/metadata/schema"
+    schemaLocation="../Level1/Metadata_v1.8.1.xsd"/>
+    
+      <xs:annotation>
+        <xs:documentation>Definition of the elements needed for specifying the biophysical properties of cells.
+     These elements are linked with those in MorphML.xsd and from the ChannelML spec by 
+     the NeuroML.xsd file</xs:documentation>
+         </xs:annotation> 
+
+    <xs:element name="biophysics" type="Biophysics">
+        <xs:annotation>
+            <xs:documentation>The root element. All other complex/simple elements will be children of this.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+        
+    <xs:complexType name="Biophysics">
+        <xs:annotation>
+            <xs:documentation>Description of biophysical properties of a cell.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="mechanism" type="Mechanism" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Definition of placement of a single electrophysiological mechanism (e.g. channel mechanism)
+                        on a group of cables of a cell. Note there should be at least one of these to specify the passive membrane conductance.
+                        Note: elements spec_capacitance, spec_axial_resistance, ion_props etc. should be used in preference to specificCapacitance etc!</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice>
+                <xs:element name="specificCapacitance" type="SpecCapacitance"/>
+                <xs:element name="spec_capacitance" type="SpecCapacitance"/>
+            </xs:choice>
+            <xs:choice>
+                <xs:element name="specificAxialResistance" type="SpecAxialResistance"/>
+                <xs:element name="spec_axial_resistance" type="SpecAxialResistance"/>
+            </xs:choice>
+            <xs:choice>
+                <xs:element name="initialMembPotential" type="InitialMembPotential" minOccurs="0"/>
+                <xs:element name="init_memb_potential" type="InitialMembPotential" minOccurs="0"/>
+            </xs:choice>
+            <xs:choice>
+                <xs:element name="ionProperties" type="IonProperties" minOccurs="0"/>
+                <xs:element name="ion_props" type="IonProperties" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+                
+                 <xs:attribute name="units" type="meta:Units" use="required">
+                    <xs:annotation>
+                        <xs:documentation>Unit system of all quantities.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>   
+    </xs:complexType>
+        
+           
+        
+        
+        
+        <xs:complexType name="Mechanism">
+        <xs:annotation>
+            <xs:documentation>Definition of placement of a single electrophysiological mechanism (e.g. channel mechanism)
+                        on a group of cables of a cell</xs:documentation>
+        </xs:annotation>
+        
+        <xs:sequence>
+            <xs:element name="parameter" type="NamedParameter" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="variableParameter" type="VariableNamedParameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Note variable_parameter will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="variable_parameter" type="VariableNamedParameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Note variable_parameter will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Name of the mechanism. Should refer to a named mechanism in a ChannelML file</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" type="MechanismType" use="required">
+            <xs:annotation>
+                <xs:documentation>Specifies the type of cellular mechanism (Channel Mechanism/Ion Concentration). Note could be used for any type of electrophysiological property of a section of a cell</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="passive_conductance" type="xs:boolean" use="optional" default="false">
+            <xs:annotation>
+                <xs:documentation>Whether this is a passive/leak conductance. In this case, 2 params, gmax and e should be sufficient to fully specify the
+            mechanism, independent of any implementation. Useful e.g. for mapping to and from inbuilt mechanisms in simulators (e.g. pas in NEURON, Em/Rm in GENESIS).
+        NOTE: this attribute will be required in v2.0!! Don't use passiveConductance anymore.
+            Changed for consistency with ChannelML and NetworkML naming conventions.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="passiveConductance" type="xs:boolean" use="optional" default="false">
+            <xs:annotation>
+                <xs:documentation>Whether this is a passive/leak conductance. NOTE: this attribute will be removed in v2.0!! Use passive_conductance instead.
+            Changed for consistency with ChannelML and NetworkML naming conventions.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>  
+        
+        
+        
+        <xs:complexType name="SpecCapacitance">
+        <xs:annotation>
+                    <xs:appinfo>
+                        <meta:units>F/m2</meta:units>
+                    </xs:appinfo>
+                    <xs:documentation>Capacitance per unit area of a group of sections</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="parameter" type="UnnamedParameter" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="variableParameter" type="VariableParameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Note variable_parameter will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="variable_parameter" type="VariableParameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Note variable_parameter will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>  
+        
+        
+        <xs:complexType name="SpecAxialResistance">
+        <xs:annotation>
+                    <xs:appinfo>
+                        <meta:units>ohm m</meta:units>
+                    </xs:appinfo>
+            <xs:documentation>Specific axial resistance of a group of sections</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="parameter" type="UnnamedParameter" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="variableParameter" type="VariableParameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Note variable_parameter will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="variable_parameter" type="VariableParameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Note variable_parameter will be the preferred form in v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>  
+        
+        
+        <xs:complexType name="InitialMembPotential">
+        <xs:annotation>
+                    <xs:appinfo>
+                        <meta:units>V</meta:units>
+                    </xs:appinfo>
+            <xs:documentation>This quantity is often required for computational simulations and specifies the potential
+                difference across the membrane at the start of the simulation. This is an optional field</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="parameter" type="UnnamedParameter" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="variableParameter" type="VariableParameter" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>  
+        
+        
+        
+        <xs:complexType name="IonProperties">
+        <xs:annotation>
+            <xs:documentation>Some properties accociated with an ion type which takes part in the mechanisms on the cell</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="parameter" type="NamedParameter" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>  
+        
+        
+        
+        <xs:complexType name="NamedParameter">
+        <xs:annotation>
+            <xs:documentation>Definition of a value for a quantity and the associated groups of cables 
+                        which have this value. Can have any name, but gmax and e are special...</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+           <xs:element name="group" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>2 names have special meaning: gmax for the maximum conductance density, and e for the reversal potential of a passive channel</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" type="xs:double" use="required"/>
+    </xs:complexType>  
+        
+        <xs:complexType name="VariableParameter">
+        <xs:annotation>
+            <xs:documentation>Definition of a value for a quantity which varies over a given group of cables</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+                            <xs:element name="group" type="xs:string" maxOccurs="unbounded"/>
+                            <xs:element name="inhomogeneous_value" type="InhomogeneousValue" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>  
+        
+        <xs:complexType name="VariableNamedParameter">
+        <xs:annotation>
+            <xs:documentation>Definition of a value for a quantity which varies over a given group of cables</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+                            <xs:element name="group" type="xs:string" maxOccurs="unbounded"/>
+                            <xs:element name="inhomogeneous_value" type="InhomogeneousValue" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>  
+        
+        
+        <xs:complexType name="InhomogeneousValue">
+        <xs:annotation>
+            <xs:documentation>How a value changes over the cable group. Implementation here based on NEURON inhomogeneous parameter specification.
+            See example for usage of this element</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="param_name" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>Name used in the inhomogeneous_param element in the cable group</xs:documentation>
+                    </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>Equation showing how parameter changes as function of variable attribute in inhomogeneous_param element</xs:documentation>
+                    </xs:annotation>
+        </xs:attribute>
+                
+    </xs:complexType>         
+        
+        <!--
+        <xs:complexType name="IonParameter">
+        <xs:annotation>
+            <xs:documentation>NamedParameter restricted to params for ions</xs:documentation>
+                </xs:annotation>
+                <xs:complexContent>
+                    <xs:restriction base="NamedParameter">
+                        <xs:sequence>
+                        <xs:element name="group">
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="yes"/>
+                                <xs:enumeration value="no"/>
+                            </xs:restriction>
+                        </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                        <xs:attribute name="value" type="xs:double" use="required"/>
+                    </xs:restriction>
+                </xs:complexContent>
+        </xs:complexType> -->
+        
+        
+        
+        <xs:complexType name="UnnamedParameter">
+        <xs:annotation>
+            <xs:documentation>Definition of a value for a quantity and the associated groups of cables 
+                        which have this value. The quantity referred to will be clear from the usage, e.g. InitialMembPotential</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="group" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="value" type="xs:double" use="required"/>
+    </xs:complexType>  
+    
+    
+          <!-- Definition of MechanismType follows. -->
+        <xs:simpleType name="MechanismType">
+            <xs:annotation>
+                <xs:documentation>Specifies the type of cellular mechanism. Note could be used for any type of electrophysiological
+                property of a section of a cell</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="Channel Mechanism">
+                    <xs:annotation>
+                        <xs:documentation>Voltage and/or conductance dependent membrane conductance</xs:documentation>
+                    </xs:annotation>
+                </xs:enumeration>
+                <xs:enumeration value="Ion Concentration">
+                    <xs:annotation>
+                        <xs:documentation>Mechanism which alters the oncentration of a specific ion</xs:documentation>
+                    </xs:annotation>
+                </xs:enumeration>
+            </xs:restriction>
+        </xs:simpleType> 
+   
+        
+
+        <xs:simpleType name="SynapticDelayValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>s</meta:units>
+                    <meta:typical_value>0.005</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of a delay associated with a synaptic connection</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+            
+
+        <xs:simpleType name="TimeConstantValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>s</meta:units>
+                    <meta:typical_value>0.005</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of any time constant, greater than zero</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minExclusive value="0"/>
+            </xs:restriction>   
+        </xs:simpleType>
+        
+        <xs:simpleType name="InvTimeConstantValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>s-1</meta:units>
+                    <meta:typical_value>100</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of the inverse of a time constant</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>   
+        </xs:simpleType>
+        
+        
+        <xs:simpleType name="TimeConstantValueIncZero">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>s</meta:units>
+                    <meta:typical_value>0.005</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of any time constant which can have value zero</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+            
+
+        <xs:simpleType name="TimeValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>s</meta:units>
+                    <meta:typical_value>0.005</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of any time value, zero or greater</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+
+        <xs:simpleType name="FrequencyValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>Hz</meta:units>
+                    <meta:typical_value>50</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of any frequency, zero or greater</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+
+        <xs:simpleType name="ConductanceValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>S</meta:units>
+                    <meta:typical_value>1e-8</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of conductance</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+        
+        
+        <xs:simpleType name="ConductanceDensityValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>S m-2</meta:units>
+                    <meta:typical_value>100</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of conductance density</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+        
+        
+
+        <xs:simpleType name="LengthValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>m</meta:units>
+                    <meta:typical_value>1e-6</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of length</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+            </xs:restriction>
+        </xs:simpleType>
+        
+        
+
+
+        <xs:simpleType name="CurrentValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>A</meta:units>
+                    <meta:typical_value>1e-11</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of current</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+            </xs:restriction>
+        </xs:simpleType>
+
+
+        <xs:simpleType name="ConcentrationValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>mM</meta:units>
+                    <meta:typical_value>1e-5</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of concentration</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minInclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+
+
+        <xs:simpleType name="VoltageValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>V</meta:units>
+                    <meta:typical_value>-0.07</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of voltage</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="TemperatureValue">
+            <xs:annotation>
+                <xs:appinfo>
+                    <meta:units>deg C</meta:units>
+                    <meta:typical_value>32</meta:typical_value>
+                </xs:appinfo>
+                <xs:documentation>Units of temperature</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:double">
+                <xs:minExclusive value="0"/>
+            </xs:restriction>
+        </xs:simpleType>
+        
+</xs:schema>
