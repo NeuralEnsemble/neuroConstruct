@@ -809,9 +809,9 @@ public class GeneralProperties
     
     //// added to test creation of NeuroML2 channel summary
     
-    public static File getNeuroML2ChannelReadableXSL()
+    public static File getNeuroML2ReadableXSL()
     {
-        return new File("templates/xmlTemplates/NeuroML2/v2.0/Channels/"+"NeuroML2ChannelTest.xsl");
+        return new File("templates/xmlTemplates/NeuroML2/v2.0/CellMechanisms/"+"NeuroML2Test.xsl");
         
     }
 

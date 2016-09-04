@@ -101,7 +101,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     JPanel jPanel3 = new JPanel();
     BorderLayout borderLayout1 = new BorderLayout();
     JButton jButtonCancel = new JButton("Close");
-
+    
     JButton jButtonReload = new JButton("Reload ChannelML file");
     JButton jButtonPlot = new JButton("Generate associated plots");
     JButton jButtonEditExt = new JButton("Edit ChannelML file externally");
@@ -515,7 +515,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
         else
         {
-          xslDoc = GeneralProperties.getNeuroML2ChannelReadableXSL();
+          xslDoc = GeneralProperties.getNeuroML2ReadableXSL();
           //System.out.println("Testing display of NeuroML2 channel summary in the text format");
         }
 
