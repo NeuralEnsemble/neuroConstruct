@@ -140,7 +140,7 @@ public class NeuroML2CellReader {
             Point3DWithDiam dist = nml2Segment.getDistal();
                             
             Segment seg = segIdVsSegments.get(nml2Segment.getId());
-                
+            
             if (prox!=null) 
             {
                 Section section = seg.getSection();
@@ -149,29 +149,29 @@ public class NeuroML2CellReader {
                 section.setStartPointPositionZ((float)prox.getZ());
                 section.setStartRadius((float)prox.getDiameter()/2);
             }
-            else
-            {
-                if(parent != null)
-                {
-                  for(org.neuroml.model.Segment nml2ParentSegment: nml2Cell.getMorphology().getSegment())
-                  {
-                    if (nml2ParentSegment.getId()==parent.getSegment())
-                    { 
-                      Point3DWithDiam parentDistal= nml2ParentSegment.getDistal();
+            //else
+            //{
+              //  if(parent != null)
+                //{
+                  //for(org.neuroml.model.Segment nml2ParentSegment: nml2Cell.getMorphology().getSegment())
+                  //{
+                    //if (nml2ParentSegment.getId()==parent.getSegment())
+                    //{ 
+                      //Point3DWithDiam parentDistal= nml2ParentSegment.getDistal();
                      
-                      parentDistal.setDiameter(dist.getDiameter());
+                      //parentDistal.setDiameter(dist.getDiameter());
                       
-                      Section section = seg.getSection();
-                      section.setStartPointPositionX((float)parentDistal.getX());
-                      section.setStartPointPositionY((float)parentDistal.getY());
-                      section.setStartPointPositionZ((float)parentDistal.getZ());
-                      section.setStartRadius((float)parentDistal.getDiameter()/2);
+                      //Section section = seg.getSection();
+                      //section.setStartPointPositionX((float)parentDistal.getX());
+                      //section.setStartPointPositionY((float)parentDistal.getY());
+                      //section.setStartPointPositionZ((float)parentDistal.getZ());
+                      //section.setStartRadius((float)parentDistal.getDiameter()/2);
                       
                       
-                    }
-                  }
-                }
-            }
+                    //}
+                  //}
+                //}
+            //}
             
             if (parent!=null) 
             {
