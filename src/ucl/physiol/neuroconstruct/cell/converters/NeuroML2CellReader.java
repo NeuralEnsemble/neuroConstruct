@@ -6,6 +6,7 @@
 
 package ucl.physiol.neuroconstruct.cell.converters;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 import org.neuroml.export.utils.Utils;
@@ -16,16 +17,23 @@ import org.neuroml.model.InitMembPotential;
 import org.neuroml.model.IntracellularProperties;
 import org.neuroml.model.Member;
 import org.neuroml.model.MembraneProperties;
+import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.Point3DWithDiam;
 import org.neuroml.model.Resistivity;
 import org.neuroml.model.SegmentGroup;
 import org.neuroml.model.SegmentParent;
 import org.neuroml.model.SpecificCapacitance;
+import org.neuroml.model.util.NeuroMLConverter;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.ChannelMechanism;
 import ucl.physiol.neuroconstruct.cell.Section;
 import ucl.physiol.neuroconstruct.cell.Segment;
+import ucl.physiol.neuroconstruct.neuroml.NeuroML2Reader;
+import static ucl.physiol.neuroconstruct.neuroml.NeuroML2Reader.logger;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLException;
+import ucl.physiol.neuroconstruct.project.Project;
+import ucl.physiol.neuroconstruct.project.ProjectManager;
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import ucl.physiol.neuroconstruct.utils.GuiUtils;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -79,8 +87,6 @@ public class NeuroML2CellReader {
         {
             logger.logComment("Adding Segment: "+ nml2Segment.getId(), true);
             Point3DWithDiam dist = nml2Segment.getDistal();
-            SegmentParent parent = nml2Segment.getParent();
-            Point3DWithDiam prox = nml2Segment.getProximal();
                     
                     
             Segment nCsegment = new Segment();
@@ -131,9 +137,10 @@ public class NeuroML2CellReader {
             logger.logComment("Checking Segment: "+ nml2Segment.getId(), true);
             SegmentParent parent = nml2Segment.getParent();
             Point3DWithDiam prox = nml2Segment.getProximal();
+            Point3DWithDiam dist = nml2Segment.getDistal();
                             
             Segment seg = segIdVsSegments.get(nml2Segment.getId());
-                    
+                
             if (prox!=null) 
             {
                 Section section = seg.getSection();
@@ -142,13 +149,38 @@ public class NeuroML2CellReader {
                 section.setStartPointPositionZ((float)prox.getZ());
                 section.setStartRadius((float)prox.getDiameter()/2);
             }
-                    
+            else
+            {
+                if(parent != null)
+                {
+                  for(org.neuroml.model.Segment nml2ParentSegment: nml2Cell.getMorphology().getSegment())
+                  {
+                    if (nml2ParentSegment.getId()==parent.getSegment())
+                    { 
+                      Point3DWithDiam parentDistal= nml2ParentSegment.getDistal();
+                     
+                      parentDistal.setDiameter(dist.getDiameter());
+                      
+                      Section section = seg.getSection();
+                      section.setStartPointPositionX((float)parentDistal.getX());
+                      section.setStartPointPositionY((float)parentDistal.getY());
+                      section.setStartPointPositionZ((float)parentDistal.getZ());
+                      section.setStartRadius((float)parentDistal.getDiameter()/2);
+                      
+                      
+                    }
+                  }
+                }
+            }
+            
             if (parent!=null) 
             {
                 Segment parentSeg = segIdVsSegments.get(parent.getSegment());
                 seg.setParentSegment(parentSeg);
                 
             }
+            
+            
                     
         }
         if (nml2Cell.getBiophysicalProperties()!=null) {
@@ -226,6 +258,48 @@ public class NeuroML2CellReader {
     public Cell getBuiltCell()
     {
         return cell;
+    }
+    
+    public static void main(String args[])
+    {
+
+        try
+        {
+            //Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx"),null);
+            testProj = Project.loadProject(new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx"),null);
+            testProj = Project.loadProject(new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx"),null);
+
+            File f = new File("testProjects/TestNetworkML/savedNetworks/test_nml2.xml");
+            f = new File("testProjects/TestNetworkML/savedNetworks/nnn.nml");
+            
+            f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/generatedNeuroML2/Granule_98.cell.nml");
+            f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/generatedNeuroML2/bask.cell.nml");
+                
+            logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
+            
+            NeuroMLConverter neuromlConverter=new NeuroMLConverter();
+
+            NeuroMLDocument neuroml = neuromlConverter.urlToNeuroML(f.toURI().toURL());
+
+            logger.logComment("Reading in NeuroML2: "+ neuroml.getId(), true);
+            
+            for (org.neuroml.model.Cell NML2Cell: neuroml.getCell())
+            {
+                NeuroML2CellReader cellReader= new NeuroML2CellReader(NML2Cell,NML2Cell.getId());
+                         
+                cellReader.parse();
+                
+                
+            }
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
     }
     
     
