@@ -305,7 +305,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
         cmlMech.setDescription(CellMechanismNotes);
                             
-        cmlMech.setMechanismModel("NeuroML2 cell mechanism imported from a network");
+        cmlMech.setMechanismModel("NeuroML 2 cell mechanism imported from a network");
                             
         cmlMech.setXMLFile(ChannelFile.getName());
                             
