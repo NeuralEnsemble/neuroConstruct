@@ -587,16 +587,17 @@ public class ProjectManager implements GenerationReport
     
     
     
-    public NetworkMLnCInfo doLoadNeuroML2Network(File nml2File, boolean acceptDefaults) throws NeuroMLException
+    public NetworkMLnCInfo doLoadNeuroML2Network(File nml2File, boolean acceptDefaults) throws NeuroMLException, IOException
     {
-        NeuroML2Reader nml2Reader = new NeuroML2Reader(activeProject);
-   
+        getCurrentProject().setNeuroML2Project();
+        
+        NeuroML2Reader nml2Reader = new NeuroML2Reader(getCurrentProject());
+        
         nml2Reader.parse(nml2File);
         
         return nml2Reader;
         
     }
-    
     
     public NetworkMLnCInfo doLoadNetworkML(File networkmlFile, boolean acceptDefaults) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
     {

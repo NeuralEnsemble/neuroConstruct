@@ -71,6 +71,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     XMLCellMechanism xmlMechanism = null;
 
     private final static String CHANNELML = "ChannelML";
+    private final static String NEUROML2 = "NeuroML2";
     private final static String SBML = "SBML";
 
     private String xmlDialect = CHANNELML;
@@ -100,7 +101,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     JPanel jPanel3 = new JPanel();
     BorderLayout borderLayout1 = new BorderLayout();
     JButton jButtonCancel = new JButton("Close");
-
+    
     JButton jButtonReload = new JButton("Reload ChannelML file");
     JButton jButtonPlot = new JButton("Generate associated plots");
     JButton jButtonEditExt = new JButton("Edit ChannelML file externally");
@@ -194,6 +195,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             xmlDialect = CHANNELML;
         else if (xmlMechanism instanceof SBMLCellMechanism)
             xmlDialect = SBML;
+        else if (xmlMechanism instanceof NeuroML2Component)
+            xmlDialect = NEUROML2;
 
 
         CML_CONTENTS_TAB = xmlDialect+" file";
@@ -503,7 +506,18 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         String tab = jTabbedPane1.getTitleAt(selectedTab);
 
         File cmlFile = this.xmlMechanism.getXMLFile(project);
-        File xslDoc = GeneralProperties.getChannelMLReadableXSL();
+        
+        File xslDoc = null;
+        
+        if (!project.isNeuroML2())
+        {
+          xslDoc = GeneralProperties.getChannelMLReadableXSL();
+        }
+        else
+        {
+          xslDoc = GeneralProperties.getNeuroML2ReadableXSL();
+          //System.out.println("Testing display of NeuroML2 channel summary in the text format");
+        }
 
         if (this.isSBMLMechanism())
         {
@@ -533,7 +547,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                 "The parameters in the "+xmlDialect+" file can be changed here, along with the settings file for loading it into neuroConstruct");
             //jPanelEdit.setToolTipText();
 
-
+            
 
             SimpleXMLDocument xmlDoc = xmlMechanism.getXMLDoc();
 
@@ -766,12 +780,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
             //Project testProj = Project.loadProject(new File("C:/fullCheckout/tempModels/neuroConstruct/Ex7_GranuleCell/Ex7_GranuleCell.neuro.xml"),pel);
             //Project testProj = Project.loadProject(new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml"),pel);
-            Project testProj = Project.loadProject(new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx"),pel);
-
+            //Project testProj = Project.loadProject(new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx"),pel);
+            Project testProj = Project.loadProject(new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx"),null);
             //ChannelMLCellMechanism xmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("NaConductance_CML");
             //ChannelMLCellMechanism xmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Gran_CaHVA_98");
             //ChannelMLCellMechanism xmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("kc_fast");
-            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("na3");
+            //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("na3");
+            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Kdr_pyr");
             
             ChannelMLEditor.logger.setThisClassVerbose(false);
 

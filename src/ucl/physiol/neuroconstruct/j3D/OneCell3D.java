@@ -471,6 +471,7 @@ public class OneCell3D
                     {
                         logger.logComment("Using mainCellTG for parent TG");
                         tgOfParent = mainCellTG;
+                        System.out.println("Testing tgOfParent when parent is null: "+tgOfParent);
                     }
                     else
                     {
@@ -479,7 +480,8 @@ public class OneCell3D
 
                         /** @todo !! Optimization: perhaps store last TransformGroup, check id of parent and use this? */
                         tgOfParent = segmentTGs.get(new Integer(parent.getSegmentId()));
-
+                        System.out.println("Parent segment id: "+parent.getSegmentId());
+                        System.out.println("Testing tgOfParent when parent is not null: "+tgOfParent);
                     }
 
                     if (showNeuriteDiam() ||
@@ -489,6 +491,9 @@ public class OneCell3D
                         if (! (currSegment.isFirstSectionSegment() && currSegment.isSomaSegment()))
                         {
                             logger.logComment("Adding a solid segment 1: "+ currSegment);
+                            System.out.println("Testing tgOfParent: "+tgOfParent);
+                            System.out.println("Testing currSegment: "+currSegment);
+                            
                             addedSegmentTG = addPositionedSegment(currSegment, tgOfParent);
 
                             if (cancelled) return null;

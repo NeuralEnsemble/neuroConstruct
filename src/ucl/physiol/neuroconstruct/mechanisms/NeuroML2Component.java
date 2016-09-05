@@ -76,7 +76,7 @@ public class NeuroML2Component extends XMLCellMechanism
     @Override
     public String getMechanismType()
     {
-        return mechanismType;
+        return this.mechanismType;
     }
 
 

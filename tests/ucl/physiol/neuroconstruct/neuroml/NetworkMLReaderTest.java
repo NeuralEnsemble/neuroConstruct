@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -144,7 +145,7 @@ public class NetworkMLReaderTest
     
     
     @Test
-    public void testSavingLoadingNetworkNML2() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException
+    public void testSavingLoadingNetworkNML2() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException, IOException
     {
         System.out.println("---  testSavingLoadingNetworkNML2");
         

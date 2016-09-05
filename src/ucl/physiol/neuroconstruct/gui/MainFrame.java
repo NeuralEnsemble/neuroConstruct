@@ -138,7 +138,6 @@ import ucl.physiol.neuroconstruct.neuron.*;
 
 import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
 import ucl.physiol.neuroconstruct.pynn.PynnFileManager.*;
@@ -980,7 +979,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenuItem jMenuItemDataSets = new JMenuItem();
     JMenuItem jMenuItemListSims = new JMenuItem();
 
-
+    boolean NeuroML2= false;
    // JButton jButtonSimulationRecord = new JButton();
 
     public MainFrame()
@@ -13145,7 +13144,121 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    protected void doImportNeuroML2(File nmlFile, boolean acceptDefaults, boolean confirmImport)
+    {
+        if (nmlFile==null || !nmlFile.exists())
+        {
+            GuiUtils.showErrorMessage(logger, "Problem locating file: "+ nmlFile, null, this);
+        }
+        else
+        {
+            long start = System.currentTimeMillis();
+            
+            try
+            {
+                projManager.getCurrentProject().resetGenerated();
 
+                logger.logComment("Removing 3D network, as it's no longer relevant...");
+                doDestroy3D();
+
+                if (this.jCheckBoxRandomGen.isSelected())
+                {
+                    Random tempRandom = new Random();
+                    this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
+                }
+
+                NetworkMLnCInfo extraInfo = projManager.doLoadNeuroML2Network(nmlFile, acceptDefaults);
+                
+                logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
+                
+                String prevSimConfig = extraInfo.getSimConfig();
+                long randomSeed = extraInfo.getRandomSeed();
+
+                if (randomSeed!=Long.MIN_VALUE)
+                {
+                    this.jTextFieldRandomGen.setText(randomSeed+"");
+                    ProjectManager.setRandomGeneratorSeed(randomSeed);
+                    ProjectManager.reinitialiseRandomGenerator();
+                }
+                if (prevSimConfig!=null)
+                {
+                    this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
+                }               
+                
+
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Error loading network info from: "+nmlFile, ex, this);
+                return;
+            }
+            long end = System.currentTimeMillis();
+
+            SimConfig simConfig = getSelectedSimConfig();
+            
+            Hashtable<String, ArrayList<Integer>> hostsVsProcs = CompNodeGenerator.getHostsVsNumOnProcs(projManager.getCurrentProject(), simConfig);
+            
+            String compNodesReport = CompNodeGenerator.generateCompNodesReport(hostsVsProcs, simConfig.getMpiConf(), -1);
+            
+            
+            boolean elecInputsReadFromFile = projManager.getCurrentProject().generatedElecInputs.getNumberSingleInputs()>0;
+            
+            String inputReport = "";
+            if (elecInputsReadFromFile)
+            {
+                inputReport = projManager.getCurrentProject().generatedElecInputs.getHtmlReport();
+            }
+            String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
+
+            setGeneratorInfo("Cell positions and network connections loaded from: <b>"+nmlFile.getAbsolutePath()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
+                                            +"<center><b>Cell Groups:</b></center>"
+                                            +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
+                                            +"<center><b>Network Connections:</b></center>"
+                +projManager.getCurrentProject().generatedNetworkConnections.getHtmlReport(
+                                        GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,simConfig)
+                                        + compNodesReport+inputReport+"<br>"+note);
+            
+            
+
+            if (elecInputsReadFromFile)
+            {
+                projManager.plotSaveGenerator = new PlotSaveGenerator(projManager.getCurrentProject(), this);
+                projManager.plotSaveGenerator.setSimConfig(simConfig);
+                projManager.plotSaveGenerator.start();
+            }
+            else
+            {
+                projManager.elecInputGenerator = new ElecInputGenerator(projManager.getCurrentProject(), this);
+                projManager.elecInputGenerator.setSimConfig(simConfig);
+                projManager.elecInputGenerator.start();
+            }
+
+            sourceOfCellPosnsInMemory = NETWORKML_POSITIONS;
+
+            jComboBoxView3DChoice.setSelectedItem(LATEST_GENERATED_POSITIONS);
+
+            if (confirmImport)
+            {
+                projManager.getCurrentProject().setProjectDescription("neuroConstruct project generated from contents" +
+                    " of file: "+ nmlFile+"\n\nThe cell positions & network connections in memory reflect the " +
+                    "instances in the NetworkML elements of the imported file. Regenerating the network in " +
+                    "neuroConstruct nmay lead to a different network structure.");
+            }
+            else
+            {
+                logger.logComment("There had been other elements in this project");
+            }
+
+            logger.logComment("Refreshing all...");
+            refreshTabCellTypes();
+            refreshTabProjectInfo();
+
+            refreshAll();
+        }
+
+
+    }
+    
     void jComboBoxView3DChoice_popupMenuWillBecomeVisible(PopupMenuEvent e)
     {
 
@@ -14721,7 +14834,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         else if (cellMech instanceof XMLCellMechanism)
         {
             ChannelMLEditor cmlEditor
-                = new ChannelMLEditor( (XMLCellMechanism) cellMech,
+                 = new ChannelMLEditor( (XMLCellMechanism) cellMech,
                                       projManager.getCurrentProject(),
                                       this);
 
@@ -14735,8 +14848,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             cmlEditor.setVisible(true);
 
             //System.out.println("Shown the dialog");
-
-
+            
         }
     }
 
@@ -16891,8 +17003,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         frame.setVisible(true);
 
     }
-
-
 
 
 }

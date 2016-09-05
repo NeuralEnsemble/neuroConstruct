@@ -1534,6 +1534,8 @@ public class Project implements TableModelListener
             }
             File propsFile = new File(cellMechDir, CellMechanismHelper.PROPERTIES_FILENAME);
             
+            //System.out.println("propsFile: "+propsFile.getAbsolutePath());
+            
             boolean saveProps = true;
             
             
@@ -1849,7 +1851,17 @@ public class Project implements TableModelListener
     {
         basicProjectInfo.setProjectFileVersion(pfv);
     }
-
+    
+    public boolean isNeuroML2()
+    {
+        return basicProjectInfo.getNeuroML2();
+    }
+    
+    public void setNeuroML2Project()
+           
+    {
+        basicProjectInfo.setNeuroML2();
+    }
     
     public static void main(String[] args) throws ProjectFileParsingException
     {
