@@ -5291,6 +5291,29 @@ public class NeuronFileManager
                         String dir = getArchSpecificDir();
 
                         neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+dir+"/special";
+                     
+                        if (!(new File(neuronExecutable)).exists())
+                        {
+                            String[] options =
+                            {
+                                GeneralUtils.DIR_64BIT,GeneralUtils.DIR_I386, GeneralUtils.DIR_I686,GeneralUtils.DIR_POWERPC, GeneralUtils.DIR_UMAC
+                            };
+
+                            for (String o : options)
+                            {
+                                String path = dirToRunInFile.getAbsolutePath() + "/" + o + "/special";
+                                boolean exists = (new File(path)).exists();
+                                logger.logComment("Trying path for compiled version of NEURON with mods: " + path+" (exists: "+exists+")", true);
+                                if (exists)
+                                {
+                                    neuronExecutable = path;
+                                }
+                            }
+                        }
+                        else {
+                                logger.logComment("Path for compiled version of NEURON with mods: " + neuronExecutable);
+                        }
+
 
                         if(neuronExecutable.indexOf("generated")<0)
                         {
