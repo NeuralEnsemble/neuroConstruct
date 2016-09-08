@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.Collections;
 import org.neuroml.export.utils.Utils;
 import org.neuroml.model.Connection;
 import org.neuroml.model.ConnectionWD;
@@ -52,6 +50,7 @@ import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
 import org.neuroml.model.ElectricalProjection;
+import org.neuroml.model.ElectricalConnectionInstance;
 import org.neuroml.model.PulseGenerator;
 import org.neuroml.model.PoissonFiringSynapse;
 import org.neuroml.model.TransientPoissonFiringSynapse;
@@ -205,6 +204,49 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     }
     
     public void addNeuroML2Cell(org.neuroml.model.Cell NML2Cell, String CellIdPrefix, File NML2CellFile) throws NeuroMLException, org.neuroml.model.util.NeuroMLException
+    {
+        String newCellId = CellIdPrefix+NML2Cell.getId();
+                
+        System.out.println("Found a NeuroML2 cell with id = "+NML2Cell.getId());
+                
+        //if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
+        //{
+            // throw new NeuroMLException("The project "+project.getProjectName() +" already contains a cell with ID "+ newCellId);
+        //} 
+                         
+        for(String cellTypeId: project.cellManager.getAllCellTypeNames())
+        {
+            if(NML2Cell.getId().equals(cellTypeId))
+            {
+                // newly found cellType will overide the existent cell type in the project
+                                
+                project.cellManager.deleteCellType(project.cellManager.getCell(cellTypeId));
+            }
+        }
+        NeuroML2CellReader cellReader= new NeuroML2CellReader(NML2Cell,newCellId);
+                         
+        cellReader.parse();
+                         
+        Cell imported_cell= cellReader.getBuiltCell();
+                      
+        try
+        {
+            project.cellManager.addCellType(imported_cell);
+                         
+            project.markProjectAsEdited();
+                             
+            logger.logComment(imported_cell.getInstanceName() + " added to the project");
+        }
+        catch (Exception ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem importing NeuroML2 file "+ NML2CellFile.getAbsolutePath(), ex, null);
+        }
+        
+        logger.logComment("Read in NeuroML 2 cell: "+ CellTopologyHelper.printDetails(imported_cell, project), true);
+        
+    }
+    
+    public void addNeuroML2Cell2CaPools(org.neuroml.model.Cell2CaPools NML2Cell, String CellIdPrefix, File NML2CellFile) throws NeuroMLException, org.neuroml.model.util.NeuroMLException
     {
         String newCellId = CellIdPrefix+NML2Cell.getId();
                 
@@ -613,7 +655,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
     }
     
-    private ConnectivityConditions determineConnectivityConditions(ElectricalProjection projection)
+    private ConnectivityConditions determineConnectivityConditions(ElectricalProjection projection,int PrePopulationSize, int PostPopulationSize)
            
     {
       ConnectivityConditions connConds = new ConnectivityConditions();
@@ -648,10 +690,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     
     public void parse(File nml2File) throws NeuroMLException, IOException
     {
-        parse(nml2File, "");
+        parse(nml2File, "",false);
     }
     
-    public void parse(File nml2File, String idPrefix) throws NeuroMLException, IOException
+    public void parse(File nml2File, String idPrefix, boolean makeAssumptionsOnConns) throws NeuroMLException, IOException
     {
         try 
         {
@@ -690,6 +732,35 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             File IonChannelFile=new File(includedInNetwork.getParentFile(),includedInNetwork.getName());
                                 
                             if(neuroml2_doc.getIonChannel().size() >1)
+                            {
+                                ionChannelNotes= ionChannel.getNotes();
+                            }
+                            else
+                            {
+                                ionChannelNotes=neuroml2_doc.getNotes();
+                            }
+                                
+                            this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
+                        }  
+                      } 
+                    }
+                    if (!neuroml2_doc.getIonChannelKS().isEmpty())
+                    {
+                      for(org.neuroml.model.IonChannelKS ionChannel: neuroml2_doc.getIonChannelKS())
+                      {
+                        String ionChannelId= ionChannel.getId();
+                            
+                        if (project.cellMechanismInfo.getAllCellMechanismNames().contains(ionChannelId))
+                        {
+                          logger.logComment("The project "+project.getProjectName() +" already contains a cell mechanism with ID "+ ionChannelId);
+                        } 
+                        else
+                        {   
+                            String ionChannelNotes=null;
+                            
+                            File IonChannelFile=new File(includedInNetwork.getParentFile(),includedInNetwork.getName());
+                                
+                            if(neuroml2_doc.getIonChannelKS().size() >1)
                             {
                                 ionChannelNotes= ionChannel.getNotes();
                             }
@@ -774,6 +845,34 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                                 this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
                             }  
                         }
+                        for(org.neuroml.model.IonChannelKS ionChannel: neuroml2_included_doc.getIonChannelKS())
+                        {
+                            String ionChannelId= ionChannel.getId();
+                            
+                            if (project.cellMechanismInfo.getAllCellMechanismNames().contains(ionChannelId))
+                            {
+                              logger.logComment("The project "+project.getProjectName() +" already contains a cell mechanism with ID "+ ionChannelId);
+                            } 
+                            else
+                            {   
+                                String ionChannelNotes=null;
+                                
+                                System.out.println("Included channel name: "+includedFile.getName());
+                            
+                                File IonChannelFile=new File(includedInNetwork.getParentFile(),includedFile.getName());
+                                
+                                if(neuroml2_included_doc.getIonChannelKS().size() >1)
+                                {
+                                   ionChannelNotes= ionChannel.getNotes();
+                                }
+                                else
+                                {
+                                   ionChannelNotes=neuroml2_included_doc.getNotes();
+                                }
+                                
+                                this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
+                            }  
+                        }
                     }
                     
                     for (org.neuroml.model.Cell nml2Cell: neuroml2_doc.getCell()) 
@@ -781,11 +880,21 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         this.addNeuroML2Cell(nml2Cell, idPrefix, includedInNetwork);  
                     }
                     
+                    for (org.neuroml.model.Cell2CaPools nml2Cell: neuroml.getCell2CaPools())
+                    {
+                        this.addNeuroML2Cell2CaPools(nml2Cell,idPrefix,nml2File);
+                    }
+                    
                     
             }
+            
             for (org.neuroml.model.Cell nml2Cell: neuroml.getCell()) 
             {
                this.addNeuroML2Cell(nml2Cell, idPrefix, nml2File);  
+            }
+            for (org.neuroml.model.Cell2CaPools nml2Cell: neuroml.getCell2CaPools())
+            {
+               this.addNeuroML2Cell2CaPools(nml2Cell,idPrefix,nml2File);
             }
             
             HashMap<String, PulseGenerator> pulseGenerators = new HashMap<String, PulseGenerator>();
@@ -854,6 +963,21 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 project.simConfigInfo.add(simConfigToUse);
                      
                 logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
+                
+                if(!makeAssumptionsOnConns)
+                {
+                    String connInfo="Please note that by default no assumptions on connectivity conditions (e.g. divergence versus convergence projection) are made\n"
+                            +       "during import of NeuroML2 network; if imported NeuroML2 network is saved and loaded again, regenerating the NeuroML2 network\n"
+                            +       "in neuroConstruct will lead to a different network structure\n"
+                            +       "Should neuroConstruct attempt to determine whether the projection is convergent or divergent?";
+                    //// move to MainFrame.java
+                }
+                
+                else
+                    
+                {
+                    
+                }
                 
                 for (Population population: network.getPopulation())
                 {
@@ -949,7 +1073,11 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         synList.add(synProp);
                         SearchPattern sp = SearchPattern.getRandomSearchPattern();
                         MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
-                        ConnectivityConditions connConds = this.determineConnectivityConditions(projection,PrePopSize,PostPopSize);
+                        ConnectivityConditions connConds = new ConnectivityConditions();
+                        if (makeAssumptionsOnConns)
+                        {
+                            connConds = this.determineConnectivityConditions(projection,PrePopSize,PostPopSize);
+                        }
                         // connsConds should be elaborated based on the information that can be extracted from NeuroML2 network.
                         float jumpSpeed = Float.MAX_VALUE;
 
@@ -1032,6 +1160,107 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     
                 }
                 
+                for (ElectricalProjection projection: network.getElectricalProjection())
+                {
+                    String netConn = projection.getId();
+                    String source = projection.getPresynapticPopulation();
+                    String target = projection.getPostsynapticPopulation();
+                    
+                    int PrePopSize =0;
+                    
+                    int PostPopSize = 0;
+                    
+                    for (Population population: network.getPopulation())
+                    {
+                        if (population.getId().equals(source))
+                        {
+                            PrePopSize = population.getSize();
+                        }
+                        if (population.getId().equals(target))
+                        {
+                            PostPopSize = population.getSize();
+                        }
+                    }
+                    if (! (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn) ||
+                           project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)))
+                    {
+                        HashSet<String> electSynTypes = new HashSet<String>();
+                        
+                        String electSynapse=null;
+                        
+                        Vector<SynapticProperties> synList = new Vector<SynapticProperties>();
+                        
+                        for (ElectricalConnectionInstance elecConn: projection.getElectricalConnectionInstance())
+                        {
+                            electSynTypes.add(elecConn.getSynapse());
+                            electSynapse= elecConn.getSynapse();
+                        }
+                        if (electSynTypes.size()  !=1 ) 
+                        {
+                          throw new NeuroMLException("neuroConstruct can only import an electrical projection between two cell populations if all of its electrcical "
+                                    + "connections have the same synapse component!");
+                        }
+                        else
+                        {
+                          SynapticProperties synProp = new SynapticProperties(electSynapse);
+                          
+                          synList.add(synProp);
+                        }
+                        SearchPattern sp = SearchPattern.getRandomSearchPattern();
+                        MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
+                        ConnectivityConditions connConds = new ConnectivityConditions();
+                        if (makeAssumptionsOnConns)
+                        {
+                            connConds = this.determineConnectivityConditions(projection,PrePopSize,PostPopSize);
+                        }
+                        // connsConds should be elaborated based on the information that can be extracted from NeuroML2 network.
+                        float jumpSpeed = Float.MAX_VALUE;
+
+                        logger.logComment("Going to add a volume based network connection "+netConn+" from group "+source+" to group "+target);
+                        
+                        try {
+                             project.morphNetworkConnectionsInfo.addRow(netConn, source, target, synList, sp, mml, connConds, jumpSpeed);
+                        } catch (NamingException ex) {
+                          logger.logComment("Problem creating volume based network connection...");
+                        }
+                        
+                    }
+                    if (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn)) {
+                        if (!project.morphNetworkConnectionsInfo.getSourceCellGroup(netConn).equals(source) ||
+                            !project.morphNetworkConnectionsInfo.getTargetCellGroup(netConn).equals(target)) {
+                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                        }
+                    }
+                    if (project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)) {
+                        if (!project.volBasedConnsInfo.getSourceCellGroup(netConn).equals(source) ||
+                            !project.volBasedConnsInfo.getTargetCellGroup(netConn).equals(target)) {
+                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                        }
+                    }
+
+                    for (ElectricalConnectionInstance conn: projection.getElectricalConnectionInstance())
+                    {
+                        
+                        int preSeg = conn.getPreSegment();
+                        int postSeg = conn.getPostSegment();
+
+                        float preFract = (new Double(conn.getPreFractionAlong())).floatValue();
+                        float postFract = (new Double(conn.getPostFractionAlong())).floatValue();
+
+                        this.netConns.addSynapticConnection(netConn, 
+                                                            GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
+                                                            parseForCellNumber(conn.getPreCell()), 
+                                                            preSeg,
+                                                            preFract,
+                                                            parseForCellNumber(conn.getPostCell()),
+                                                            postSeg,
+                                                            postFract,
+                                                            0,
+                                                            null);
+                    }
+                   
+                    
+                }
                 for (InputList inputList: network.getInputList()) 
                 {
                     String inputId = inputList.getId();
@@ -1319,7 +1548,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
                 NeuroML2Reader nml2Reader = new NeuroML2Reader(testProj);
 
-                nml2Reader.parse(f, "New_");
+                nml2Reader.parse(f, "New_",false);
             }
             
 
