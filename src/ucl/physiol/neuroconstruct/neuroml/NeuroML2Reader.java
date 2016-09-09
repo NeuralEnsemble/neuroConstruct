@@ -401,15 +401,15 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         }
                             
         project.cellMechanismInfo.addCellMechanism(cmlMech);
-                            
-        File xslDir = GeneralProperties.getChannelMLSchemataDir();
+        
+        /*File xslDir = GeneralProperties.getChannelMLSchemataDir();
                             
         File newXslNeuron = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_NEURONmod.xsl");
                             
         File newXslGenesis = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_GENESIStab.xsl");
                             
         File newXslPSICS = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_PSICS.xsl");
-
+      
         File[] newXsl =
         {
             newXslNeuron, newXslGenesis, newXslPSICS
@@ -446,7 +446,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             {
                 GuiUtils.showErrorMessage(logger, "Problem adding the mapping for " + cellMechanismId, ex, null);
             }
-        }
+        }*/
     }
     
     public ConnectivityConditions determineConnectivityConditions(Projection projection, int PrePopulationSize, int PostPopulationSize)    
@@ -684,7 +684,14 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             {
                 SynapseNotes= NML2Synapse.getNotes();
             }
-            this.addNeuroML2CellMechanism(synapseId,CellMechanism.NEUROML2_SYNAPSE,synapseFile,SynapseNotes);
+            if (NML2Synapse instanceof org.neuroml.model.GapJunction)
+            {
+               this.addNeuroML2CellMechanism(synapseId,CellMechanism.NEUROML2_GAP_JUNCTION,synapseFile,SynapseNotes);
+            }
+            else
+            {
+               this.addNeuroML2CellMechanism(synapseId,CellMechanism.NEUROML2_SYNAPSE,synapseFile,SynapseNotes);
+            }
        }  
     }
     
@@ -772,6 +779,14 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
                         }  
                       } 
+                    }
+                    /// GapJunction
+                    if (!neuroml2_doc.getGapJunction().isEmpty())
+                    {
+                        for (org.neuroml.model.GapJunction includedGapJunction: neuroml2_doc.getGapJunction())
+                       {
+                         this.addNeuroML2Synapse(includedGapJunction,includedInNetwork,neuroml2_doc);
+                       }
                     }
                     /// ExpTwoSynapse
                     if (!neuroml2_doc.getExpTwoSynapse().isEmpty())
@@ -964,21 +979,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                      
                 logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
                 
-                if(!makeAssumptionsOnConns)
-                {
-                    String connInfo="Please note that by default no assumptions on connectivity conditions (e.g. divergence versus convergence projection) are made\n"
-                            +       "during import of NeuroML2 network; if imported NeuroML2 network is saved and loaded again, regenerating the NeuroML2 network\n"
-                            +       "in neuroConstruct will lead to a different network structure\n"
-                            +       "Should neuroConstruct attempt to determine whether the projection is convergent or divergent?";
-                    //// move to MainFrame.java
-                }
-                
-                else
-                    
-                {
-                    
-                }
-                
                 for (Population population: network.getPopulation())
                 {
                     if (!project.cellGroupsInfo.getAllCellGroupNames().contains(population.getId())) 
@@ -1102,7 +1102,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
                         }
                     }
-
+                    
                     for (Connection conn: projection.getConnection())
                     {
                         int preSeg = conn.getPreSegmentId();
@@ -1139,8 +1139,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         delay_map= getValueAndUnits(delay);
                         
                         ConnSpecificProps csp = new ConnSpecificProps(projection.getSynapse());
-                        
-                        csp.internalDelay = Float.NaN;
                         
                         csp.weight = weight;
                         
@@ -1246,7 +1244,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
                         float preFract = (new Double(conn.getPreFractionAlong())).floatValue();
                         float postFract = (new Double(conn.getPostFractionAlong())).floatValue();
-
+                        
                         this.netConns.addSynapticConnection(netConn, 
                                                             GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
                                                             parseForCellNumber(conn.getPreCell()), 

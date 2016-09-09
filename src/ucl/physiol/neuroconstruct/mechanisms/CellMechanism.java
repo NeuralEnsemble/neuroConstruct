@@ -54,6 +54,7 @@ public abstract class CellMechanism
     public static final String NEUROML2_CONC_MODEL = "NeuroML 2 concentration model";
     public static final String NEUROML2_ABSTRACT_CELL = "NeuroML 2 abstract cell";
     public static final String NEUROML2_SYNAPSE = "NeuroML 2 synapse";
+     public static final String NEUROML2_GAP_JUNCTION = "NeuroML 2 gap junction";
 
     /**
      * Implementation methods

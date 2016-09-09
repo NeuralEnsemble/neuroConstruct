@@ -13166,7 +13166,31 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     Random tempRandom = new Random();
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
+                logger.logComment("Warning about the connectivity conditions");
+                Object[] options =
+                {"OK", "Cancel"};
 
+                JOptionPane option = new JOptionPane(
+                "By default no assumptions on connectivity conditions (e.g. divergent versus convergent projection) are made during\n"+
+                "import of NeuroML2 network; if imported NeuroML2 network is saved and loaded again, regenerating the NeuroML2\n"
+               +"network in neuroConstruct will lead to a different network structure. Should neuroConstruct proceed with import?",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+                JDialog dialog = option.createDialog(this, "Warning");
+                dialog.setVisible(true);
+
+                Object choice = option.getValue();
+                logger.logComment("User has chosen: " + choice);
+                if (choice.equals("Cancel"))
+                {
+                   logger.logComment("User has changed their mind...");
+                   return;
+                }
+                
                 NetworkMLnCInfo extraInfo = projManager.doLoadNeuroML2Network(nmlFile, acceptDefaults);
                 
                 logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
