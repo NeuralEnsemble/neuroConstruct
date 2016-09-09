@@ -3972,12 +3972,16 @@ public class NeuronFileManager
             }
             
             boolean isGapJunction = false;
-            
+            boolean NeuroML2GapJunction =false;
             if (synPropList.size()==1)
             {
                 CellMechanism cm = project.cellMechanismInfo.getCellMechanism(synPropList.get(0).getSynapseType());
-                if (cm.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
-                    isGapJunction = true;
+                if ((cm.getMechanismType().equals(CellMechanism.GAP_JUNCTION)) || (cm.getMechanismType().equals(CellMechanism.NEUROML2_GAP_JUNCTION)))
+                     isGapJunction = true;
+                if (cm.getMechanismType().equals(CellMechanism.NEUROML2_GAP_JUNCTION))
+                     NeuroML2GapJunction= true;
+                
+                 
             }
 
             ArrayList<SingleSynapticConnection> allSynapses = project.generatedNetworkConnections.getSynapticConnections(netConnName);
@@ -4406,18 +4410,25 @@ public class NeuronFileManager
                         {
                             // Target cell mechanism
                             responseConn.append(tgtSecNameFull + " { " + gjListenObjA + " = new " + synapseType + "(" + fractTgtSection + ") }\n");
-
-                            responseConn.append(gjListenObjA + ".weight = "+weight+"\n");
-
-                            responseConn.append("setpointer "+ gjListenObjA + ".vgap, "  + srcSecVarLoc + "\n\n");
-
+                            
+                            if (!NeuroML2GapJunction)
+                            { responseConn.append(gjListenObjA + ".weight = "+weight+"\n");
+                              responseConn.append("setpointer "+ gjListenObjA + ".vgap, "  + srcSecVarLoc + "\n\n");
+                            }
+                            else {
+                            responseConn.append("setpointer "+ gjListenObjA + ".vpeer, "  + srcSecVarLoc + "\n\n");
+                            }
 
                             // Source cell mechanism
                             responseConn.append(srcSecNameFull + " { "  + gjListenObjB + " = new " + synapseType + "(" + fractSrcSection + ") }\n");
-
-                            responseConn.append(gjListenObjB + ".weight = "+weight+"\n");
-
-                            responseConn.append("setpointer "+ gjListenObjB + ".vgap, " + tgtSecVarLoc + "\n\n");
+                            
+                            if (!NeuroML2GapJunction)
+                            {responseConn.append(gjListenObjB + ".weight = "+weight+"\n");
+                             responseConn.append("setpointer "+ gjListenObjB + ".vgap, " + tgtSecVarLoc + "\n\n");
+                            }
+                            else {
+                            responseConn.append("setpointer "+ gjListenObjB + ".vpeer, " + tgtSecVarLoc + "\n\n");
+                            }
                         }
                         else
                         {
@@ -4429,9 +4440,17 @@ public class NeuronFileManager
                             responseConn.append("if ("+targetExists+") {\n");
                             
                             responseConn.append("    "+tgtSecNameFull + " { " + gjListenObjA + " = new " + synapseType + "(" + fractTgtSection + ") }\n");
-                            responseConn.append("    "+gjListenObjA + ".weight = "+weight+"\n");
-                            responseConn.append("    "+"pnm.pc.target_var(&"+gjListenObjA + ".vgap, "+tgtGlobalId+")\n");
-                             
+                            
+                            if (!NeuroML2GapJunction)
+                            {
+                             responseConn.append("    "+gjListenObjA + ".weight = "+weight+"\n");
+                             responseConn.append("    "+"pnm.pc.target_var(&"+gjListenObjA + ".vgap, "+tgtGlobalId+")\n");
+                            }
+                            else 
+                            {
+                             responseConn.append("    "+"pnm.pc.target_var(&"+gjListenObjA + ".vpeer, "+tgtGlobalId+")\n");
+                            }
+                            
                             responseConn.append("    "+"pnm.pc.source_var(&"+tgtSecVarLoc+ ", "+srcGlobalId+")\n");
                             
                             responseConn.append("}\n");
@@ -4442,8 +4461,15 @@ public class NeuronFileManager
                             // Source cell mechanism
                             responseConn.append("if ("+sourceExists+") {\n");
                             responseConn.append("    "+srcSecNameFull + " { "  + gjListenObjB + " = new " + synapseType + "(" + fractSrcSection + ") }\n");
-                            responseConn.append("    "+gjListenObjB + ".weight = "+weight+"\n");
-                            responseConn.append("    "+"pnm.pc.target_var(&"+gjListenObjB + ".vgap, "+srcGlobalId+")\n");
+                            
+                            if (!NeuroML2GapJunction)
+                            {responseConn.append("    "+gjListenObjB + ".weight = "+weight+"\n");
+                             responseConn.append("    "+"pnm.pc.target_var(&"+gjListenObjB + ".vgap, "+srcGlobalId+")\n");
+                            }
+                            else
+                            {
+                             responseConn.append("    "+"pnm.pc.target_var(&"+gjListenObjB + ".vpeer, "+srcGlobalId+")\n");
+                            }
                              
                             responseConn.append("    "+"pnm.pc.source_var(&"+srcSecVarLoc+ ", "+tgtGlobalId+")\n");
                             

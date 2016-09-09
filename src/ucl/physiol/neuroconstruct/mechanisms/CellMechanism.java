@@ -129,7 +129,8 @@ public abstract class CellMechanism
 
     public boolean isGapJunctionMechanism()
     {
-        return getMechanismType().equals(CellMechanism.GAP_JUNCTION);
+        return getMechanismType().equals(CellMechanism.GAP_JUNCTION) ||
+                getMechanismType().equals(CellMechanism.NEUROML2_GAP_JUNCTION);
     }
     
     public boolean isSynapticMechanism()

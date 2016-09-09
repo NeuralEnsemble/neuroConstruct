@@ -34,7 +34,6 @@ import java.util.Vector;
 import java.util.Random;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -1218,6 +1217,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         
                         try {
                              project.morphNetworkConnectionsInfo.addRow(netConn, source, target, synList, sp, mml, connConds, jumpSpeed);
+   
                         } catch (NamingException ex) {
                           logger.logComment("Problem creating volume based network connection...");
                         }
