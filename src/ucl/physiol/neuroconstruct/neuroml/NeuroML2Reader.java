@@ -50,6 +50,7 @@ import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
 import org.neuroml.model.ElectricalProjection;
 import org.neuroml.model.ElectricalConnectionInstance;
+import org.neuroml.model.ElectricalConnection;
 import org.neuroml.model.PulseGenerator;
 import org.neuroml.model.PoissonFiringSynapse;
 import org.neuroml.model.TransientPoissonFiringSynapse;
@@ -60,6 +61,7 @@ import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 import ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells;
+import ucl.physiol.neuroconstruct.project.PrePostAllowedLocs;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -75,11 +77,11 @@ import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import java.util.regex.*;
+import ucl.physiol.neuroconstruct.cell.Section;
+import ucl.physiol.neuroconstruct.cell.Segment;
 import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.CellMechanismHelper;
 import ucl.physiol.neuroconstruct.mechanisms.NeuroML2Component;
-import ucl.physiol.neuroconstruct.mechanisms.SimulatorMapping;
-import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
 import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainInstanceProps;
 
@@ -111,6 +113,18 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     private Project project = null;
     
     private String currentPopulation = null;
+    
+    private String preCellType=null;
+                    
+    private String postCellType=null;
+    
+    private Cell preCellnC;
+    
+    private Cell postCellnC;
+                    
+    private int prePopSize =0;
+                    
+    private int postPopSize =0;
     
     private String groupCellType = "";
     
@@ -145,14 +159,17 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     private final static String PERSISTENT_POISSON="persistentPoisson";
     
     private final static String TRANSIENT_POISSON="transientPoisson";
+    
+    private boolean inferConnectivityConditions;
 
-    public NeuroML2Reader(Project project)
+    public NeuroML2Reader(Project project,boolean inferConnConditions)
     {
         this.cellPos = project.generatedCellPositions;
         this.netConns = project.generatedNetworkConnections;
         this.elecInputs = project.generatedElecInputs;
         this.project = project;
         this.testMode = false;
+        this.inferConnectivityConditions=inferConnConditions;
 		
 
     }
@@ -448,7 +465,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         }*/
     }
     
-    public ConnectivityConditions determineConnectivityConditions(Projection projection, int PrePopulationSize, int PostPopulationSize)    
+    public ConnectivityConditions determineConnectivityConditions(Projection projection, 
+            int PrePopulationSize, int PostPopulationSize, String preCellComponentType, String postCellComponentType)    
     {   
         Set<Integer> preCellSet= new HashSet<Integer>();
       
@@ -466,9 +484,19 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
         HashMap<Integer,Integer> postsynapticDict = new HashMap<Integer,Integer>();
         
+        preCellnC = project.cellManager.getCell(preCellComponentType);
+                    
+        postCellnC=project.cellManager.getCell(postCellComponentType);
+        
+        Set<Integer> postCellSegs= new HashSet<Integer>();
+        
+        Set<Integer> preCellSegs = new HashSet<Integer>();
+        
         boolean autapsesAllowed= false;
         
         ConnectivityConditions connConds = new ConnectivityConditions();
+        
+        String synapse =  projection.getSynapse();
         
         int cellCounter;
     
@@ -495,6 +523,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
               postCellSet.add(postCellId);
             
               postCellList.add(postCellId);
+              
+              preCellSegs.add(preSeg);
+              
+              postCellSegs.add(postSeg);
                         
           }
         }
@@ -522,8 +554,52 @@ public class NeuroML2Reader implements NetworkMLnCInfo
               postCellSet.add(postCellId);
             
               postCellList.add(postCellId);
+              
+              preCellSegs.add(preSeg);
+              
+              postCellSegs.add(postSeg);
                         
           }
+        }
+        
+        for(Integer segId: preCellSegs)
+        {  
+            Segment targetSeg= preCellnC.getSegmentWithId(segId);
+                       
+            String sectionName= targetSeg.getSection().getSectionName();
+                       
+            for (String segmentGroup: preCellnC.getAllGroupNames() )
+            {   
+                ArrayList<Section> allSectionsPerGroup= preCellnC.getSectionsInGroup(segmentGroup);
+                           
+                for (Section section: allSectionsPerGroup)
+                {   
+                    if (section.getSectionName().equals(sectionName))
+                    {
+                        preCellnC.associateGroupWithSynapse(segmentGroup, synapse);
+                    }
+                }
+            }
+        }
+                    
+        for(Integer segId: postCellSegs)
+        {  
+            Segment targetSeg= postCellnC.getSegmentWithId(segId);
+                       
+            String sectionName= targetSeg.getSection().getSectionName();
+                       
+            for (String segmentGroup: postCellnC.getAllGroupNames() )
+            {   
+                ArrayList<Section> allSectionsPerGroup= postCellnC.getSectionsInGroup(segmentGroup);
+                           
+                for (Section section: allSectionsPerGroup)
+                {   
+                    if (section.getSectionName().equals(sectionName))
+                    {
+                        postCellnC.associateGroupWithSynapse(segmentGroup, synapse);
+                    }
+                }
+            }
         }
         
         System.out.println("Printing presynaptic cell ids for "+projection.getId()+": "+preCellSet);
@@ -653,14 +729,13 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         return connConds;
         
     }
-    
-    private ConnectivityConditions determineConnectivityConditions(ElectricalProjection projection,int PrePopulationSize, int PostPopulationSize)
-           
+    // skipped for now, no specific assumptions on connectivity conditions
+    private ConnectivityConditions determineConnectivityConditions(ElectricalProjection projection,int PrePopulationSize, int PostPopulationSize,
+            String PreCellType, String PostCellType)      
     {
-      ConnectivityConditions connConds = new ConnectivityConditions();
+       ConnectivityConditions connConds = new ConnectivityConditions();
       
-      return connConds;
-        
+       return connConds;   
     }
     
     public void addNeuroML2Synapse(org.neuroml.model.BaseSynapse NML2Synapse, File synapseFile,NeuroMLDocument NML2Doc)
@@ -696,10 +771,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     
     public void parse(File nml2File) throws NeuroMLException, IOException
     {
-        parse(nml2File, "",false);
+        parse(nml2File, "");
     }
     
-    public void parse(File nml2File, String idPrefix, boolean makeAssumptionsOnConns) throws NeuroMLException, IOException
+    public void parse(File nml2File, String idPrefix) throws NeuroMLException, IOException
     {
         try 
         {
@@ -973,10 +1048,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 String simName = getSimConfig();
                 
                 simConfigToUse = new SimConfig(simName, "");
-                   
-                project.simConfigInfo.add(simConfigToUse);
+                
+                //project.simConfigInfo.add(simConfigToUse);
                      
-                logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
+                //logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
                 
                 for (Population population: network.getPopulation())
                 {
@@ -1049,56 +1124,19 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     String target = projection.getPostsynapticPopulation();
                     String synapse = projection.getSynapse();
                     
-                    int PrePopSize =0;
-                    
-                    int PostPopSize = 0;
-                    
-                    for (Population population: network.getPopulation())
+                    for (Population pop: network.getPopulation())
                     {
-                        if (population.getId().equals(source))
+                        if (pop.getId().equals(source))
                         {
-                            PrePopSize = population.getSize();
+                            preCellType = pop.getComponent();
+                            
+                            prePopSize = pop.getSize();
                         }
-                        if (population.getId().equals(target))
+                        if (pop.getId().equals(target))
                         {
-                            PostPopSize = population.getSize();
-                        }
-                    }
-                    if (! (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn) ||
-                           project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)))
-                    {
-                        SynapticProperties synProp = new SynapticProperties(synapse);
-                        Vector<SynapticProperties> synList = new Vector<SynapticProperties>();
-                        synList.add(synProp);
-                        SearchPattern sp = SearchPattern.getRandomSearchPattern();
-                        MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
-                        ConnectivityConditions connConds = new ConnectivityConditions();
-                        if (makeAssumptionsOnConns)
-                        {
-                            connConds = this.determineConnectivityConditions(projection,PrePopSize,PostPopSize);
-                        }
-                        // connsConds should be elaborated based on the information that can be extracted from NeuroML2 network.
-                        float jumpSpeed = Float.MAX_VALUE;
-
-                        logger.logComment("Going to add a volume based network connection "+netConn+" from group "+source+" to group "+target);
-                        
-                        try {
-                             project.morphNetworkConnectionsInfo.addRow(netConn, source, target, synList, sp, mml, connConds, jumpSpeed);
-                        } catch (NamingException ex) {
-                          logger.logComment("Problem creating volume based network connection...");
-                        }
-                        
-                    }
-                    if (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn)) {
-                        if (!project.morphNetworkConnectionsInfo.getSourceCellGroup(netConn).equals(source) ||
-                            !project.morphNetworkConnectionsInfo.getTargetCellGroup(netConn).equals(target)) {
-                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
-                        }
-                    }
-                    if (project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)) {
-                        if (!project.volBasedConnsInfo.getSourceCellGroup(netConn).equals(source) ||
-                            !project.volBasedConnsInfo.getTargetCellGroup(netConn).equals(target)) {
-                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                            postCellType= pop.getComponent();
+                            
+                            postPopSize = pop.getSize();
                         }
                     }
                     
@@ -1121,6 +1159,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                                                             0,
                                                             null);
                     }
+                    
                     for (ConnectionWD conn: projection.getConnectionWD())
                     {
                         int preSeg = conn.getPreSegmentId();
@@ -1155,6 +1194,77 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                                                             localConnProps);
                     }
                     
+                    if (! (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn) ||
+                           project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)))
+                    {
+                        SynapticProperties synProp = new SynapticProperties(synapse);
+                        Vector<SynapticProperties> synList = new Vector<SynapticProperties>();
+                        synList.add(synProp);
+                        SearchPattern sp = SearchPattern.getRandomSearchPattern();
+                        MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
+                        ConnectivityConditions connConds = new ConnectivityConditions();
+                        
+                        if (this.inferConnectivityConditions)
+                        {
+                            // connsConds may be elaborated based on the information that can be extracted from NeuroML2 network.
+                            connConds = this.determineConnectivityConditions(projection,prePopSize,postPopSize,preCellType,postCellType);
+                        }
+                        else
+                        {   
+                            // minimal assumptions on the segment group specificity 
+                            
+                            for(String groupName: project.cellManager.getCell(preCellType).getAllGroupNames())
+                            {
+                               if (groupName.equals("soma_group"))
+                               {
+                                  project.cellManager.getCell(preCellType).associateGroupWithSynapse("soma_group", synapse);
+                               }
+                               else if (groupName.equals("axon_group"))
+                               {
+                                   project.cellManager.getCell(preCellType).associateGroupWithSynapse("axon_group", synapse);
+                               }
+                            }
+                            
+                            for(String groupName: project.cellManager.getCell(postCellType).getAllGroupNames())
+                            {
+                               if (groupName.equals("dendrite_group"))
+                               {
+                                  project.cellManager.getCell(postCellType).associateGroupWithSynapse("dendrite_group", synapse);
+                               }
+                               
+                               if (groupName.equals("soma_group"))
+                               {
+                                  project.cellManager.getCell(postCellType).associateGroupWithSynapse("soma_group", synapse);
+                               }
+                            }
+                        }
+                        
+                        float jumpSpeed = Float.MAX_VALUE;
+
+                        logger.logComment("Going to add a volume based network connection "+netConn+" from group "+source+" to group "+target);
+                        
+                        try {
+                             project.morphNetworkConnectionsInfo.addRow(netConn, source, target, synList, sp, mml, connConds, jumpSpeed);
+                        } catch (NamingException ex) {
+                          logger.logComment("Problem creating volume based network connection...");
+                        }
+                        
+                    }
+                    if (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn)) {
+                        if (!project.morphNetworkConnectionsInfo.getSourceCellGroup(netConn).equals(source) ||
+                            !project.morphNetworkConnectionsInfo.getTargetCellGroup(netConn).equals(target)) {
+                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                        }
+                    }
+                    if (project.volBasedConnsInfo.getAllAAConnNames().contains(netConn)) {
+                        if (!project.volBasedConnsInfo.getSourceCellGroup(netConn).equals(source) ||
+                            !project.volBasedConnsInfo.getTargetCellGroup(netConn).equals(target)) {
+                            throw new NeuroMLException("Mismatch in the source/target of net conn "+netConn+" between neuroConstruct/NeuroML!");
+                        }
+                    }
+                    
+                    simConfigToUse.addNetConn(netConn);
+                    
                 }
                 
                 for (ElectricalProjection projection: network.getElectricalProjection())
@@ -1163,19 +1273,19 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     String source = projection.getPresynapticPopulation();
                     String target = projection.getPostsynapticPopulation();
                     
-                    int PrePopSize =0;
-                    
-                    int PostPopSize = 0;
-                    
                     for (Population population: network.getPopulation())
                     {
                         if (population.getId().equals(source))
                         {
-                            PrePopSize = population.getSize();
+                            prePopSize = population.getSize();
+                            
+                            preCellType = population.getComponent();
                         }
                         if (population.getId().equals(target))
                         {
-                            PostPopSize = population.getSize();
+                            postPopSize = population.getSize();
+                            
+                            postCellType = population.getComponent();
                         }
                     }
                     if (! (project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConn) ||
@@ -1192,6 +1302,13 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             electSynTypes.add(elecConn.getSynapse());
                             electSynapse= elecConn.getSynapse();
                         }
+                        
+                        for (ElectricalConnection elecConn: projection.getElectricalConnection())
+                        {
+                            electSynTypes.add(elecConn.getSynapse());
+                            electSynapse= elecConn.getSynapse();
+                        }
+                        
                         if (electSynTypes.size()  !=1 ) 
                         {
                           throw new NeuroMLException("neuroConstruct can only import an electrical projection between two cell populations if all of its electrcical "
@@ -1206,11 +1323,42 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         SearchPattern sp = SearchPattern.getRandomSearchPattern();
                         MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
                         ConnectivityConditions connConds = new ConnectivityConditions();
-                        if (makeAssumptionsOnConns)
+                        
+                        if (this.inferConnectivityConditions)
                         {
-                            connConds = this.determineConnectivityConditions(projection,PrePopSize,PostPopSize);
+                            // connsConds may be elaborated based on the information that can be extracted from NeuroML2 network.
+                            connConds = this.determineConnectivityConditions(projection,prePopSize,postPopSize,preCellType,postCellType);
                         }
-                        // connsConds should be elaborated based on the information that can be extracted from NeuroML2 network.
+                        else
+                        {   
+                            // minimal assumptions on the segment group specificity 
+                            
+                            for(String groupName: project.cellManager.getCell(preCellType).getAllGroupNames())
+                            {
+                               if (groupName.equals("soma_group"))
+                               {
+                                  project.cellManager.getCell(preCellType).associateGroupWithSynapse("soma_group", electSynapse);
+                               }
+                               else if (groupName.equals("axon_group"))
+                               {
+                                   project.cellManager.getCell(preCellType).associateGroupWithSynapse("axon_group", electSynapse);
+                               }
+                            }
+                            
+                            for(String groupName: project.cellManager.getCell(postCellType).getAllGroupNames())
+                            {
+                               if (groupName.equals("dendrite_group"))
+                               {
+                                  project.cellManager.getCell(postCellType).associateGroupWithSynapse("dendrite_group", electSynapse);
+                               }
+                               
+                               if (groupName.equals("soma_group"))
+                               {
+                                  project.cellManager.getCell(postCellType).associateGroupWithSynapse("soma_group", electSynapse);
+                               }
+                            }
+                        }
+                        
                         float jumpSpeed = Float.MAX_VALUE;
 
                         logger.logComment("Going to add a volume based network connection "+netConn+" from group "+source+" to group "+target);
@@ -1256,7 +1404,28 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                                                             0,
                                                             null);
                     }
-                   
+                    for (ElectricalConnection conn: projection.getElectricalConnection())
+                    {
+                        
+                        int preSeg = conn.getPreSegment();
+                        int postSeg = conn.getPostSegment();
+
+                        float preFract = (new Double(conn.getPreFractionAlong())).floatValue();
+                        float postFract = (new Double(conn.getPostFractionAlong())).floatValue();
+                        
+                        this.netConns.addSynapticConnection(netConn, 
+                                                            GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
+                                                            parseForCellNumber(conn.getPreCell()), 
+                                                            preSeg,
+                                                            preFract,
+                                                            parseForCellNumber(conn.getPostCell()),
+                                                            postSeg,
+                                                            postFract,
+                                                            0,
+                                                            null);
+                    }
+                    
+                    simConfigToUse.addNetConn(netConn);
                     
                 }
                 for (InputList inputList: network.getInputList()) 
@@ -1367,7 +1536,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                            }
                            else
                            {
-                              throw new NeuroMLException("neuroConstruct can only import PulseGenertors when all of the parameter values are specified in Physiological Units or SI Units");
+                              throw new NeuroMLException("neuroConstruct can only import PoissonFiringSynapse when all of the parameter values are specified in Physiological Units or SI Units");
                            }
                            Float currentRate =
                      (float)UnitConverter.getRate(Float.parseFloat((String)rate_map.get("value")),inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
@@ -1379,6 +1548,67 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                            rp.setRate(currentRate);
                            
                            logger.logComment("New RandomSpikeTrain props: "+" ("+currentRate+")"); 
+                            
+                        }
+                        if (currentInputType.equals(TRANSIENT_POISSON))
+                        {
+                            TransientPoissonFiringSynapse tpfs = transientPoissonFiringSynapses.get(inputList.getComponent()); 
+                           
+                            String rate= tpfs.getAverageRate();
+                            
+                            String duration =tpfs.getDuration();
+                            
+                            String delay= tpfs.getDelay();
+                            
+                            String currentSynapseType=tpfs.getSynapse();
+                           
+                            HashMap rate_map;
+                    
+                            HashMap delay_map;
+                            
+                            HashMap duration_map;
+                           
+                            rate_map= getValueAndUnits(rate);
+                            
+                            delay_map= getValueAndUnits(delay);
+                            
+                            duration_map=getValueAndUnits(duration);
+                            
+                            if(((String)rate_map.get("units")).equals("per_ms") && ((String)duration_map.get("units")).equals("ms") 
+                                    &&((String)delay_map.get("units")).equals("ms"))
+                            {
+                                inputUnitSystem = UnitConverter.getUnitSystemIndex("Physiological Units");
+                               
+                            }
+                            else if ((((String)rate_map.get("units")).equals("Hz") || ((String)rate_map.get("units")).equals("per_s"))
+                                    &&((String)duration_map.get("units")).equals("s") && ((String)delay_map.get("units")).equals("s"))
+                            {
+                               inputUnitSystem = UnitConverter.getUnitSystemIndex("SI Units");
+                            }
+                            else
+                            {
+                              throw new NeuroMLException("neuroConstruct can only import TransientPoissonFiringSynapse when all of the parameter values are specified in Physiological Units or SI Units");
+                            }
+                            Float currentRate =
+                     (float)UnitConverter.getRate(Float.parseFloat((String)rate_map.get("value")),inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                            
+                            Float currentDuration =
+                     (float)UnitConverter.getRate(Float.parseFloat((String)duration_map.get("value")),inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                            
+                            Float currentDelay =
+                     (float)UnitConverter.getRate(Float.parseFloat((String)duration_map.get("value")),inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                            
+                            currentElectricalInput = new RandomSpikeTrain(new NumberGenerator(currentRate), currentSynapseType);
+                             
+                            rp = new RandomSpikeTrainInstanceProps();
+
+                            rp.setRate(currentRate);
+                            
+                            rp.setDuration(currentDuration);
+                            
+                            rp.setDelay(currentDelay);
+                            
+                            logger.logComment("New RandomSpikeTrain props: "+" ("+currentRate+")"+" ("+currentDuration+")"+" ("+currentDelay+")"); 
                             
                         }
                     }
@@ -1410,13 +1640,17 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                               project.elecInputInfo.addStim(stim);
                               simConfigToUse.addInput(stim.getReference());
                               
+                              project.markProjectAsEdited();
+                              
                             }
-                            if (currentInputType.equals(PERSISTENT_POISSON))
+                            if (currentInputType.equals(PERSISTENT_POISSON) || currentInputType.equals(TRANSIENT_POISSON))
                             {
                               RandomSpikeTrain rst = (RandomSpikeTrain)currentElectricalInput;
                               stim = new RandomSpikeTrainSettings(inputId, currentInputCellGroup, cellChoose, segChoose,  rst.getRate(), rst.getSynapseType());
                               project.elecInputInfo.addStim(stim);
                               simConfigToUse.addInput(stim.getReference());
+                              
+                              project.markProjectAsEdited();
                               
                             }
                             logger.logComment(currentInputType+" electrical input "+inputId+" on the cell group "+ currentInputCellGroup+" added to the project.");
@@ -1430,7 +1664,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                            currentSingleInput.setInstanceProps(iip);
                         }
                         
-                        if (currentInputType.equals(PERSISTENT_POISSON))
+                        if (currentInputType.equals(PERSISTENT_POISSON) || currentInputType.equals(TRANSIENT_POISSON))
                         {   
                            currentSingleInput.setInstanceProps(rp);
                         }
@@ -1444,6 +1678,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                                                   //fractAlong);
                     }
                 }
+                
+                project.simConfigInfo.add(simConfigToUse);
+                
+                logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
             }
         }
         catch (MalformedURLException e) 
@@ -1544,9 +1782,9 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
 
 
-                NeuroML2Reader nml2Reader = new NeuroML2Reader(testProj);
+                NeuroML2Reader nml2Reader = new NeuroML2Reader(testProj,false);
 
-                nml2Reader.parse(f, "New_",false);
+                nml2Reader.parse(f, "New_");
             }
             
 

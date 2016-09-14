@@ -56,6 +56,8 @@ public class NeuroML2CellReader {
     
     private String cellID=null;
     
+    private HashMap<String,Integer> SectionsVSegs = new HashMap<String,Integer>();
+    
     String infoOnnCCellSupport = "Currently, neuroConstruct import of NeuroML2 files is geared towards files it has generated itself.\n"
                     + "Restrictions on files it can import include:\n"
                     + " - &lt;segmentGroup&gt; should have only &lt;member&gt; elements (interpreted as unbranched Sections)\n"

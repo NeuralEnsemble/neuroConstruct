@@ -13372,12 +13372,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
                 logger.logComment("Warning about the connectivity conditions");
                 Object[] options =
-                {"OK", "Cancel"};
+                {"YES", "NO"};
 
                 JOptionPane option = new JOptionPane(
-                "By default no assumptions on connectivity conditions (e.g. divergent versus convergent projection) are made during\n"+
-                "import of NeuroML2 network; if imported NeuroML2 network is saved and loaded again, regenerating the NeuroML2\n"
-               +"network in neuroConstruct will lead to a different network structure. Should neuroConstruct proceed with import?",
+                "By default no assumptions are made on connectivity modes, target-to-source cell ratios, and segment group specifcities during import\n"+
+                "of NeuroML2 network; generating the NeuroML2 network configurations in neuroConstruct will lead to a different network structure\n"+
+                "with minimal constraints compared to the original network. Should neuroConstruct attempt to constrain connectivity conditions?",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE,
                 null,
@@ -13389,14 +13389,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 Object choice = option.getValue();
                 logger.logComment("User has chosen: " + choice);
-                if (choice.equals("Cancel"))
+                
+                NetworkMLnCInfo extraInfo;
+                
+                if (choice.equals("NO"))
                 {
-                   logger.logComment("User has changed their mind...");
-                   return;
+                  extraInfo = projManager.doLoadNeuroML2Network(nmlFile, false);
                 }
-                
-                NetworkMLnCInfo extraInfo = projManager.doLoadNeuroML2Network(nmlFile, acceptDefaults);
-                
+                else
+                {
+                  extraInfo = projManager.doLoadNeuroML2Network(nmlFile, true);
+                }
                 logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
                 
                 String prevSimConfig = extraInfo.getSimConfig();
