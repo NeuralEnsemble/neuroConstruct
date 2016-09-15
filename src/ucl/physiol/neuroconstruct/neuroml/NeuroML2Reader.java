@@ -30,10 +30,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 import java.util.Random;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -84,6 +87,7 @@ import ucl.physiol.neuroconstruct.mechanisms.CellMechanismHelper;
 import ucl.physiol.neuroconstruct.mechanisms.NeuroML2Component;
 import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainInstanceProps;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainExtInstanceProps;
 
 
 /**
@@ -148,6 +152,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     
     private RandomSpikeTrainInstanceProps rp=null;
     
+    private RandomSpikeTrainExtInstanceProps trp= null;
+    
     private int inputUnitSystem = -1;
     
     private SimConfig simConfigToUse = new SimConfig();
@@ -159,6 +165,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     private final static String PERSISTENT_POISSON="persistentPoisson";
     
     private final static String TRANSIENT_POISSON="transientPoisson";
+    
+    private final static float PICO_TO_MICRO_SCALING = (float) 0.000001;
     
     private boolean inferConnectivityConditions;
 
@@ -418,51 +426,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
         project.cellMechanismInfo.addCellMechanism(cmlMech);
         
-        /*File xslDir = GeneralProperties.getChannelMLSchemataDir();
-                            
-        File newXslNeuron = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_NEURONmod.xsl");
-                            
-        File newXslGenesis = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_GENESIStab.xsl");
-                            
-        File newXslPSICS = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_PSICS.xsl");
-      
-        File[] newXsl =
-        {
-            newXslNeuron, newXslGenesis, newXslPSICS
-        };
-        String[] simEnv =
-        {
-            "NEURON", "GENESIS", "PSICS"
-        };
-
-        for (int i = 0; i < newXsl.length; i++)
-        {
-            try
-            {
-                GeneralUtils.copyFileIntoDir(newXsl[i], newChannelDir);
-                
-                SimulatorMapping map = new SimulatorMapping(newXsl[i].getName(), simEnv[i], true);
-
-                cmlMech.addSimMapping(map);
-
-                try
-                {
-                    cmlMech.reset(project, false);
-                    logger.logComment("New cml mech: " + cmlMech.getInstanceName());
-                }
-                catch (Exception ex)
-                {
-                    GuiUtils.showErrorMessage(logger, "Problem updating mechanism to support mapping to simulator: " + simEnv[i], ex, null);
-                }
-                
-                project.markProjectAsEdited();
-
-            }
-            catch (IOException ex)
-            {
-                GuiUtils.showErrorMessage(logger, "Problem adding the mapping for " + cellMechanismId, ex, null);
-            }
-        }*/
     }
     
     public ConnectivityConditions determineConnectivityConditions(Projection projection, 
@@ -484,15 +447,63 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
         HashMap<Integer,Integer> postsynapticDict = new HashMap<Integer,Integer>();
         
+        TreeMap<String, Integer> preSegPerSecCounters= new TreeMap<String,Integer>();
+        
+        TreeMap<String, Integer> postSegPerSecCounters= new TreeMap<String,Integer>();
+        
+        LinkedHashMap<String, Integer> preSegPerSecCountersSorted= new LinkedHashMap<String,Integer>();
+        
+        LinkedHashMap<String, Integer> postSegPerSecCountersSorted= new LinkedHashMap<String,Integer>();
+        
         preCellnC = project.cellManager.getCell(preCellComponentType);
                     
         postCellnC=project.cellManager.getCell(postCellComponentType);
         
-        Set<Integer> postCellSegs= new HashSet<Integer>();
+        Set<Integer> postCellSegIds= new HashSet<Integer>();
         
-        Set<Integer> preCellSegs = new HashSet<Integer>();
+        Set<Integer> preCellSegIds = new HashSet<Integer>();
+        
+        ArrayList<Segment> preCellSegs= new ArrayList<Segment>();
+        
+        ArrayList<Segment> postCellSegs= new ArrayList<Segment>();
+        
+        ArrayList<String> potentialPreSegGroups = new ArrayList<String>();
+        
+        ArrayList<String> potentialPostSegGroups = new ArrayList<String>();
         
         boolean autapsesAllowed= false;
+        
+        boolean preAxonGroupContainsAll= false;
+        
+        boolean preSomaGroupContainsAll = false;
+        
+        boolean preDendriteGroupContainsAll= false;
+        
+        boolean postAxonGroupContainsAll= false;
+        
+        boolean postSomaGroupContainsAll = false;
+        
+        boolean postDendriteGroupContainsAll= false;
+        
+        boolean minimalSetOfPreSegGroups = false;
+        
+        boolean minimalSetOfPostSegGroups = false;
+        
+        boolean preAxonAllowed= false;
+        
+        boolean preSomaAllowed = false;
+        
+        boolean preDendriteAllowed = false;
+        
+        boolean postAxonAllowed= false;
+        
+        boolean postSomaAllowed = false;
+        
+        boolean postDendriteAllowed = false;
+        
+        PrePostAllowedLocs lociAllowed = new PrePostAllowedLocs();
+        
+        int totalNumOfSegs = 0;
         
         ConnectivityConditions connConds = new ConnectivityConditions();
         
@@ -511,7 +522,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         
               int postCellId=parseForCellNumber(conn.getPostCellId());
               
-              if (preCellId == postCellId)
+              if ((preCellId == postCellId) && 
+                    (projection.getPostsynapticPopulation().equals(projection.getPresynapticPopulation())))
               {
                   autapsesAllowed= true;
               }
@@ -524,9 +536,9 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             
               postCellList.add(postCellId);
               
-              preCellSegs.add(preSeg);
+              preCellSegIds.add(preSeg);
               
-              postCellSegs.add(postSeg);
+              postCellSegIds.add(postSeg);
                         
           }
         }
@@ -542,7 +554,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         
               int postCellId=parseForCellNumber(conn.getPostCellId());
               
-              if (preCellId == postCellId)
+              if ((preCellId == postCellId) && 
+                    (projection.getPostsynapticPopulation().equals(projection.getPresynapticPopulation())))
               {
                   autapsesAllowed= true;
               }
@@ -555,53 +568,325 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             
               postCellList.add(postCellId);
               
-              preCellSegs.add(preSeg);
+              preCellSegIds.add(preSeg);
               
-              postCellSegs.add(postSeg);
+              postCellSegIds.add(postSeg);
                         
           }
         }
         
-        for(Integer segId: preCellSegs)
-        {  
+        for (Integer segId: preCellSegIds)
+        {
             Segment targetSeg= preCellnC.getSegmentWithId(segId);
-                       
-            String sectionName= targetSeg.getSection().getSectionName();
-                       
-            for (String segmentGroup: preCellnC.getAllGroupNames() )
-            {   
-                ArrayList<Section> allSectionsPerGroup= preCellnC.getSectionsInGroup(segmentGroup);
+            
+            preCellSegs.add(targetSeg);
+        }
+        
+        for (Integer segId: postCellSegIds)
+        {
+            Segment targetSeg = postCellnC.getSegmentWithId(segId);
+          
+            postCellSegs.add(targetSeg);
+        }
+        
+        int numOfPreSegs= preCellSegIds.size();
+        
+        System.out.println("Number of unique pre seg ids: "+numOfPreSegs);
+        
+        int numOfPostSegs= postCellSegIds.size();
+        
+        System.out.println("Number of unique post seg ids: "+numOfPostSegs);
+        
+        for (String segmentGroup: preCellnC.getAllGroupNames() )
+        {
+           int segCounter = 0;
+            
+           ArrayList<Section> allSectionsPerGroup= preCellnC.getSectionsInGroup(segmentGroup);
                            
-                for (Section section: allSectionsPerGroup)
-                {   
+           for (Section section: allSectionsPerGroup)
+           {   
+                for (Segment preSeg: preCellSegs)
+                {    
+                    String sectionName= preSeg.getSection().getSectionName(); 
+                    
                     if (section.getSectionName().equals(sectionName))
                     {
-                        preCellnC.associateGroupWithSynapse(segmentGroup, synapse);
+                        segCounter++;
                     }
+                }
+           }
+           if ((segCounter != 0)  && (!segmentGroup.contains("ModelView"))  && (!segmentGroup.equals("all")) )
+           {
+               preSegPerSecCounters.put(segmentGroup, segCounter);  
+           }
+        }
+        
+        for (String segmentGroup: postCellnC.getAllGroupNames() )
+        {
+           int segCounter = 0;
+            
+           ArrayList<Section> allSectionsPerGroup= postCellnC.getSectionsInGroup(segmentGroup);
+                           
+           for (Section section: allSectionsPerGroup)
+           {   
+                for (Segment postSeg: postCellSegs)
+                {    
+                    String sectionName= postSeg.getSection().getSectionName(); 
+                    
+                    if (section.getSectionName().equals(sectionName))
+                    {
+                        segCounter++;
+                    }
+                }
+           }
+           if ((segCounter != 0)  && (!segmentGroup.contains("ModelView")) && (!segmentGroup.equals("all")) )
+           {
+              postSegPerSecCounters.put(segmentGroup, segCounter);
+           }  
+        }
+        
+        int maxPreSet= Collections.max(preSegPerSecCounters.values());
+        
+        int maxPostSet = Collections.max(postSegPerSecCounters.values());
+        
+        while(!preSegPerSecCounters.isEmpty())
+        {
+          for (String segGroup: preSegPerSecCounters.keySet())
+          {
+            if(maxPreSet == preSegPerSecCounters.get(segGroup))
+            {
+                preSegPerSecCountersSorted.put(segGroup,preSegPerSecCounters.get(segGroup));
+                
+                preSegPerSecCounters.remove(segGroup);
+                
+                if (!preSegPerSecCounters.isEmpty())
+                {
+                  maxPreSet= Collections.max(preSegPerSecCounters.values());
+                }
+                break;
+            }
+          }
+        }
+        
+        while(!postSegPerSecCounters.isEmpty())
+        {
+          for (String segGroup: postSegPerSecCounters.keySet())
+          {
+            if(maxPostSet == postSegPerSecCounters.get(segGroup))
+            {
+                postSegPerSecCountersSorted.put(segGroup,postSegPerSecCounters.get(segGroup));
+                
+                postSegPerSecCounters.remove(segGroup);
+                
+                if (!postSegPerSecCounters.isEmpty())
+                {
+                  maxPostSet= Collections.max(postSegPerSecCounters.values());
+                }
+                break;
+            }
+          }
+        }
+        
+        System.out.println("Testing order pre segs: "+preSegPerSecCountersSorted);
+        
+        System.out.println("Testing order post segs: "+postSegPerSecCountersSorted);
+        
+        System.out.println("Testing order of pre seg keys: "+preSegPerSecCountersSorted.keySet());
+        
+        System.out.println("Testing order of pre seg keys: "+postSegPerSecCountersSorted.keySet());
+        
+        for (String segGroup: preSegPerSecCountersSorted.keySet())
+        {   
+            if( (!segGroup.equals("axon_group")) && (!segGroup.equals("soma_group")) 
+                        &&(!segGroup.equals("dendrite_group"))        )
+            {
+                    potentialPreSegGroups.add(segGroup);
+                    
+                    totalNumOfSegs = preSegPerSecCountersSorted.get(segGroup)+ totalNumOfSegs;
+                    
+                    if (segGroup.contains("dend"))
+                    {
+                        preDendriteAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("soma"))
+                    {
+                        preSomaAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("axon"))
+                    {
+                        preAxonAllowed= true;
+                    }
+            }
+            
+            if(preSegPerSecCountersSorted.get(segGroup) >= numOfPreSegs)
+            {
+                
+                if (segGroup.equals("axon_group"))
+                {
+                    preAxonGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("soma_group"))
+                {
+                    preSomaGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("dendrite_group"))
+                {
+                    preDendriteGroupContainsAll= true;
                 }
             }
+            
+            if (totalNumOfSegs >= numOfPreSegs)
+            {
+                minimalSetOfPreSegGroups = true;
+                
+                break;
+            }
+            
         }
-                    
-        for(Integer segId: postCellSegs)
-        {  
-            Segment targetSeg= postCellnC.getSegmentWithId(segId);
-                       
-            String sectionName= targetSeg.getSection().getSectionName();
-                       
-            for (String segmentGroup: postCellnC.getAllGroupNames() )
-            {   
-                ArrayList<Section> allSectionsPerGroup= postCellnC.getSectionsInGroup(segmentGroup);
-                           
-                for (Section section: allSectionsPerGroup)
-                {   
-                    if (section.getSectionName().equals(sectionName))
-                    {
-                        postCellnC.associateGroupWithSynapse(segmentGroup, synapse);
-                    }
-                }
+        if (!minimalSetOfPreSegGroups)
+        {
+            preAxonAllowed= false;
+            preSomaAllowed= false;
+            preDendriteAllowed= false;
+            
+            if(preAxonGroupContainsAll)
+            {
+                preCellnC.associateGroupWithSynapse("axon_group", synapse);
+                
+                preAxonAllowed=true;
+            }
+            else if (preSomaGroupContainsAll )
+            {
+                preCellnC.associateGroupWithSynapse("soma_group", synapse); 
+                
+                preSomaAllowed=true;
+            }
+            else if (preDendriteGroupContainsAll )
+            {
+                 preCellnC.associateGroupWithSynapse("dendrite_group", synapse); 
+                 
+                 preDendriteAllowed=true;
+            }
+            //// revert to the widest scope of the segment group specificty
+            else
+            {
+                preCellnC.associateGroupWithSynapse("axon_group", synapse);
+                preCellnC.associateGroupWithSynapse("soma_group", synapse);
+                preCellnC.associateGroupWithSynapse("dendrite_group", synapse);
+                preAxonAllowed=true;
+                preSomaAllowed=true;
+                preDendriteAllowed=true;
+            }
+        }
+        else
+        {
+            for(String preSegGroup: potentialPreSegGroups)
+            {
+                preCellnC.associateGroupWithSynapse(preSegGroup, synapse);
             }
         }
         
+        totalNumOfSegs= 0;
+        
+        for (String segGroup: postSegPerSecCountersSorted.keySet())
+        {   
+            if( (!segGroup.equals("axon_group")) && (!segGroup.equals("soma_group")) 
+                        &&(!segGroup.equals("dendrite_group"))        )
+            {
+                    potentialPostSegGroups.add(segGroup);
+                    
+                    totalNumOfSegs = postSegPerSecCountersSorted.get(segGroup)+ totalNumOfSegs;
+                    
+                    if (segGroup.contains("dend"))
+                    {
+                        postDendriteAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("soma"))
+                    {
+                        postSomaAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("axon"))
+                    {
+                        postAxonAllowed= true;
+                    }
+            }
+            
+            if(postSegPerSecCountersSorted.get(segGroup) >= numOfPostSegs)
+            {
+                
+                if (segGroup.equals("axon_group"))
+                {
+                    postAxonGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("soma_group"))
+                {
+                    postSomaGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("dendrite_group"))
+                {
+                    postDendriteGroupContainsAll= true;
+                }
+            }
+            
+            if (totalNumOfSegs >= numOfPostSegs)
+            {
+                minimalSetOfPostSegGroups = true;
+                
+                break;
+            }
+            
+        }
+        if (!minimalSetOfPostSegGroups)
+        {
+            postAxonAllowed = false;
+            postSomaAllowed= false;
+            postDendriteAllowed= false;
+            
+            if(postAxonGroupContainsAll)
+            {
+                postCellnC.associateGroupWithSynapse("axon_group", synapse);
+                
+                postAxonAllowed=true;
+            }
+            else if (postSomaGroupContainsAll )
+            {
+                postCellnC.associateGroupWithSynapse("soma_group", synapse);  
+                
+                postSomaAllowed=true;
+            }
+            else if (postDendriteGroupContainsAll )
+            {
+                 postCellnC.associateGroupWithSynapse("dendrite_group", synapse); 
+                 
+                 postDendriteAllowed=true;
+            }
+            //// revert to the widest scope of the segment group specificty
+            else
+            {
+                postCellnC.associateGroupWithSynapse("axon_group", synapse);
+                postCellnC.associateGroupWithSynapse("soma_group", synapse);
+                postCellnC.associateGroupWithSynapse("dendrite_group", synapse);
+                postAxonAllowed=true;
+                postSomaAllowed=true;
+                postDendriteAllowed=true;
+            }
+        }
+        else
+        {
+            for(String postSegGroup: potentialPostSegGroups)
+            {
+                postCellnC.associateGroupWithSynapse(postSegGroup, synapse);
+            }
+        }
+        ////////////////////////////////////////////////////////////////
         System.out.println("Printing presynaptic cell ids for "+projection.getId()+": "+preCellSet);
         
         System.out.println("Printing postsynaptic cell ids for"+projection.getId()+": "+postCellSet);
@@ -720,23 +1005,655 @@ public class NeuroML2Reader implements NetworkMLnCInfo
           }
           else
           {
-              //TODO
+              //TODO, for now stays to the default values in neuroConstruct, e.g. SOURCE_TO_TARGET only
           }
           
         }
-        connConds.setAllowAutapses(false);
+        lociAllowed.setAxonsAllowedPost(postAxonAllowed);
+        lociAllowed.setDendritesAllowedPost(postDendriteAllowed);
+        lociAllowed.setSomaAllowedPost(postSomaAllowed);
+        lociAllowed.setAxonsAllowedPre(preAxonAllowed);
+        lociAllowed.setDendritesAllowedPre(preDendriteAllowed);
+        lociAllowed.setSomaAllowedPre(preSomaAllowed);
+        
+        connConds.setPrePostAllowedLoc(lociAllowed);
+        
+        connConds.setAllowAutapses(autapsesAllowed);
         
         return connConds;
         
     }
-    // skipped for now, no specific assumptions on connectivity conditions
-    private ConnectivityConditions determineConnectivityConditions(ElectricalProjection projection,int PrePopulationSize, int PostPopulationSize,
-            String PreCellType, String PostCellType)      
-    {
-       ConnectivityConditions connConds = new ConnectivityConditions();
+    ////// overload method for handling electrical projections /////////////////////////////////////
+    public ConnectivityConditions determineConnectivityConditions(ElectricalProjection projection, 
+            int PrePopulationSize, int PostPopulationSize, String preCellComponentType, String postCellComponentType)    
+    {   
+        Set<Integer> preCellSet= new HashSet<Integer>();
       
-       return connConds;   
+        Set<Integer> postCellSet= new HashSet<Integer>();
+        
+        Set<Integer> postCellAppearance = new HashSet<Integer>();
+        
+        Set<Integer> preCellAppearance = new HashSet<Integer>();
+        
+        ArrayList<Integer> preCellList = new ArrayList<Integer>();
+        
+        ArrayList<Integer> postCellList= new ArrayList<Integer>();
+        
+        HashMap<Integer,Integer> presynapticDict = new HashMap<Integer,Integer>();
+        
+        HashMap<Integer,Integer> postsynapticDict = new HashMap<Integer,Integer>();
+        
+        TreeMap<String, Integer> preSegPerSecCounters= new TreeMap<String,Integer>();
+        
+        TreeMap<String, Integer> postSegPerSecCounters= new TreeMap<String,Integer>();
+        
+        LinkedHashMap<String, Integer> preSegPerSecCountersSorted= new LinkedHashMap<String,Integer>();
+        
+        LinkedHashMap<String, Integer> postSegPerSecCountersSorted= new LinkedHashMap<String,Integer>();
+        
+        ArrayList<String> potentialPreSegGroups = new ArrayList<String>();
+        
+        ArrayList<String> potentialPostSegGroups = new ArrayList<String>();
+        
+        preCellnC = project.cellManager.getCell(preCellComponentType);
+                    
+        postCellnC=project.cellManager.getCell(postCellComponentType);
+        
+        Set<Integer> postCellSegIds= new HashSet<Integer>();
+        
+        Set<Integer> preCellSegIds = new HashSet<Integer>();
+        
+        ArrayList<Segment> preCellSegs= new ArrayList<Segment>();
+        
+        ArrayList<Segment> postCellSegs= new ArrayList<Segment>();
+        
+        ArrayList<String> gapJunctionList = new ArrayList<String>();
+        
+        boolean autapsesAllowed= false;
+        
+        boolean preAxonGroupContainsAll= false;
+        
+        boolean preSomaGroupContainsAll = false;
+        
+        boolean preDendriteGroupContainsAll= false;
+        
+        boolean postAxonGroupContainsAll= false;
+        
+        boolean postSomaGroupContainsAll = false;
+        
+        boolean postDendriteGroupContainsAll= false;
+        
+        boolean minimalSetOfPreSegGroups = false;
+        
+        boolean minimalSetOfPostSegGroups = false;
+        
+        boolean preAxonAllowed= false;
+        
+        boolean preSomaAllowed = false;
+        
+        boolean preDendriteAllowed = false;
+        
+        boolean postAxonAllowed= false;
+        
+        boolean postSomaAllowed = false;
+        
+        boolean postDendriteAllowed = false;
+        
+        PrePostAllowedLocs lociAllowed = new PrePostAllowedLocs();
+        
+        int totalNumOfSegs = 0;
+        
+        ConnectivityConditions connConds = new ConnectivityConditions();
+        
+        int cellCounter;
+    
+        if (!projection.getElectricalConnection().isEmpty())
+        {
+          for (ElectricalConnection conn: projection.getElectricalConnection())
+          {
+              int preSeg = conn.getPreSegment();
+              int postSeg = conn.getPostSegment();
+                        
+              int preCellId=parseForCellNumber(conn.getPreCell());
+                        
+              int postCellId=parseForCellNumber(conn.getPostCell());
+              
+              if ((preCellId == postCellId) && 
+                    (projection.getPostsynapticPopulation().equals(projection.getPresynapticPopulation())))
+              {
+                  autapsesAllowed= true;
+              }
+            
+              preCellSet.add(preCellId);
+            
+              preCellList.add(preCellId);
+            
+              postCellSet.add(postCellId);
+            
+              postCellList.add(postCellId);
+              
+              preCellSegIds.add(preSeg);
+              
+              postCellSegIds.add(postSeg);
+              
+              gapJunctionList.add(conn.getSynapse());
+                        
+          }
+        }
+        
+        else if (!projection.getElectricalConnectionInstance().isEmpty())
+        {
+          for (ElectricalConnectionInstance conn: projection.getElectricalConnectionInstance())
+          {
+              int preSeg = conn.getPreSegment();
+              int postSeg = conn.getPostSegment();
+                        
+              int preCellId=parseForCellNumber(conn.getPreCell());
+                        
+              int postCellId=parseForCellNumber(conn.getPostCell());
+              
+              if ((preCellId == postCellId) && 
+                    (projection.getPostsynapticPopulation().equals(projection.getPresynapticPopulation())))
+              {
+                  autapsesAllowed= true;
+              }
+            
+              preCellSet.add(preCellId);
+            
+              preCellList.add(preCellId);
+            
+              postCellSet.add(postCellId);
+            
+              postCellList.add(postCellId);
+              
+              preCellSegIds.add(preSeg);
+              
+              postCellSegIds.add(postSeg);
+              
+              gapJunctionList.add(conn.getSynapse());
+                        
+          }
+        }
+        
+        for (Integer segId: preCellSegIds)
+        {
+            Segment targetSeg= preCellnC.getSegmentWithId(segId);
+            
+            preCellSegs.add(targetSeg);
+        }
+        
+        for (Integer segId: postCellSegIds)
+        {
+            Segment targetSeg = postCellnC.getSegmentWithId(segId);
+          
+            postCellSegs.add(targetSeg);
+        }
+        
+        int numOfPreSegs= preCellSegIds.size();
+        
+        System.out.println("Number of unique pre seg ids: "+numOfPreSegs);
+        
+        int numOfPostSegs= postCellSegIds.size();
+        
+        System.out.println("Number of unique post seg ids: "+numOfPostSegs);
+        
+        for (String segmentGroup: preCellnC.getAllGroupNames() )
+        {
+           int segCounter = 0;
+            
+           ArrayList<Section> allSectionsPerGroup= preCellnC.getSectionsInGroup(segmentGroup);
+                           
+           for (Section section: allSectionsPerGroup)
+           {   
+                for (Segment preSeg: preCellSegs)
+                {    
+                    String sectionName= preSeg.getSection().getSectionName(); 
+                    
+                    if (section.getSectionName().equals(sectionName))
+                    {
+                        segCounter++;
+                    }
+                }
+           }
+           if ((segCounter != 0)  && (!segmentGroup.contains("ModelView"))  && (!segmentGroup.equals("all")) )
+           {
+               preSegPerSecCounters.put(segmentGroup, segCounter);  
+           }
+        }
+        
+        for (String segmentGroup: postCellnC.getAllGroupNames() )
+        {
+           int segCounter = 0;
+            
+           ArrayList<Section> allSectionsPerGroup= postCellnC.getSectionsInGroup(segmentGroup);
+                           
+           for (Section section: allSectionsPerGroup)
+           {   
+                for (Segment postSeg: postCellSegs)
+                {    
+                    String sectionName= postSeg.getSection().getSectionName(); 
+                    
+                    if (section.getSectionName().equals(sectionName))
+                    {
+                        segCounter++;
+                    }
+                }
+           }
+           if ((segCounter != 0)  && (!segmentGroup.contains("ModelView")) && (!segmentGroup.equals("all")) )
+           {
+              postSegPerSecCounters.put(segmentGroup, segCounter);
+           }  
+        }
+        
+        int maxPreSet= Collections.max(preSegPerSecCounters.values());
+        
+        int maxPostSet = Collections.max(postSegPerSecCounters.values());
+        
+        while(!preSegPerSecCounters.isEmpty())
+        {
+          for (String segGroup: preSegPerSecCounters.keySet())
+          {
+            if(maxPreSet == preSegPerSecCounters.get(segGroup))
+            {
+                preSegPerSecCountersSorted.put(segGroup,preSegPerSecCounters.get(segGroup));
+                
+                preSegPerSecCounters.remove(segGroup);
+                
+                if (!preSegPerSecCounters.isEmpty())
+                {
+                  maxPreSet= Collections.max(preSegPerSecCounters.values());
+                }
+                break;
+            }
+          }
+        }
+        
+        while(!postSegPerSecCounters.isEmpty())
+        {
+          for (String segGroup: postSegPerSecCounters.keySet())
+          {
+            if(maxPostSet == postSegPerSecCounters.get(segGroup))
+            {
+                postSegPerSecCountersSorted.put(segGroup,postSegPerSecCounters.get(segGroup));
+                
+                postSegPerSecCounters.remove(segGroup);
+                
+                if (!postSegPerSecCounters.isEmpty())
+                {
+                  maxPostSet= Collections.max(postSegPerSecCounters.values());
+                }
+                break;
+            }
+          }
+        }
+        
+        System.out.println("Testing order pre segs: "+preSegPerSecCountersSorted);
+        
+        System.out.println("Testing order post segs: "+postSegPerSecCountersSorted);
+        
+        System.out.println("Testing order of pre seg keys: "+preSegPerSecCountersSorted.keySet());
+        
+        System.out.println("Testing order of pre seg keys: "+postSegPerSecCountersSorted.keySet());
+        
+        for (String segGroup: preSegPerSecCountersSorted.keySet())
+        {   
+            if( (!segGroup.equals("axon_group")) && (!segGroup.equals("soma_group")) 
+                        &&(!segGroup.equals("dendrite_group"))        )
+            {
+                    potentialPreSegGroups.add(segGroup);
+                    
+                    totalNumOfSegs = preSegPerSecCountersSorted.get(segGroup)+ totalNumOfSegs;
+                    
+                    if (segGroup.contains("dend"))
+                    {
+                        preDendriteAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("soma"))
+                    {
+                        preSomaAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("axon"))
+                    {
+                        preAxonAllowed= true;
+                    }
+            }
+            
+            if(preSegPerSecCountersSorted.get(segGroup) >= numOfPreSegs)
+            {
+                
+                if (segGroup.equals("axon_group"))
+                {
+                    preAxonGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("soma_group"))
+                {
+                    preSomaGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("dendrite_group"))
+                {
+                    preDendriteGroupContainsAll= true;
+                }
+            }
+            
+            if (totalNumOfSegs >= numOfPreSegs)
+            {
+                minimalSetOfPreSegGroups = true;
+                
+                break;
+            }
+            
+        }
+        if (!minimalSetOfPreSegGroups)
+        {   
+            preAxonAllowed = false;
+            preSomaAllowed= false;
+            preDendriteAllowed= false;
+            
+            if(preAxonGroupContainsAll)
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                   preCellnC.associateGroupWithSynapse("axon_group", gapJunctionId);
+                }
+                
+                preAxonAllowed=true;
+            }
+            else if (preSomaGroupContainsAll )
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                  preCellnC.associateGroupWithSynapse("soma_group", gapJunctionId); 
+                }
+                
+                preSomaAllowed=true;
+            }
+            else if (preDendriteGroupContainsAll )
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                   preCellnC.associateGroupWithSynapse("dendrite_group", gapJunctionId); 
+                }
+                 
+                 preDendriteAllowed=true;
+            }
+            //// revert to the widest scope of the segment group specificty
+            else
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                   preCellnC.associateGroupWithSynapse("axon_group", gapJunctionId);
+                   preCellnC.associateGroupWithSynapse("soma_group", gapJunctionId);
+                   preCellnC.associateGroupWithSynapse("dendrite_group", gapJunctionId);
+                }
+                preAxonAllowed=true;
+                preSomaAllowed=true;
+                preDendriteAllowed=true;
+            }
+        }
+        else
+        {
+            for(String gapJunctionId: gapJunctionList)
+            {
+               for(String preSegGroup: potentialPreSegGroups)
+               {
+                    preCellnC.associateGroupWithSynapse(preSegGroup, gapJunctionId);
+               }
+            }
+        }
+        
+        totalNumOfSegs= 0;
+        
+        for (String segGroup: postSegPerSecCountersSorted.keySet())
+        {   
+            if( (!segGroup.equals("axon_group")) && (!segGroup.equals("soma_group")) 
+                        &&(!segGroup.equals("dendrite_group"))        )
+            {
+                    potentialPostSegGroups.add(segGroup);
+                    
+                    totalNumOfSegs = postSegPerSecCountersSorted.get(segGroup)+ totalNumOfSegs;
+                    
+                    if (segGroup.contains("dend"))
+                    {
+                        postDendriteAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("soma"))
+                    {
+                        postSomaAllowed= true;
+                    }
+                    
+                    if (segGroup.contains("axon"))
+                    {
+                        postAxonAllowed= true;
+                    }
+            }
+            
+            if(postSegPerSecCountersSorted.get(segGroup) >= numOfPostSegs)
+            {
+                
+                if (segGroup.equals("axon_group"))
+                {
+                    postAxonGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("soma_group"))
+                {
+                    postSomaGroupContainsAll=true;
+                }
+                
+                if (segGroup.equals("dendrite_group"))
+                {
+                    postDendriteGroupContainsAll= true;
+                }
+            }
+            
+            if (totalNumOfSegs >= numOfPostSegs)
+            {
+                minimalSetOfPostSegGroups = true;
+                
+                break;
+            }
+            
+        }
+        if (!minimalSetOfPostSegGroups)
+        {   
+            postAxonAllowed =false;
+            postSomaAllowed= false;
+            postDendriteAllowed= false;
+            
+            if(postAxonGroupContainsAll)
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                   postCellnC.associateGroupWithSynapse("axon_group", gapJunctionId);
+                }
+                
+                postAxonAllowed=true;
+            }
+            else if (postSomaGroupContainsAll )
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                    postCellnC.associateGroupWithSynapse("soma_group", gapJunctionId);  
+                }
+                
+                postSomaAllowed=true;
+            }
+            else if (postDendriteGroupContainsAll )
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                  postCellnC.associateGroupWithSynapse("dendrite_group", gapJunctionId);  
+                }
+                 
+                 postDendriteAllowed=true;
+            }
+            //// revert to the widest scope of the segment group specificty
+            else
+            {
+                for(String gapJunctionId: gapJunctionList)
+                {
+                   postCellnC.associateGroupWithSynapse("axon_group", gapJunctionId);
+                   postCellnC.associateGroupWithSynapse("soma_group", gapJunctionId);
+                   postCellnC.associateGroupWithSynapse("dendrite_group", gapJunctionId);
+                }
+                postAxonAllowed=true;
+                postSomaAllowed=true;
+                postDendriteAllowed=true;
+            }
+        }
+        else
+        {
+            for(String gapJunctionId: gapJunctionList)
+            {
+              for(String postSegGroup: potentialPostSegGroups)
+              {
+                postCellnC.associateGroupWithSynapse(postSegGroup, gapJunctionId);
+              }
+            }
+        }
+        ////////////////////////////////////////////////////////////////
+        System.out.println("Printing presynaptic cell ids for "+projection.getId()+": "+preCellSet);
+        
+        System.out.println("Printing postsynaptic cell ids for"+projection.getId()+": "+postCellSet);
+        
+        for (Integer preCellId: preCellSet)
+        {
+            cellCounter = 0;
+            
+            for (Integer preCell: preCellList)
+            {
+              if (preCellId == preCell)
+              {
+                  cellCounter ++;
+              }
+            }
+            presynapticDict.put(preCellId,cellCounter);
+        }
+        
+        for (Integer postCellId: postCellSet)
+        {
+            cellCounter = 0;
+            
+            for (Integer postCell: postCellList)
+            {
+              if (postCellId == postCell)
+              {
+                  cellCounter ++;
+              }
+            }
+            postsynapticDict.put(postCellId,cellCounter);
+        }
+        
+        for (Integer CellId : presynapticDict.keySet())
+        {
+            preCellAppearance.add(presynapticDict.get(CellId));
+            
+        }
+        
+        for (Integer CellId : postsynapticDict.keySet())
+        {
+            postCellAppearance.add(postsynapticDict.get(CellId));
+            
+        }
+        
+        
+        System.out.println("Presynaptic dictionary for "+projection.getId()+": "+presynapticDict);
+        
+        System.out.println("Postsynaptic dictionary for "+projection.getId()+": "+postsynapticDict);
+        
+        System.out.println("Values of presynaptic topology dictionary for "+projection.getId()+": "+preCellAppearance);
+        
+        System.out.println("Values of postsynaptic topology dictionary for "+projection.getId()+": "+postCellAppearance);
+        
+        if(postCellAppearance.size() ==1)
+        {
+            int NumPerPostCell=0;
+            
+            int NumPerPreCell=0;
+            
+            if(preCellAppearance.size()==1)
+            {
+               
+               for(Integer value: postCellAppearance)
+               {
+                   NumPerPostCell= value;
+               }
+               for(Integer value: preCellAppearance)
+               {
+                   NumPerPreCell = value;
+               }
+               
+               if (NumPerPreCell>NumPerPostCell)
+               {
+                  connConds.setGenerationDirection(1);
+                  connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPostCell));
+                  System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
+               }
+               else if (NumPerPreCell < NumPerPostCell)
+               {
+                  connConds.setGenerationDirection(0);
+                  connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPreCell));
+                  System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
+               }
+               else if ((NumPerPreCell==1) && (NumPerPostCell==1))
+               {
+                   connConds.setOnlyConnectToUniqueCells(true);
+                   
+               }
+            }
+            else
+            {
+               for(Integer value: postCellAppearance)
+               {
+                   NumPerPostCell= value;
+               }
+               connConds.setGenerationDirection(1);
+               connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPostCell));
+               System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
+
+            }
+        }
+        else
+        {
+          if(preCellAppearance.size() ==1)
+          {
+            int NumPerPreCell =0;
+            
+            for(Integer value: preCellAppearance)
+            {
+                NumPerPreCell= value;
+                
+            }
+            connConds.setGenerationDirection(0);
+            connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPreCell));
+             System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
+          }
+          else
+          {
+              //TODO, for now stays to the default values in neuroConstruct, e.g. SOURCE_TO_TARGET only
+          }
+          
+        }
+        lociAllowed.setAxonsAllowedPost(postAxonAllowed);
+        lociAllowed.setDendritesAllowedPost(postDendriteAllowed);
+        lociAllowed.setSomaAllowedPost(postSomaAllowed);
+        lociAllowed.setAxonsAllowedPre(preAxonAllowed);
+        lociAllowed.setDendritesAllowedPre(preDendriteAllowed);
+        lociAllowed.setSomaAllowedPre(preSomaAllowed);
+        
+        connConds.setPrePostAllowedLoc(lociAllowed);
+        
+        connConds.setAllowAutapses(autapsesAllowed);
+        
+        return connConds;
+        
     }
+    
     
     public void addNeuroML2Synapse(org.neuroml.model.BaseSynapse NML2Synapse, File synapseFile,NeuroMLDocument NML2Doc)
     {
@@ -969,9 +1886,9 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                         this.addNeuroML2Cell(nml2Cell, idPrefix, includedInNetwork);  
                     }
                     
-                    for (org.neuroml.model.Cell2CaPools nml2Cell: neuroml.getCell2CaPools())
+                    for (org.neuroml.model.Cell2CaPools nml2Cell: neuroml2_doc.getCell2CaPools())
                     {
-                        this.addNeuroML2Cell2CaPools(nml2Cell,idPrefix,nml2File);
+                        this.addNeuroML2Cell2CaPools(nml2Cell,idPrefix,includedInNetwork);
                     }
                     
                     
@@ -984,6 +1901,47 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             for (org.neuroml.model.Cell2CaPools nml2Cell: neuroml.getCell2CaPools())
             {
                this.addNeuroML2Cell2CaPools(nml2Cell,idPrefix,nml2File);
+            }
+            // GapJunction
+            if (!neuroml.getGapJunction().isEmpty())
+            {
+               for (org.neuroml.model.GapJunction includedGapJunction: neuroml.getGapJunction())
+               {
+                  this.addNeuroML2Synapse(includedGapJunction,nml2File,neuroml);
+               }
+            }
+            /// ExpTwoSynapse
+            if (!neuroml.getExpTwoSynapse().isEmpty())
+            {
+                for (org.neuroml.model.ExpTwoSynapse includedSynapse: neuroml.getExpTwoSynapse())
+                {
+                    this.addNeuroML2Synapse(includedSynapse,nml2File,neuroml);
+                }
+            }
+            // ExpOneSynapse
+            if (!neuroml.getExpOneSynapse().isEmpty())
+            {
+                for (org.neuroml.model.ExpOneSynapse includedSynapse: neuroml.getExpOneSynapse())
+                {
+                   this.addNeuroML2Synapse(includedSynapse,nml2File,neuroml);
+                }
+            }
+            /// AlphaSynapse
+            if (!neuroml.getAlphaSynapse().isEmpty())
+            {
+                for (org.neuroml.model.AlphaSynapse includedSynapse: neuroml.getAlphaSynapse())
+                {
+                    this.addNeuroML2Synapse(includedSynapse,nml2File,neuroml);
+                }
+            }
+            /// BlockingPlasticSynapse
+            if (!neuroml.getBlockingPlasticSynapse().isEmpty())
+            {
+                for (org.neuroml.model.BlockingPlasticSynapse includedSynapse: neuroml.getBlockingPlasticSynapse())
+                {
+                    this.addNeuroML2Synapse(includedSynapse,nml2File,neuroml);
+                         
+                }
             }
             
             HashMap<String, PulseGenerator> pulseGenerators = new HashMap<String, PulseGenerator>();
@@ -1309,7 +2267,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             electSynapse= elecConn.getSynapse();
                         }
                         
-                        if (electSynTypes.size()  !=1 ) 
+                        if ((electSynTypes.size()  !=1)  && (!this.inferConnectivityConditions) ) 
                         {
                           throw new NeuroMLException("neuroConstruct can only import an electrical projection between two cell populations if all of its electrcical "
                                     + "connections have the same synapse component!");
@@ -1481,6 +2439,14 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                            
                            amplitude_map= getValueAndUnits(amplitude);
                            
+                           if (amplitude_map.get("units").equals("pA"))
+                           {
+                              float ampInMicroA= Float.parseFloat((String)amplitude_map.get("value"))*PICO_TO_MICRO_SCALING;
+                              amplitude_map.put("value", Float.toString(ampInMicroA));
+                              amplitude_map.put("units", "uA");
+                              
+                           }
+                           
                            if(((String)delay_map.get("units")).equals("ms") && ((String)duration_map.get("units")).equals("ms")
                                    && ((String)amplitude_map.get("units")).equals("uA"))
                            {
@@ -1585,6 +2551,10 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             {
                                inputUnitSystem = UnitConverter.getUnitSystemIndex("SI Units");
                             }
+                            //else if 
+                            //{
+                                       //TODO 
+                            //}
                             else
                             {
                               throw new NeuroMLException("neuroConstruct can only import TransientPoissonFiringSynapse when all of the parameter values are specified in Physiological Units or SI Units");
@@ -1600,13 +2570,13 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
                             currentElectricalInput = new RandomSpikeTrain(new NumberGenerator(currentRate), currentSynapseType);
                              
-                            rp = new RandomSpikeTrainInstanceProps();
+                            trp = new RandomSpikeTrainExtInstanceProps();
 
-                            rp.setRate(currentRate);
+                            trp.setRate(currentRate);
                             
-                            rp.setDuration(currentDuration);
+                            trp.setDuration(currentDuration);
                             
-                            rp.setDelay(currentDelay);
+                            trp.setDelay(currentDelay);
                             
                             logger.logComment("New RandomSpikeTrain props: "+" ("+currentRate+")"+" ("+currentDuration+")"+" ("+currentDelay+")"); 
                             
@@ -1664,18 +2634,16 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                            currentSingleInput.setInstanceProps(iip);
                         }
                         
-                        if (currentInputType.equals(PERSISTENT_POISSON) || currentInputType.equals(TRANSIENT_POISSON))
+                        if (currentInputType.equals(PERSISTENT_POISSON))
                         {   
                            currentSingleInput.setInstanceProps(rp);
                         }
+                        if (currentInputType.equals(TRANSIENT_POISSON))
+                        {
+                           currentSingleInput.setInstanceProps(trp);
+                        }
                         elecInputs.addSingleInput(inputId, currentSingleInput);
                         
-                        //elecInputs.addSingleInput(inputId, 
-                                                  //currentInputType, 
-                                                  //currentInputCellGroup, 
-                                                  //parseForCellNumber(input.getTarget()), 
-                                                  //segmentId, 
-                                                  //fractAlong);
                     }
                 }
                 

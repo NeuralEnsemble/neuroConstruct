@@ -43,9 +43,6 @@ public class RandomSpikeTrainInstanceProps extends InputInstanceProps
 {
     private float rate = Float.NaN;
     
-    private float duration = Float.NaN;
-    
-    private float delay = Float.NaN;
     
     @Override
     public String details(boolean html)
@@ -58,28 +55,12 @@ public class RandomSpikeTrainInstanceProps extends InputInstanceProps
         return rate;
     }
     
-    public float getDuration()
-    {
-        return duration;
-    }
     
-    public float getDelay()
-    {
-        return delay;
-    }
 
     public void setRate(float rate)
     {
         this.rate = rate;
     }
     
-    public void setDuration(float duration)
-    {
-        this.duration= duration;
-    }
     
-    public void setDelay(float delay)
-    {
-        this.delay = delay;
-    }
 }
