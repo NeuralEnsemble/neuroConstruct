@@ -1634,7 +1634,7 @@ public class NeuronFileManager
         int totalStims = project.generatedElecInputs.getNumberSingleInputs();
 
         StringBuilder response = new StringBuilder(totalStims*800);  // initial cap
-
+        
         ArrayList<String> allStims = this.simConfig.getInputs();
 
         addMajorHocComment(response, "Adding " + allStims.size() + " stimulation(s)");

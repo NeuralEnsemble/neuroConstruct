@@ -39,6 +39,8 @@
 
 <xsl:apply-templates select="cml:expTwoSynapse"/>
 
+<xsl:apply-templates select="cml:expThreeSynapse"/>
+
 <xsl:apply-templates select="cml:expOneSynapse"/>
 
 <xsl:apply-templates select="cml:alphaSynapse"/>
@@ -208,6 +210,66 @@
 <xsl:call-template name="tableRow">
         <xsl:with-param name="name"> Base conductance</xsl:with-param>
         <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@gbase"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name">Reversal potential</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@erev"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:if test="count(cml:annotation) &gt; 0">
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name">Annotation</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="cml:annotation"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+</xsl:if>
+
+</table>
+<br/>
+</xsl:template>
+
+<xsl:template match="cml:expThreeSynapse">
+<h3>Synapse type: ExpThreeSynapse</h3>
+
+
+<table frame="box" rules="all" align="centre" cellpadding="4" width ="100%">
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name">Synapse id</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@id"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:if test="count(cml:notes) &gt; 0">
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name">Description</xsl:with-param>
+        <xsl:with-param name="comment">Notes specific to the synapse component</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="cml:notes"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+</xsl:if>
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name"> Rise time constant</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@tauRise"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name"> Decay time constant 1</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@tauDecay1"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name"> Decay time constant 2</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@tauDecay2"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name"> Base conductance 1</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@gbase1"/>&lt;/b&gt;</xsl:with-param>
+</xsl:call-template>
+
+<xsl:call-template name="tableRow">
+        <xsl:with-param name="name"> Base conductance 2</xsl:with-param>
+        <xsl:with-param name="value">&lt;b&gt;<xsl:value-of select="@gbase2"/>&lt;/b&gt;</xsl:with-param>
 </xsl:call-template>
 
 <xsl:call-template name="tableRow">
