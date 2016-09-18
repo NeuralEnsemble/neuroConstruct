@@ -507,6 +507,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
         PrePostAllowedLocs lociAllowed = new PrePostAllowedLocs();
         
+        boolean setSynLoci = false;
+        
         int totalNumOfSegs = 0;
         
         ConnectivityConditions connConds = new ConnectivityConditions();
@@ -619,7 +621,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     }
                 }
            }
-           if ((segCounter != 0)  && (!segmentGroup.contains("ModelView"))  && (!segmentGroup.equals("all")) )
+           if ((segCounter != 0) && (!segmentGroup.contains("ModelView")) && (!segmentGroup.equals("all")) )
            {
                preSegPerSecCounters.put(segmentGroup, segCounter);  
            }
@@ -643,7 +645,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     }
                 }
            }
-           if ((segCounter != 0)  && (!segmentGroup.contains("ModelView")) && (!segmentGroup.equals("all")) )
+           if ((segCounter != 0)&& (!segmentGroup.contains("ModelView")) && (!segmentGroup.equals("all")) )
            {
               postSegPerSecCounters.put(segmentGroup, segCounter);
            }  
@@ -721,6 +723,12 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     if (segGroup.contains("axon"))
                     {
                         preAxonAllowed= true;
+                    }
+                    
+                    // cases such as "apic_shaft"
+                    if( (!segGroup.contains("dend")) && (!segGroup.contains("soma")) && (!segGroup.contains("axon")) )
+                    {
+                        preDendriteAllowed = true;
                     }
             }
             
@@ -818,6 +826,12 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                     if (segGroup.contains("axon"))
                     {
                         postAxonAllowed= true;
+                    }
+                    
+                    // cases such as "apic_shaft"
+                    if( (!segGroup.contains("dend")) && (!segGroup.contains("soma")) && (!segGroup.contains("axon")) )
+                    {
+                        postDendriteAllowed = true;
                     }
             }
             
@@ -1013,14 +1027,27 @@ public class NeuroML2Reader implements NetworkMLnCInfo
           }
           
         }
-        lociAllowed.setAxonsAllowedPost(postAxonAllowed);
-        lociAllowed.setDendritesAllowedPost(postDendriteAllowed);
-        lociAllowed.setSomaAllowedPost(postSomaAllowed);
-        lociAllowed.setAxonsAllowedPre(preAxonAllowed);
-        lociAllowed.setDendritesAllowedPre(preDendriteAllowed);
-        lociAllowed.setSomaAllowedPre(preSomaAllowed);
-        
-        connConds.setPrePostAllowedLoc(lociAllowed);
+        if(postAxonAllowed || postDendriteAllowed || postSomaAllowed)
+        {
+          lociAllowed.setAxonsAllowedPost(postAxonAllowed);
+          lociAllowed.setDendritesAllowedPost(postDendriteAllowed);
+          lociAllowed.setSomaAllowedPost(postSomaAllowed);
+          
+          setSynLoci = true;
+        }
+        if(preAxonAllowed || preDendriteAllowed || preSomaAllowed)
+        {
+          lociAllowed.setAxonsAllowedPre(preAxonAllowed);
+          lociAllowed.setDendritesAllowedPre(preDendriteAllowed);
+          lociAllowed.setSomaAllowedPre(preSomaAllowed);
+          
+          setSynLoci = true;
+          
+        }
+        if (setSynLoci)
+        {
+            connConds.setPrePostAllowedLoc(lociAllowed); 
+        }
         
         connConds.setAllowAutapses(autapsesAllowed);
         
