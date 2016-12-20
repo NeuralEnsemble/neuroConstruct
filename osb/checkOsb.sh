@@ -164,6 +164,8 @@ standardGHProject 'BrianShowcase' 'showcase'
 standardGHProject 'BlueBrainProjectShowcase' 'showcase'
 standardGHProject 'AllenInstituteNeuroML' 'showcase'
 standardGHProject 'StochasticityShowcase' 'showcase'
+standardGHProject 'GPUShowcase' 'showcase'
+standardGHProject 'FPGAShowcase' 'showcase'
 
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
