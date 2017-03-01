@@ -4349,6 +4349,7 @@ public class CellTopologyHelper
                 repeatedNameSections.add("Section name: "
                                          + segment.getSection().getSectionName()
                                          + " is used more than once" );
+                System.out.println("Testing NeuroML2 import: segment id "+segment.getSegmentId());
             }
             allSectionNames.add(segment.getSection().getSectionName());
 

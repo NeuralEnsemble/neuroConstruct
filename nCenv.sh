@@ -12,7 +12,7 @@ export NC_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #   Use an altered value below to run the application with extra memory
 #   **OR** set NC_MAX_MEMORY_LOCAL in your .bashrc file
 #   Type java -X for more info
-export NC_MAX_MEMORY=450M 
+export NC_MAX_MEMORY=4000M
 
 ########################################################################################
 

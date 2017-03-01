@@ -234,6 +234,7 @@ public class NetworkMLReaderTest
         
         assertEquals(stateString1.toString(), stateString2.toString());
         System.out.println("Strings representing internal states equal!");
+        System.out.println("-----------------------------------------------");
        
     }
     
