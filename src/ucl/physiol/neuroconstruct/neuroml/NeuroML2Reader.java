@@ -235,7 +235,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     {
         String newCellId = CellIdPrefix+NML2Cell.getId();
                 
-        System.out.println("Found a NeuroML2 cell with id = "+NML2Cell.getId());
+        //System.out.println("Found a NeuroML2 cell with id = "+NML2Cell.getId());
                 
         //if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
         //{
@@ -278,7 +278,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     {
         String newCellId = CellIdPrefix+NML2Cell.getId();
                 
-        System.out.println("Found a NeuroML2 cell with id = "+NML2Cell.getId());
+        //System.out.println("Found a NeuroML2 cell with id = "+NML2Cell.getId());
                 
         //if (project.cellManager.getAllCellTypeNames().contains(newCellId)) 
         //{
@@ -321,15 +321,15 @@ public class NeuroML2Reader implements NetworkMLnCInfo
     {   
         String PathToNML2CellMechanism= NML2CellMechanismFile.getPath();
                             
-        System.out.println("Full path to NeuroML2 cell mechanism: "+PathToNML2CellMechanism);
+        //System.out.println("Full path to NeuroML2 cell mechanism: "+PathToNML2CellMechanism);
                             
         File CMLDir = ProjectStructure.getCellMechanismDir(project.getProjectMainDirectory());
                             
-        System.out.println("Cell Mechanism dir: "+CMLDir.getPath());
+        //System.out.println("Cell Mechanism dir: "+CMLDir.getPath());
                             
         File newChannelDir = new File(CMLDir, cellMechanismId);
                             
-        System.out.println("Cell mechanism will be copied to: "+newChannelDir.getPath());
+        //System.out.println("Cell mechanism will be copied to: "+newChannelDir.getPath());
                             
         newChannelDir.mkdirs();
                             
@@ -354,7 +354,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
         Path CopyIonChannelTo= FileSystems.getDefault().getPath(FullSavedPath);
                             
-        System.out.println("A full path of a saved channel:"+FullSavedPath);
+        //System.out.println("A full path of a saved channel:"+FullSavedPath);
         
         try
         {
@@ -597,11 +597,11 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
         int numOfPreSegs= preCellSegIds.size();
         
-        System.out.println("Number of unique pre seg ids: "+numOfPreSegs);
+        //System.out.println("Number of unique pre seg ids: "+numOfPreSegs);
         
         int numOfPostSegs= postCellSegIds.size();
         
-        System.out.println("Number of unique post seg ids: "+numOfPostSegs);
+        //System.out.println("Number of unique post seg ids: "+numOfPostSegs);
         
         for (String segmentGroup: preCellnC.getAllGroupNames() )
         {
@@ -693,13 +693,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
           }
         }
         
-        System.out.println("Testing order pre segs: "+preSegPerSecCountersSorted);
-        
-        System.out.println("Testing order post segs: "+postSegPerSecCountersSorted);
-        
-        System.out.println("Testing order of pre seg keys: "+preSegPerSecCountersSorted.keySet());
-        
-        System.out.println("Testing order of pre seg keys: "+postSegPerSecCountersSorted.keySet());
         
         for (String segGroup: preSegPerSecCountersSorted.keySet())
         {   
@@ -904,10 +897,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 postCellnC.associateGroupWithSynapse(postSegGroup, synapse);
             }
         }
-        ////////////////////////////////////////////////////////////////
-        System.out.println("Printing presynaptic cell ids for "+projection.getId()+": "+preCellSet);
-        
-        System.out.println("Printing postsynaptic cell ids for"+projection.getId()+": "+postCellSet);
         
         for (Integer preCellId: preCellSet)
         {
@@ -950,13 +939,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         }
         
         
-        System.out.println("Presynaptic dictionary for "+projection.getId()+": "+presynapticDict);
-        
-        System.out.println("Postsynaptic dictionary for "+projection.getId()+": "+postsynapticDict);
-        
-        System.out.println("Values of presynaptic topology dictionary for "+projection.getId()+": "+preCellAppearance);
-        
-        System.out.println("Values of postsynaptic topology dictionary for "+projection.getId()+": "+postCellAppearance);
         
         if(postCellAppearance.size() ==1)
         {
@@ -980,13 +962,13 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                {
                   connConds.setGenerationDirection(1);
                   connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPostCell));
-                  System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
+                  //System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
                }
                else if (NumPerPreCell < NumPerPostCell)
                {
                   connConds.setGenerationDirection(0);
                   connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPreCell));
-                  System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
+                  //System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
                }
                else if ((NumPerPreCell==1) && (NumPerPostCell==1))
                {
@@ -1002,7 +984,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                }
                connConds.setGenerationDirection(1);
                connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPostCell));
-               System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
+               //System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
 
             }
         }
@@ -1019,7 +1001,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             }
             connConds.setGenerationDirection(0);
             connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPreCell));
-             System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
+             //System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
           }
           else
           {
@@ -1222,11 +1204,11 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         
         int numOfPreSegs= preCellSegIds.size();
         
-        System.out.println("Number of unique pre seg ids: "+numOfPreSegs);
+        //System.out.println("Number of unique pre seg ids: "+numOfPreSegs);
         
         int numOfPostSegs= postCellSegIds.size();
         
-        System.out.println("Number of unique post seg ids: "+numOfPostSegs);
+        //System.out.println("Number of unique post seg ids: "+numOfPostSegs);
         
         for (String segmentGroup: preCellnC.getAllGroupNames() )
         {
@@ -1318,13 +1300,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
           }
         }
         
-        System.out.println("Testing order pre segs: "+preSegPerSecCountersSorted);
-        
-        System.out.println("Testing order post segs: "+postSegPerSecCountersSorted);
-        
-        System.out.println("Testing order of pre seg keys: "+preSegPerSecCountersSorted.keySet());
-        
-        System.out.println("Testing order of pre seg keys: "+postSegPerSecCountersSorted.keySet());
         
         for (String segGroup: preSegPerSecCountersSorted.keySet())
         {   
@@ -1547,10 +1522,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
               }
             }
         }
-        ////////////////////////////////////////////////////////////////
-        System.out.println("Printing presynaptic cell ids for "+projection.getId()+": "+preCellSet);
-        
-        System.out.println("Printing postsynaptic cell ids for"+projection.getId()+": "+postCellSet);
         
         for (Integer preCellId: preCellSet)
         {
@@ -1593,13 +1564,6 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         }
         
         
-        System.out.println("Presynaptic dictionary for "+projection.getId()+": "+presynapticDict);
-        
-        System.out.println("Postsynaptic dictionary for "+projection.getId()+": "+postsynapticDict);
-        
-        System.out.println("Values of presynaptic topology dictionary for "+projection.getId()+": "+preCellAppearance);
-        
-        System.out.println("Values of postsynaptic topology dictionary for "+projection.getId()+": "+postCellAppearance);
         
         if(postCellAppearance.size() ==1)
         {
@@ -1623,13 +1587,13 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                {
                   connConds.setGenerationDirection(1);
                   connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPostCell));
-                  System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
+                  //System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
                }
                else if (NumPerPreCell < NumPerPostCell)
                {
                   connConds.setGenerationDirection(0);
                   connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPreCell));
-                  System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
+                  //System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
                }
                else if ((NumPerPreCell==1) && (NumPerPostCell==1))
                {
@@ -1645,7 +1609,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                }
                connConds.setGenerationDirection(1);
                connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPostCell));
-               System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
+               //System.out.println("This is a convergent projection with "+NumPerPostCell+" connections per postsynaptic target cell");
 
             }
         }
@@ -1662,7 +1626,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
             }
             connConds.setGenerationDirection(0);
             connConds.setNumConnsInitiatingCellGroup(new NumberGenerator(NumPerPreCell));
-             System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
+            //System.out.println("This a divergent projection with "+NumPerPreCell+" connections per presynaptic source cell");
           }
           else
           {
@@ -1874,7 +1838,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             {   
                                 String ionChannelNotes=null;
                                 
-                                System.out.println("Included channel name: "+includedFile.getName());
+                                //System.out.println("Included channel name: "+includedFile.getName());
                             
                                 File IonChannelFile=new File(includedInNetwork.getParentFile(),includedFile.getName());
                                 
@@ -1902,7 +1866,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             {   
                                 String ionChannelNotes=null;
                                 
-                                System.out.println("Included channel name: "+includedFile.getName());
+                                //System.out.println("Included channel name: "+includedFile.getName());
                             
                                 File IonChannelFile=new File(includedInNetwork.getParentFile(),includedFile.getName());
                                 

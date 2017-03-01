@@ -1068,7 +1068,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldProjFileVersion.setText("");
         jMenuItemUnzipProject.setText("Import Zipped Project...");
         jMenuItemImportLevel123.setText("Import NeuroML Levels 1-3...");
-        jMenuItemImportNeuroML2.setText("Import NeuroML2");
+        jMenuItemImportNeuroML2.setText("Import NeuroML 2...");
 
         jMenuItemUnzipProject.addActionListener(new java.awt.event.ActionListener()
         {

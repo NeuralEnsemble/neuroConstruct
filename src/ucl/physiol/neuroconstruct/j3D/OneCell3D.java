@@ -331,20 +331,24 @@ public class OneCell3D
 
 
         int nextStickNumber = 0;
-        
+
+
         //GeneralUtils.timeCheck("Step 1..");
 
         for (int currSectionIndex = 0; currSectionIndex < secSize; currSectionIndex++)
         {
             Section currSection = allSections.get(currSectionIndex);
-            
+
             /** @todo !! Possible optimization by caching these arranged by section... */
             LinkedList<Segment> allSegsInSec = this.myCell.getAllSegmentsInSection(currSection);
-            
+
+
+
             for (int currSegIndex = 0; currSegIndex < allSegsInSec.size(); currSegIndex++)
             {
+
                 Segment currSegment = allSegsInSec.get(currSegIndex);
-                
+
                 logger.logComment("");
                 logger.logComment("****************    Looking at segment id " + currSegment.getSegmentId()
                                   + ", called: " + currSegment.getSegmentName()
@@ -460,14 +464,13 @@ public class OneCell3D
                     segmentTGs.put(currSegment.getSegmentId(), addedSegmentTG);
                     logger.logComment("segmentTGs: " + segmentTGs);
                 }
-                
+
                 if (showNeuriteDiam() || showSomaDiam() || showSticks())
                 {
                     if (parent == null)
                     {
                         logger.logComment("Using mainCellTG for parent TG");
                         tgOfParent = mainCellTG;
-                        //System.out.println("Testing tgOfParent when parent is null: "+tgOfParent);
                     }
                     else
                     {
@@ -476,10 +479,7 @@ public class OneCell3D
 
                         /** @todo !! Optimization: perhaps store last TransformGroup, check id of parent and use this? */
                         tgOfParent = segmentTGs.get(new Integer(parent.getSegmentId()));
-                        
-                        //System.out.println("Testing segmentTGSs: "+segmentTGs);
-                        //System.out.println("Parent segment id: "+parent.getSegmentId());
-                        //System.out.println("Testing tgOfParent when parent is not null: "+tgOfParent);
+
                     }
 
                     if (showNeuriteDiam() ||
@@ -489,9 +489,6 @@ public class OneCell3D
                         if (! (currSegment.isFirstSectionSegment() && currSegment.isSomaSegment()))
                         {
                             logger.logComment("Adding a solid segment 1: "+ currSegment);
-                            //System.out.println("Testing tgOfParent: "+tgOfParent);
-                            //System.out.println("Testing currSegment: "+currSegment);
-                            
                             addedSegmentTG = addPositionedSegment(currSegment, tgOfParent);
 
                             if (cancelled) return null;
