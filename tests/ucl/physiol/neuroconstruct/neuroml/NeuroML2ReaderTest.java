@@ -27,7 +27,8 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.junit.runner.Result;
 import org.neuroml.model.ExpTwoSynapse;
@@ -89,20 +90,20 @@ public class NeuroML2ReaderTest
         {
             Network nml2net = nmlDocument.getNetwork().get(0);
 
-            assert(testNeuroML2Proj.cellGroupsInfo.getAllCellGroupNames().size()==nml2net.getPopulation().size());
-            assert(testNeuroML2Proj.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().size()==nml2net.getProjection().size());
+            assertTrue(testNeuroML2Proj.cellGroupsInfo.getAllCellGroupNames().size()==nml2net.getPopulation().size());
+            assertTrue(testNeuroML2Proj.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().size()==nml2net.getProjection().size());
           
         }
         //ArrayList<String> ics = new ArrayList<String>();
         for (IonChannel ic:nmlDocument.getIonChannel())
         {   
             System.out.println("Checking: "+ic);
-              assert(testNeuroML2Proj.cellMechanismInfo.getAllCellMechanismNames().contains(ic.getId()));
+            assertTrue(testNeuroML2Proj.cellMechanismInfo.getAllCellMechanismNames().contains(ic.getId()));
         }
         for (ExpTwoSynapse syn:nmlDocument.getExpTwoSynapse())
         {
             System.out.println("Checking: "+syn);
-              assert(testNeuroML2Proj.cellMechanismInfo.getAllCellMechanismNames().contains(syn.getId()));
+            assertTrue(testNeuroML2Proj.cellMechanismInfo.getAllCellMechanismNames().contains(syn.getId()));
         }
     }
 
