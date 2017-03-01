@@ -166,7 +166,7 @@ public class MainApplication
 
         if (frame.projManager.getCurrentProject()==null)
         {
-            String projectName = nmlFile.getName().indexOf(".")>1 ? nmlFile.getName().substring(0, nmlFile.getName().indexOf(".")) : nmlFile.getName();
+            String projectName = nmlFile.getName();
 
             File projectLocation = ProjectStructure.getDefaultnCProjectsDir();
 

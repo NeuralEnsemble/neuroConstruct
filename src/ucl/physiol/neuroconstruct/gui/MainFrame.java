@@ -8797,7 +8797,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.add(jMenuItemUnzipProject);
         jMenuFile.addSeparator();
         jMenuFile.add(jMenuItemImportLevel123);
-        jMenuFile.addSeparator();
         jMenuFile.add(jMenuItemImportNeuroML2);
         jMenuFile.addSeparator();
         
@@ -13371,6 +13370,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
                 logger.logComment("Warning about the connectivity conditions");
+                
+                
+                GuiUtils.showWarningMessage(logger, "Note that the NeuroML 2 import into neuroConstruct is not 100% lossless.\n\n"
+                    + "This should only be used to visualise cells & network structure and is not (yet) recommended for:\n"
+                    + "NeuroML 2 -> neuroConstruct -> NEURON\nPlease use jNeuroML for NeuroML 2 -> NEURON\n\n"
+                    + "Proceed with caution!", this);
+                
+                
                 Object[] options =
                 {"YES", "NO"};
 

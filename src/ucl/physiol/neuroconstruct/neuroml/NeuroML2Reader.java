@@ -1724,15 +1724,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
                             File IonChannelFile=new File(includedInNetwork.getParentFile(),includedInNetwork.getName());
                                 
-                            if(neuroml2_doc.getIonChannel().size() >1)
-                            {
-                                ionChannelNotes= ionChannel.getNotes();
-                            }
-                            else
-                            {
-                                ionChannelNotes=neuroml2_doc.getNotes();
-                            }
-                                
+                            ionChannelNotes= ionChannel.getNotes();
+                            
                             this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
                         }  
                       } 
@@ -1753,14 +1746,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
                             File IonChannelFile=new File(includedInNetwork.getParentFile(),includedInNetwork.getName());
                                 
-                            if(neuroml2_doc.getIonChannelKS().size() >1)
-                            {
-                                ionChannelNotes= ionChannel.getNotes();
-                            }
-                            else
-                            {
-                                ionChannelNotes=neuroml2_doc.getNotes();
-                            }
+                            ionChannelNotes= ionChannel.getNotes();
+                       
                                 
                             this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
                         }  
@@ -1842,14 +1829,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
                                 File IonChannelFile=new File(includedInNetwork.getParentFile(),includedFile.getName());
                                 
-                                if(neuroml2_included_doc.getIonChannel().size() >1)
-                                {
-                                   ionChannelNotes= ionChannel.getNotes();
-                                }
-                                else
-                                {
-                                   ionChannelNotes=neuroml2_included_doc.getNotes();
-                                }
+                                ionChannelNotes= ionChannel.getNotes();
+                                
                                 
                                 this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
                             }  
@@ -1870,14 +1851,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             
                                 File IonChannelFile=new File(includedInNetwork.getParentFile(),includedFile.getName());
                                 
-                                if(neuroml2_included_doc.getIonChannelKS().size() >1)
-                                {
-                                   ionChannelNotes= ionChannel.getNotes();
-                                }
-                                else
-                                {
-                                   ionChannelNotes=neuroml2_included_doc.getNotes();
-                                }
+                                ionChannelNotes= ionChannel.getNotes();
+                                
                                 
                                 this.addNeuroML2CellMechanism(ionChannelId,CellMechanism.NEUROML2_ION_CHANNEL,IonChannelFile,ionChannelNotes);
                             }  

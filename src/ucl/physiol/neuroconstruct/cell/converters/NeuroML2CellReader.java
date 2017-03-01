@@ -109,7 +109,7 @@ public class NeuroML2CellReader {
         Vector<Segment> allSegments = new Vector<Segment>();     
         for (org.neuroml.model.Segment nml2Segment: NML2morphology.getSegment())
         {
-            logger.logComment("Adding Segment: "+ nml2Segment.getId(), true);
+            logger.logComment("Adding Segment: "+ nml2Segment.getId());
             Point3DWithDiam dist = nml2Segment.getDistal();
                     
                     
@@ -124,7 +124,7 @@ public class NeuroML2CellReader {
                     
             segIdVsSegments.put(nml2Segment.getId(), nCsegment);
             
-            System.out.println("Printing added segment id: "+nml2Segment.getId());
+            //System.out.println("Printing added segment id: "+nml2Segment.getId());
             
             allSegments.add(nCsegment);
             
@@ -161,7 +161,7 @@ public class NeuroML2CellReader {
         // To set section start points
        for (org.neuroml.model.Segment nml2Segment: NML2morphology.getSegment())
        {
-            logger.logComment("Checking Segment: "+ nml2Segment.getId(), true);
+            logger.logComment("Checking Segment: "+ nml2Segment.getId());
             SegmentParent parent = nml2Segment.getParent();
             Point3DWithDiam prox = nml2Segment.getProximal();
             Point3DWithDiam dist = nml2Segment.getDistal();
