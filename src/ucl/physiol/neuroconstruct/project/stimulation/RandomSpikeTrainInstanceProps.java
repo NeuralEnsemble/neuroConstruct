@@ -43,6 +43,7 @@ public class RandomSpikeTrainInstanceProps extends InputInstanceProps
 {
     private float rate = Float.NaN;
     
+    
     @Override
     public String details(boolean html)
     {
@@ -53,9 +54,13 @@ public class RandomSpikeTrainInstanceProps extends InputInstanceProps
     {
         return rate;
     }
+    
+    
 
     public void setRate(float rate)
     {
         this.rate = rate;
     }
+    
+    
 }

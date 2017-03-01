@@ -138,7 +138,6 @@ import ucl.physiol.neuroconstruct.neuron.*;
 
 import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
 import ucl.physiol.neuroconstruct.pynn.PynnFileManager.*;
@@ -592,6 +591,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JTextField jTextFieldProjFileVersion = new JTextField();
     JMenuItem jMenuItemUnzipProject = new JMenuItem();
     JMenuItem jMenuItemImportLevel123 = new JMenuItem();
+    JMenuItem jMenuItemImportNeuroML2 = new JMenuItem();
     
     //JMenu jMenuExamples = new JMenu();
     //JMenu jMenuModels = new JMenu();
@@ -980,7 +980,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenuItem jMenuItemDataSets = new JMenuItem();
     JMenuItem jMenuItemListSims = new JMenuItem();
 
-
+    boolean NeuroML2= false;
    // JButton jButtonSimulationRecord = new JButton();
 
     public MainFrame()
@@ -1068,6 +1068,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldProjFileVersion.setText("");
         jMenuItemUnzipProject.setText("Import Zipped Project...");
         jMenuItemImportLevel123.setText("Import NeuroML Levels 1-3...");
+        jMenuItemImportNeuroML2.setText("Import NeuroML 2...");
 
         jMenuItemUnzipProject.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1082,6 +1083,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemImportLevel123_actionPerformed(e);
+            }
+        });
+       
+       jMenuItemImportNeuroML2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemImportNeuroML2_actionPerformed(e);
             }
         });
         
@@ -8788,7 +8797,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.add(jMenuItemUnzipProject);
         jMenuFile.addSeparator();
         jMenuFile.add(jMenuItemImportLevel123);
+        jMenuFile.add(jMenuItemImportNeuroML2);
         jMenuFile.addSeparator();
+        
 
         /*
         jMenuFile.add(jMenuExamples);
@@ -9011,7 +9022,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jMenuItemZipUp.setEnabled(true);
             this.jMenuItemUnzipProject.setEnabled(true);
             this.jMenuItemImportLevel123.setEnabled(true);
-
+            this.jMenuItemImportNeuroML2.setEnabled(true);
             jMenuItemCopyProject.setEnabled(true);
 
             this.jMenuItemCloseProject.setEnabled(true);
@@ -13028,6 +13039,197 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             doImportNeuroML(nmlFile, false, freshProject);
         }
     }
+    
+    void  jMenuItemImportNeuroML2_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Loading NeuroML2 file");
+
+        boolean freshProject = projManager.getCurrentProject()==null ||
+            (projManager.getCurrentProject().cellManager.getNumberCellTypes()==0 &&
+            projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames().isEmpty());
+
+        if (projManager.getCurrentProject() == null)
+        {
+            int yesNo = JOptionPane.showConfirmDialog(this,"There is no project currently loaded. Would you like to create a new project to load the NeuroML2 file into?"
+                , "Create new project for NeuroML2?", JOptionPane.YES_NO_OPTION);
+
+            if (yesNo==JOptionPane.YES_OPTION)
+            {
+                doNewProject(false);
+            }
+            else
+            {
+                return;
+            }
+        }
+        
+        final JFileChooser chooser = new JFileChooser();
+
+        chooser.setCurrentDirectory(projManager.getCurrentProject().getProjectMainDirectory());
+
+//        chooser.setFileFilter(new SimpleFileFilter(new String[]{".net.xml"}, "Level 3 NeuroML Network files", true));
+
+        logger.logComment("chooser.getCurrentDirectory(): "+chooser.getCurrentDirectory());
+
+        chooser.setDialogTitle("Choose NeuroML2 file to load");
+
+        final JTextArea summary = new JTextArea(12,40);
+        summary.setMargin(new Insets(5,5,5,5));
+        summary.setEditable(false);
+        JPanel addedPanel = new JPanel();
+        addedPanel.setLayout(new BorderLayout());
+        
+        JScrollPane jScrollPane = new JScrollPane(summary);
+        //jScrollPane.setBorder(BorderFactory.createEtchedBorder());
+        addedPanel.add(jScrollPane, BorderLayout.NORTH);
+
+        JPanel viewPanel = new JPanel();
+        final JLabel sizeInfo = new JLabel("");
+        final JButton openButton = new JButton("View file");
+        final JButton editButton = new JButton("Edit externally");
+
+        viewPanel.add(sizeInfo);
+        viewPanel.add(openButton);
+        viewPanel.add(editButton);
+        openButton.setEnabled(false);
+        editButton.setEnabled(false);
+        addedPanel.add(viewPanel, BorderLayout.SOUTH);
+        
+        openButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                File newFile = chooser.getSelectedFile();
+                if (newFile!=null)
+                {
+                    chooser.cancelSelection();
+                    //System.out.println("Opening file: "+newFile);
+                    SimpleViewer.showFile(newFile.getAbsolutePath(), 12, false, false, false);
+                }
+                
+            }
+        });
+        editButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                File newFile = chooser.getSelectedFile();
+                if (newFile!=null)
+                {
+                    chooser.cancelSelection();
+                    
+                    String editorPath = GeneralProperties.getEditorPath(true);
+
+                    Runtime rt = Runtime.getRuntime();
+
+                    String command = editorPath + " " + newFile.getAbsolutePath()+"";
+
+                    if (GeneralUtils.isWindowsBasedPlatform() && newFile.getAbsolutePath().indexOf(" " )>=0)
+                    {
+                        command = editorPath + " \"" + newFile.getAbsolutePath()+"\"";
+                    }
+
+
+                    logger.logComment("Going to execute command: " + command);
+
+                    try
+                    {
+
+                        rt.exec(command);
+                    }
+                    catch (IOException ex)
+                    {
+                        logger.logError("Error running "+command);
+                    }
+
+                    logger.logComment("Have successfully executed command: " + command);
+                }
+                
+            }
+        });
+
+
+        chooser.addPropertyChangeListener(new PropertyChangeListener(){
+
+            public void propertyChange(PropertyChangeEvent e)
+            {
+                logger.logComment("propertyChange: " + e);
+                logger.logComment("getPropertyName: " + e.getPropertyName());
+                
+                if (e.getPropertyName().equals("SelectedFileChangedProperty"))
+                {
+                    File newFile = chooser.getSelectedFile();
+                    logger.logComment("Looking at: " + newFile);
+                    try
+                    {
+                        if (newFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
+                        {
+                            openButton.setEnabled(false);
+                            
+                            ZipInputStream zf = new ZipInputStream(new FileInputStream( newFile));
+                            ZipEntry ze = null;
+
+                            //summary.setText("Comment: "+zf.getNextEntry().getComment());
+                            while ((ze=zf.getNextEntry())!=null)
+                            {
+                                logger.logComment("Entry: " +ze );
+                                summary.setText("Contains: "+ze);
+                            }
+                            summary.setCaretPosition(0);
+
+
+                        }
+                        else
+                        {
+                            openButton.setEnabled(true);
+                            editButton.setEnabled(true);
+
+                            FileReader fr = null;
+
+                            fr = new FileReader(newFile);
+
+                            LineNumberReader reader = new LineNumberReader(fr);
+                            String nextLine = null;
+
+                            StringBuilder sb = new StringBuilder();
+                            int count = 0;
+                            int maxlines = 100;
+
+                            while (count <= maxlines && (nextLine = reader.readLine()) != null)
+                            {
+                                sb.append(nextLine + "\n");
+                                count++;
+                            }
+                            if (count >= maxlines) sb.append("\n\n  ... NetworkML file continues ...");
+                            reader.close();
+                            fr.close();
+                            summary.setText(sb.toString());
+                            summary.setCaretPosition(0);
+                            
+                            sizeInfo.setText("Size: "+ newFile.length()+" bytes");
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        summary.setText("Error loading contents of file: " + newFile);
+                    }
+                }
+
+            }
+
+            });
+
+        chooser.setAccessory(addedPanel);
+
+        int retval = chooser.showDialog(this, "Choose NeuroML2 file");
+
+        if (retval == JOptionPane.OK_OPTION)
+        {
+            File nmlFile = chooser.getSelectedFile();
+            doImportNeuroML2(nmlFile, false, freshProject);
+        }
+    }
 
     protected void doImportNeuroML(File nmlFile, boolean acceptDefaults, boolean confirmImport)
     {
@@ -13145,7 +13347,156 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    protected void doImportNeuroML2(File nmlFile, boolean acceptDefaults, boolean confirmImport)
+    {
+        if (nmlFile==null || !nmlFile.exists())
+        {
+            GuiUtils.showErrorMessage(logger, "Problem locating file: "+ nmlFile, null, this);
+        }
+        else
+        {
+            long start = System.currentTimeMillis();
+            
+            try
+            {
+                projManager.getCurrentProject().resetGenerated();
 
+                logger.logComment("Removing 3D network, as it's no longer relevant...");
+                doDestroy3D();
+
+                if (this.jCheckBoxRandomGen.isSelected())
+                {
+                    Random tempRandom = new Random();
+                    this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
+                }
+                logger.logComment("Warning about the connectivity conditions");
+                
+                
+                GuiUtils.showWarningMessage(logger, "Note that the NeuroML 2 import into neuroConstruct is not 100% lossless.\n\n"
+                    + "This should only be used to visualise cells & network structure and is not (yet) recommended for:\n"
+                    + "NeuroML 2 -> neuroConstruct -> NEURON\nPlease use jNeuroML for NeuroML 2 -> NEURON\n\n"
+                    + "Proceed with caution!", this);
+                
+                
+                Object[] options =
+                {"YES", "NO"};
+
+                JOptionPane option = new JOptionPane(
+                "By default no assumptions are made on connectivity modes, target-to-source cell ratios, and segment group specifcities during import\n"+
+                "of NeuroML2 network; generating the NeuroML2 network configurations in neuroConstruct will lead to a different network structure\n"+
+                "with minimal constraints compared to the original network. Should neuroConstruct attempt to constrain connectivity conditions?",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+                JDialog dialog = option.createDialog(this, "Warning");
+                dialog.setVisible(true);
+
+                Object choice = option.getValue();
+                logger.logComment("User has chosen: " + choice);
+                
+                NetworkMLnCInfo extraInfo;
+                
+                if (choice.equals("NO"))
+                {
+                  extraInfo = projManager.doLoadNeuroML2Network(nmlFile, false);
+                }
+                else
+                {
+                  extraInfo = projManager.doLoadNeuroML2Network(nmlFile, true);
+                }
+                logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
+                
+                String prevSimConfig = extraInfo.getSimConfig();
+                long randomSeed = extraInfo.getRandomSeed();
+
+                if (randomSeed!=Long.MIN_VALUE)
+                {
+                    this.jTextFieldRandomGen.setText(randomSeed+"");
+                    ProjectManager.setRandomGeneratorSeed(randomSeed);
+                    ProjectManager.reinitialiseRandomGenerator();
+                }
+                if (prevSimConfig!=null)
+                {
+                    this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
+                }               
+                
+
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Error loading network info from: "+nmlFile, ex, this);
+                return;
+            }
+            long end = System.currentTimeMillis();
+
+            SimConfig simConfig = getSelectedSimConfig();
+            
+            Hashtable<String, ArrayList<Integer>> hostsVsProcs = CompNodeGenerator.getHostsVsNumOnProcs(projManager.getCurrentProject(), simConfig);
+            
+            String compNodesReport = CompNodeGenerator.generateCompNodesReport(hostsVsProcs, simConfig.getMpiConf(), -1);
+            
+            
+            boolean elecInputsReadFromFile = projManager.getCurrentProject().generatedElecInputs.getNumberSingleInputs()>0;
+            
+            String inputReport = "";
+            if (elecInputsReadFromFile)
+            {
+                inputReport = projManager.getCurrentProject().generatedElecInputs.getHtmlReport();
+            }
+            String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
+
+            setGeneratorInfo("Cell positions and network connections loaded from: <b>"+nmlFile.getAbsolutePath()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
+                                            +"<center><b>Cell Groups:</b></center>"
+                                            +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
+                                            +"<center><b>Network Connections:</b></center>"
+                +projManager.getCurrentProject().generatedNetworkConnections.getHtmlReport(
+                                        GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,simConfig)
+                                        + compNodesReport+inputReport+"<br>"+note);
+            
+            
+
+            if (elecInputsReadFromFile)
+            {
+                projManager.plotSaveGenerator = new PlotSaveGenerator(projManager.getCurrentProject(), this);
+                projManager.plotSaveGenerator.setSimConfig(simConfig);
+                projManager.plotSaveGenerator.start();
+            }
+            else
+            {
+                projManager.elecInputGenerator = new ElecInputGenerator(projManager.getCurrentProject(), this);
+                projManager.elecInputGenerator.setSimConfig(simConfig);
+                projManager.elecInputGenerator.start();
+            }
+
+            sourceOfCellPosnsInMemory = NETWORKML_POSITIONS;
+
+            jComboBoxView3DChoice.setSelectedItem(LATEST_GENERATED_POSITIONS);
+
+            if (confirmImport)
+            {
+                projManager.getCurrentProject().setProjectDescription("neuroConstruct project generated from contents" +
+                    " of file: "+ nmlFile+"\n\nThe cell positions & network connections in memory reflect the " +
+                    "instances in the NetworkML elements of the imported file. Regenerating the network in " +
+                    "neuroConstruct nmay lead to a different network structure.");
+            }
+            else
+            {
+                logger.logComment("There had been other elements in this project");
+            }
+
+            logger.logComment("Refreshing all...");
+            refreshTabCellTypes();
+            refreshTabProjectInfo();
+
+            refreshAll();
+        }
+
+
+    }
+    
     void jComboBoxView3DChoice_popupMenuWillBecomeVisible(PopupMenuEvent e)
     {
 
@@ -14721,7 +15072,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         else if (cellMech instanceof XMLCellMechanism)
         {
             ChannelMLEditor cmlEditor
-                = new ChannelMLEditor( (XMLCellMechanism) cellMech,
+                 = new ChannelMLEditor( (XMLCellMechanism) cellMech,
                                       projManager.getCurrentProject(),
                                       this);
 
@@ -14735,8 +15086,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             cmlEditor.setVisible(true);
 
             //System.out.println("Shown the dialog");
-
-
+            
         }
     }
 
@@ -16891,8 +17241,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         frame.setVisible(true);
 
     }
-
-
 
 
 }

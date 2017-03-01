@@ -213,7 +213,7 @@ public class NetworkMLConstants
     public static String NEUROML2_POPULATION_LIST = "populationList";
     public static String NEUROML2_POPULATION_COMPONENT = "component";
     public static String NEUROML2_POPULATION_SIZE = "size";
-
+    public static String NEUROML2_POPULATION_ID = "id";
 
     // Projection
     

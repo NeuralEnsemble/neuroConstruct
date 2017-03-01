@@ -1,0 +1,47 @@
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta4.xsd" id="StimuliTest">
+    <include href="pyr_4_sym.cell.nml"></include>
+    <expTwoSynapse id="syn0" gbase="1nS" erev="0mV" tauDecay="10ms" tauRise="0.5ms"/>
+    <expTwoSynapse id="syn1" gbase="6nS" erev="0mV" tauDecay="10ms" tauRise="2ms"/>
+    <spikeArray id="spikeArray">
+        <spike id="0" time="100ms"/>
+        <spike id="1" time="500ms"/>
+        <spike id="2" time="700ms"/>
+        <spike id="3" time="705ms"/>
+    </spikeArray>
+    <timedSynapticInput id="timedSynapticInput" synapse="syn1" spikeTarget="./syn1">
+        <spike id="0" time="100ms"/>
+        <spike id="1" time="500ms"/>
+        <spike id="2" time="700ms"/>
+        <spike id="3" time="705ms"/>
+    </timedSynapticInput>
+    <spikeGeneratorPoisson id="spikeGenPoisson" averageRate="150 Hz"/>
+    <poissonFiringSynapse id="poissonFiringSyn" averageRate="150 Hz" synapse="syn0" spikeTarget="./syn0"/>
+    <network id="StimuliTest_network">
+        <population id="PoissonFiringSynCells" component="pyr_4_sym" size="3"/>
+        <population id="SpikeArrayCells" component="pyr_4_sym" size="3"/>
+        <population id="SpikeGeneratorPoissonCells" component="pyr_4_sym" size="3"/>
+        <population id="TimedSynapticInputCells" component="pyr_4_sym" size="3"/>
+        <population id="SpikeArrays" component="spikeArray" size="1"/>
+        <population id="SpikeGeneratorPoissons" component="spikeGenPoisson" size="1"/>
+        <projection id="Proj_sa" presynapticPopulation="SpikeArrays" postsynapticPopulation="SpikeArrayCells" synapse="syn1">
+            <connection id="0" preCellId="../SpikeArrays[0]" preSegmentId="0" preFractionAlong="0.5" postCellId="../SpikeArrayCells/0/pyr_4_sym" postSegmentId="0" postFractionAlong="0.5"/>
+            <connection id="1" preCellId="../SpikeArrays[0]" preSegmentId="0" preFractionAlong="0.5" postCellId="../SpikeArrayCells/1/pyr_4_sym" postSegmentId="2" postFractionAlong="0.5"/>
+            <connection id="2" preCellId="../SpikeArrays[0]" preSegmentId="0" preFractionAlong="0.5" postCellId="../SpikeArrayCells/2/pyr_4_sym" postSegmentId="4" postFractionAlong="0.5"/>
+        </projection>
+        <projection id="Proj_sgp" presynapticPopulation="SpikeGeneratorPoissons" postsynapticPopulation="SpikeGeneratorPoissonCells" synapse="syn0">
+            <connection id="0" preCellId="../SpikeGeneratorPoissons[0]" preSegmentId="0" preFractionAlong="0.5" postCellId="../SpikeGeneratorPoissonCells/0/pyr_4_sym" postSegmentId="0" postFractionAlong="0.5"/>
+            <connection id="1" preCellId="../SpikeGeneratorPoissons[0]" preSegmentId="0" preFractionAlong="0.5" postCellId="../SpikeGeneratorPoissonCells/1/pyr_4_sym" postSegmentId="2" postFractionAlong="0.5"/>
+            <connection id="2" preCellId="../SpikeGeneratorPoissons[0]" preSegmentId="0" preFractionAlong="0.5" postCellId="../SpikeGeneratorPoissonCells/2/pyr_4_sym" postSegmentId="4" postFractionAlong="0.5"/>
+        </projection>
+        <inputList id="pfsInput" population="PoissonFiringSynCells" component="poissonFiringSyn">
+            <input id="0" target="../PoissonFiringSynCells/0/pyr_4_sym" destination="synapses"/>
+            <input id="1" target="../PoissonFiringSynCells/1/pyr_4_sym" destination="synapses" segmentId="2"/>
+            <input id="2" target="../PoissonFiringSynCells/2/pyr_4_sym" destination="synapses" segmentId="4"/>
+        </inputList>
+        <inputList id="tsiInput" population="TimedSynapticInputCells" component="timedSynapticInput">
+            <input id="0" target="../TimedSynapticInputCells/0/pyr_4_sym" destination="synapses" segmentId="0"/>
+            <input id="1" target="../TimedSynapticInputCells/1/pyr_4_sym" destination="synapses" segmentId="2"/>
+            <input id="2" target="../TimedSynapticInputCells/2/pyr_4_sym" destination="synapses" segmentId="4"/>
+        </inputList>
+    </network>
+</neuroml>

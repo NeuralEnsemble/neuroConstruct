@@ -154,7 +154,7 @@ public class MainApplication
         frame.doLoadProject(projectFile);
     }
 
-    private void importNeuroML(String nmlFilename)
+    private void importNeuroML(String nmlFilename, boolean neuroml2)
     {
         File nmlFile = new File(nmlFilename);
 
@@ -166,14 +166,18 @@ public class MainApplication
 
         if (frame.projManager.getCurrentProject()==null)
         {
-            String projectName = nmlFile.getName().indexOf(".")>1 ? nmlFile.getName().substring(0, nmlFile.getName().indexOf(".")) : nmlFile.getName();
+            String projectName = nmlFile.getName();
 
             File projectLocation = ProjectStructure.getDefaultnCProjectsDir();
 
             frame.doNewProject(false, projectLocation, projectName);
         }
-
-        frame.doImportNeuroML(nmlFile, true, true);
+        if (!neuroml2)
+        {frame.doImportNeuroML(nmlFile, true, true);
+        }
+        else {
+         frame.doImportNeuroML2(nmlFile,true,true);
+        }
     }
 
     private void generate()
@@ -233,6 +237,7 @@ public class MainApplication
         System.out.println("-make                       build neuroConstruct from source (JDK 1.5+ is needed)");
         System.out.println("-sims projectfilename       load project with tree based simulation browser");
         System.out.println("-neuroml neuromlfilename    import contents of NeuroML file, creating new project");
+        System.out.println("-neuroml2 neuromlfilename    import contents of NeuroML2 file, creating new project");
         System.out.println("");
         
         System.exit(0);
@@ -303,12 +308,13 @@ public class MainApplication
 
             String projFileToOpen = null;
             ArrayList<String> nmlFilesToOpen = new ArrayList<String>();
-
+            ArrayList<String> nml2FilesToOpen = new ArrayList<String>();
             boolean reloadLastProject = false;
             boolean generate = false;
             boolean createHoc = false;
             boolean runHoc = false;
             boolean importNeuroML = false;
+            boolean importNeuroML2=false;
             
             String[] pyArgs = null;
             
@@ -339,6 +345,15 @@ public class MainApplication
                     }
 
                     importNeuroML = true;
+                }
+                else if (args[i].equalsIgnoreCase("-neuroml2") )
+                {
+                    if (args.length<2)
+                    {
+                        printUsageAndQuit();
+                    }
+
+                    importNeuroML2 = true;
                 }
 
                 else if (args[i].equalsIgnoreCase("-sims"))
@@ -457,11 +472,15 @@ public class MainApplication
                 }
                 else
                 {
-                    if (!importNeuroML)
+                    if ((!importNeuroML) && (!importNeuroML2))
                     {
                         projFileToOpen = args[i];
                     }
-                    else
+                    else if (importNeuroML2)
+                    {
+                        nml2FilesToOpen.add(args[i]);
+                    }
+                    else if (importNeuroML)
                     {
                         nmlFilesToOpen.add(args[i]);
                     }
@@ -501,7 +520,18 @@ public class MainApplication
                     for (String nmlFileToOpen: nmlFilesToOpen)
                     {
                         System.out.println("Importing elements from NeuroML file: "+ nmlFileToOpen);
-                        app.importNeuroML(nmlFileToOpen);
+                        app.importNeuroML(nmlFileToOpen,false);
+                        app.frame.refreshAll();
+
+                        
+                    }
+                }
+                else if (!nml2FilesToOpen.isEmpty())
+                {
+                    for (String nml2FileToOpen: nml2FilesToOpen)
+                    {
+                        System.out.println("Importing elements from NeuroML2 file: "+ nml2FileToOpen);
+                        app.importNeuroML(nml2FileToOpen,true);
                         app.frame.refreshAll();
 
                         

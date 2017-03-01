@@ -136,7 +136,7 @@ public class MorphMLConstants
     public static String INHOMO_PARAM_DISTAL_V2 = "distal";
     public static String INHOMO_PARAM_DISTAL_NORM_END_ATTR_V2 = "normalizationEnd";
 
-
+    public static String NEUROML2_CELL_ID="id";
 
     private MorphMLConstants()
     {
