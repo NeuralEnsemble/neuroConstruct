@@ -319,6 +319,7 @@ public class MorphBasedConnGenerator extends Thread
                         {
                             if (!CellTopologyHelper.isSynapseAllowed(genStartCellInstance, synType))
                             {
+                                
                                 GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synType+" on cell of type " +
                                                       genStartCellInstance+", netConn: "+this.netConnName+".\n"+synLocWarning, null, null);
 
@@ -326,7 +327,7 @@ public class MorphBasedConnGenerator extends Thread
                             }
                             if (!CellTopologyHelper.isSynapseAllowed(genFinishCellInstance, synType))
                             {
-
+                                
                                 GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synType+" on cell of type " +
                                                       genFinishCellInstance+", netConn: "+this.netConnName+".\n"+synLocWarning, null, null);
 
@@ -512,7 +513,7 @@ public class MorphBasedConnGenerator extends Thread
 
 
                         if (genStartConnPoint == null)
-                        {
+                        {   
                             GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synPropList+" on cell of type " +
                                                       genStartCellInstance.toString()+", netConn: "+this.netConnName+".\n"+
                                                       synLocWarning, null, null);

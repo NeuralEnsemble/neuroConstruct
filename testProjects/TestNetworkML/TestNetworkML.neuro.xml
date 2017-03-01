@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_75" class="java.beans.XMLDecoder">
+<java version="1.7.0_111" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -22,8 +22,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <string>TestNetworkML</string>
   </void>
  </object>
- <object class="ucl.physiol.neuroconstruct.project.RegionsInfo">
-  <void property="internalData">
+ <object class="ucl.physiol.neuroconstruct.project.RegionsInfo" id="RegionsInfo0">
+  <void id="Hashtable0" property="internalData">
    <void method="get">
     <string>Name</string>
     <void method="add">
@@ -50,8 +50,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <void method="get">
     <string>Description</string>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.RectangularBox">
-      <void property="parameterList">
+     <object class="ucl.physiol.neuroconstruct.project.RectangularBox" id="RectangularBox0">
+      <void id="InternalParameterArray0" property="parameterList">
        <void id="InternalParameter0" index="4">
         <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
          <string>value</string>
@@ -65,8 +65,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </object>
     </void>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.RectangularBox">
-      <void property="parameterList">
+     <object class="ucl.physiol.neuroconstruct.project.RectangularBox" id="RectangularBox1">
+      <void id="InternalParameterArray1" property="parameterList">
        <void id="InternalParameter1" index="1">
         <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
          <string>value</string>
@@ -91,8 +91,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    </void>
   </void>
  </object>
- <object class="ucl.physiol.neuroconstruct.project.CellGroupsInfo">
-  <void property="internalData">
+ <object class="ucl.physiol.neuroconstruct.project.CellGroupsInfo" id="CellGroupsInfo0">
+  <void id="Hashtable1" property="internalData">
    <void method="get">
     <string>Cell Packing Adapter</string>
     <void method="add">
@@ -103,8 +103,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </object>
     </void>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.packing.HexagonalLayerPackingAdapter">
-      <void property="parameterList">
+     <object class="ucl.physiol.neuroconstruct.project.packing.HexagonalLayerPackingAdapter" id="HexagonalLayerPackingAdapter0">
+      <void id="InternalParameterArray2" property="parameterList">
        <void id="InternalParameter3" index="0">
         <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
          <string>value</string>
@@ -127,8 +127,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </object>
     </void>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapter">
-      <void property="parameterList">
+     <object class="ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapter" id="OneDimRegSpacingPackingAdapter0">
+      <void id="InternalParameterArray3" property="parameterList">
        <void id="InternalParameter5" index="2">
         <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
          <string>value</string>
@@ -282,7 +282,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    </void>
   </void>
  </object>
- <object class="ucl.physiol.neuroconstruct.project.SimPlotInfo">
+ <object class="ucl.physiol.neuroconstruct.project.SimPlotInfo" id="SimPlotInfo0">
   <void property="allSimPlots">
    <void method="add">
     <object class="ucl.physiol.neuroconstruct.project.SimPlot">
@@ -472,10 +472,10 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <int>2</int>
   </void>
  </object>
- <object class="ucl.physiol.neuroconstruct.project.ElecInputInfo">
+ <object class="ucl.physiol.neuroconstruct.project.ElecInputInfo" id="ElecInputInfo0">
   <void property="allStims">
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings" id="IClampSettings0">
      <void property="amp">
       <void property="fixedNum">
        <float>2.0</float>
@@ -488,8 +488,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void>
      </void>
      <void property="cellChooser">
-      <object class="ucl.physiol.neuroconstruct.project.cellchoice.PercentageOfCells">
-       <void property="parameterList">
+      <object class="ucl.physiol.neuroconstruct.project.cellchoice.PercentageOfCells" id="PercentageOfCells0">
+       <void id="InternalStringFloatParameterArray0" property="parameterList">
         <void id="InternalStringFloatParameter0" index="0">
          <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
           <string>value</string>
@@ -564,7 +564,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings" id="IClampSettings1">
      <void property="amp">
       <void property="fixedNum">
        <float>0.2</float>
@@ -588,7 +588,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings" id="IClampSettings2">
      <void property="amp">
       <void property="fixedNum">
        <float>0.2</float>
@@ -622,7 +622,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings" id="IClampSettings3">
      <void property="amp">
       <void property="fixedNum">
        <float>0.2</float>
@@ -705,8 +705,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <void method="add">
     <object class="ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings">
      <void property="cellChooser">
-      <object class="ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells">
-       <void property="parameterList">
+      <object class="ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells" id="IndividualCells0">
+       <void id="InternalStringFloatParameterArray1" property="parameterList">
         <void index="0">
          <void property="stringValue">
           <string>1</string>
@@ -751,15 +751,15 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings" id="IClampSettings4">
      <void property="amp">
       <void property="fixedNum">
        <float>0.2</float>
       </void>
      </void>
      <void property="cellChooser">
-      <object class="ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells">
-       <void property="parameterList">
+      <object class="ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells" id="IndividualCells1">
+       <void id="InternalStringFloatParameterArray2" property="parameterList">
         <void index="0">
          <void property="stringValue">
           <string>2</string>
@@ -786,7 +786,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings" id="IClampSettings5">
      <void id="NumberGenerator9" property="amp">
       <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
        <string>distributionType</string>
@@ -803,8 +803,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void>
      </void>
      <void property="cellChooser">
-      <object class="ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells">
-       <void property="parameterList">
+      <object class="ucl.physiol.neuroconstruct.project.cellchoice.IndividualCells" id="IndividualCells2">
+       <void id="InternalStringFloatParameterArray3" property="parameterList">
         <void index="0">
          <void property="stringValue">
           <string>3</string>
@@ -832,10 +832,10 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    </void>
   </void>
  </object>
- <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo">
+ <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo" id="SimConfigInfo0">
   <void property="allSimConfigs">
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig" id="SimConfig0">
      <void property="cellGroups">
       <void method="add">
        <string>CellGroup_2</string>
@@ -895,7 +895,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig" id="SimConfig1">
      <void property="cellGroups">
       <void method="add">
        <string>SampleCellGroup</string>
@@ -923,7 +923,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig" id="SimConfig2">
      <void property="cellGroups">
       <void method="add">
        <string>CellGroup_3</string>
@@ -968,7 +968,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig" id="SimConfig3">
      <void property="cellGroups">
       <void method="add">
        <string>CellGroup_3</string>
@@ -993,7 +993,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </object>
    </void>
    <void method="add">
-    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig" id="SimConfig4">
      <void property="cellGroups">
       <void method="add">
        <string>One</string>
@@ -1028,8 +1028,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    </void>
   </void>
  </object>
- <object class="ucl.physiol.neuroconstruct.project.SimpleNetworkConnectionsInfo">
-  <void property="internalData">
+ <object class="ucl.physiol.neuroconstruct.project.SimpleNetworkConnectionsInfo" id="SimpleNetworkConnectionsInfo0">
+  <void id="Hashtable2" property="internalData">
    <void method="get">
     <string>Name</string>
     <void method="add">
@@ -1510,7 +1510,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <void method="get">
     <string>Connectivity Conditions</string>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions">
+     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions" id="ConnectivityConditions0">
       <void property="allowAutapses">
        <boolean>false</boolean>
       </void>
@@ -1553,7 +1553,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </object>
     </void>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions">
+     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions" id="ConnectivityConditions1">
       <void property="allowAutapses">
        <boolean>false</boolean>
       </void>
@@ -1568,7 +1568,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </object>
     </void>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions">
+     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions" id="ConnectivityConditions2">
       <void property="allowAutapses">
        <boolean>false</boolean>
       </void>
