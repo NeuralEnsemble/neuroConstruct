@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta4.xsd" id="AMPA_syn">
+
+    <notes>ChannelML file describing a single synaptic mechanism</notes>
+
+    <expTwoSynapse id="AMPA_syn" tauRise="0.003s" tauDecay="0.0031s" gbase="30e-9S" erev="0.0V">
+
+        <notes>Simple example of a synaptic mechanism, which consists of a postsynaptic conductance which changes as a double exponential function of time. Mappings exist for NEURON and GENESIS.</notes>
+</expTwoSynapse>
+
+</neuroml>

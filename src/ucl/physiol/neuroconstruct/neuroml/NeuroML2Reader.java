@@ -2734,84 +2734,59 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
     public static void main(String args[])
     {
-
         try
         {
-            //Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),null);
-            Project testProj = Project.loadProject(new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx"),null);
-            testProj = Project.loadProject(new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx"),null);
-            testProj = Project.loadProject(new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx"),null);
-
-            File f = new File("testProjects/TestNetworkML/savedNetworks/test_nml2.xml");
-            f = new File("testProjects/TestNetworkML/savedNetworks/nnn.nml");
             
-            boolean network = true;
-            if (network) 
+            File f = new File("testProjects/TestNeuroML2Files/ACnet2/MediumNet.net.nml");
+
+            logger.logComment("Loading nml cell from "+ f.getAbsolutePath());
+
+            ProjectManager pm = new ProjectManager(null, null);
+
+            //pm.setCurrentProject(testProj);
+
+            if (!f.exists())
             {
-                f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/pythonScripts/CElegansConnectome.nml");
-                f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/generatedNeuroML2/ACnet2.net.nml");
-
-                logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
-
-                ProjectManager pm = new ProjectManager(null, null);
-
-                //pm.setCurrentProject(testProj);
-
-                if (!f.exists())
-                {
-                  System.out.println("Error! File not found: "+f.getAbsolutePath());
-                  System.exit(1);
-                }
-                
-                if (pm.getCurrentProject()==null)
-                {  
-                   String projectName = f.getName().indexOf(".")>1 ? f.getName().substring(0, f.getName().indexOf(".")) : f.getName();
-                   System.out.println("Will make a new project: "+projectName);
-                   Project testNeuroML2Proj;
-                   
-                   File projDir = new File(ProjectStructure.getDefaultnCProjectsDir().getPath(), projectName);
-                   
-                   System.out.println("Project in: "+projDir.getAbsolutePath());
-                           
-                   testNeuroML2Proj=Project.createNewProject(projDir.getAbsolutePath(),
-                                           projectName,
-                                           Project.getDummyProjectEventListener());
-                   
-                   pm.setCurrentProject(testNeuroML2Proj);
-                   
-                   pm.getCurrentProject().saveProject();
-                   
-                }
-                
-                if (pm.getCurrentProject() != null)
-                {
-                   System.out.println("Test project is set in "+System.getProperty("user.home")+"/nC_projects/");
-                   pm.doLoadNeuroML2Network(f, false);
-                }
-
-                while (pm.isGenerating())
-                {
-                    Thread.sleep(2);
-                    System.out.println("Waiting...");
-                }
-                
-                System.out.println(pm.getCurrentProject().generatedCellPositions.details());
-                System.out.println(pm.getCurrentProject().generatedNetworkConnections.details());
-                
+              System.out.println("Error! File not found: "+f.getAbsolutePath());
+              System.exit(1);
             }
-            else 
+
+            if (pm.getCurrentProject()==null)
+            {  
+               String projectName = f.getName().indexOf(".")>1 ? f.getName().substring(0, f.getName().indexOf(".")) : f.getName();
+               System.out.println("Will make a new project: "+projectName);
+               Project testNeuroML2Proj;
+
+               File projDir = new File(ProjectStructure.getDefaultnCProjectsDir().getPath(), projectName);
+
+               System.out.println("Project in: "+projDir.getAbsolutePath());
+
+               testNeuroML2Proj=Project.createNewProject(projDir.getAbsolutePath(),
+                                       projectName,
+                                       Project.getDummyProjectEventListener());
+
+               pm.setCurrentProject(testNeuroML2Proj);
+
+               pm.getCurrentProject().saveProject();
+
+            }
+
+            if (pm.getCurrentProject() != null)
             {
-                f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/generatedNeuroML2/Granule_98.cell.nml");
-                f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/generatedNeuroML2/bask.cell.nml");
-                
-                logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
-
-
-                NeuroML2Reader nml2Reader = new NeuroML2Reader(testProj,false);
-
-                nml2Reader.parse(f, "New_");
+               System.out.println("Test project is set in "+System.getProperty("user.home")+"/nC_projects/");
+               pm.doLoadNeuroML2Network(f, false);
             }
-            
+
+            while (pm.isGenerating())
+            {
+                Thread.sleep(2);
+                System.out.println("Waiting...");
+            }
+
+            System.out.println(pm.getCurrentProject().generatedCellPositions.details());
+            System.out.println(pm.getCurrentProject().generatedNetworkConnections.details());
+
+
 
         }
         catch (Exception e)
