@@ -31,16 +31,19 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.Result;
+import org.neuroml.model.Cell;
 import org.neuroml.model.ExpTwoSynapse;
 import org.neuroml.model.IonChannel;
 import org.neuroml.model.Network;
 import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.util.NeuroMLConverter;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.OriginalCompartmentalisation;
 import ucl.physiol.neuroconstruct.project.NoProjectLoadedException;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.ProjectManager;
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import ucl.physiol.neuroconstruct.test.MainTest;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 public class NeuroML2ReaderTest
 {
@@ -54,7 +57,7 @@ public class NeuroML2ReaderTest
            String projectName = nml2File.getName().indexOf(".")>1 ? nml2File.getName().substring(0, nml2File.getName().indexOf(".")) : nml2File.getName();
            System.out.println("Will make a new project: "+projectName);
 
-           File projDir = new File(ProjectStructure.getDefaultnCProjectsDir().getPath(), projectName);
+           File projDir = new File(nml2File.getParentFile().getAbsolutePath(), "temp");
 
            System.out.println("Project in: "+projDir.getAbsolutePath());
 
@@ -64,7 +67,8 @@ public class NeuroML2ReaderTest
 
            pm.setCurrentProject(testNeuroML2Proj);
 
-           //pm.getCurrentProject().saveProject();
+           pm.getCurrentProject().saveProject();
+           System.out.println("Project in: "+testNeuroML2Proj.getProjectFullFileName());
 
         }
 
@@ -74,11 +78,8 @@ public class NeuroML2ReaderTest
            pm.doLoadNeuroML2Network(nml2File, false);
         }
 
-        while (pm.isGenerating())
-        {
-            Thread.sleep(2);
-            System.out.println("Waiting...");
-        }
+        Thread.sleep(5);
+        System.out.println("Waiting...");
         
         
 		NeuroMLConverter nmlc = new NeuroMLConverter();
@@ -105,21 +106,51 @@ public class NeuroML2ReaderTest
             System.out.println("Checking: "+syn);
             assertTrue(testNeuroML2Proj.cellMechanismInfo.getAllCellMechanismNames().contains(syn.getId()));
         }
+        for (Cell cell: nmlDocument.getCell())
+        {
+            System.out.println("Checking: "+cell);
+            assertTrue(testNeuroML2Proj.cellManager.getAllCellTypeNames().contains(cell.getId()));
+        }
+        /************** To do...
+        File nmlFile = File.createTempFile("nml2", nml2File.getName());
+
+        NeuroMLFileManager nmlfm = new NeuroMLFileManager(testNeuroML2Proj);
+        
+        nmlfm.generateNeuroMLFiles(pm.getCurrentProject().simConfigInfo.getAllSimConfigs().get(0),
+                                                          NeuroMLConstants.NeuroMLVersion.getLatestVersion(),
+                                                          LemsConstants.LemsOption.NONE,
+                                                          new OriginalCompartmentalisation(),
+                                                          123,
+                                                         false,
+                                                         true,
+                                                         new File(testNeuroML2Proj.getProjectMainDirectory(),"generatedNeuroML2"),
+                                                         UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS),
+                                                         false);*/
+        
+    	//NeuroMLDocument nmlDocumentReloaded = nmlc.loadNeuroML(nmlFile, true, true);
+        
+        //System.out.println("NeuroML 2 summary (reloaded from "+nmlFile.getAbsolutePath()+"):\n"+nmlc.summary(nmlDocumentReloaded));
     }
 
+    @Test
+    public void testTwoCell() throws NeuroMLException, InterruptedException, NoProjectLoadedException, IOException, org.neuroml.model.util.NeuroMLException
+    {
+        loadNML2File(new File("testProjects/TestNeuroML2Files/ACnet2/TwoCell.net.nml"));
+        
+    }
+/*
     @Test
     public void testACNet2() throws NeuroMLException, InterruptedException, NoProjectLoadedException, IOException, org.neuroml.model.util.NeuroMLException
     {
         loadNML2File(new File("testProjects/TestNeuroML2Files/ACnet2/MediumNet.net.nml"));
         
     }
-
     @Test
     public void testPyrCell() throws NeuroMLException, InterruptedException, NoProjectLoadedException, IOException, org.neuroml.model.util.NeuroMLException
     {
         loadNML2File(new File("testProjects/TestNeuroML2Files/ACnet2/pyr_4_sym.cell.nml"));
         
-    }
+    }*/
     
     
     public static void main(String[] args)
