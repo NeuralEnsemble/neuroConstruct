@@ -21,10 +21,10 @@ set NC_MAX_MEMORY=500M
 
 set NC_VERSION=1.7.2
 
-set JNEUROML_VERSION=0.8.1
+set JNEUROML_VERSION=0.8.2
 
 REM -----------------------------
-REM   Should no longer be changed. V old version of lems/nml libs...
+REM   Should no longer be changed. **Very old version** of lems/nml libs...
 set LIB_NEUROML_VERSION=2.0.0
 set LEMS_VERSION=0.8.3 
 REM -----------------------------

@@ -21,11 +21,13 @@ export NC_MAX_MEMORY=450M
 # Current version of neuroConstruct
 export NC_VERSION=1.7.2
 
-export JNEUROML_VERSION=0.8.1
+export JNEUROML_VERSION=0.8.2
 
-# These are for very old versions of NML2/LEMS libraries...
+#########
+# These are for **very old versions** of NML2/LEMS libraries...
 export LIB_NEUROML_VERSION=2.0.0
 export LEMS_VERSION=0.8.3
+#########
 
 
 if [ -n "$NC_MAX_MEMORY_LOCAL" ]; then
