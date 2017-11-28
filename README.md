@@ -21,7 +21,7 @@ If you have Apache ant installed, you can run the application with:
 
     ant run
 
-More installation details can be found at https://github.com/NeuralEnsemble/neuroConstruct/blob/master/INSTALL
+More installation details can be found at https://github.com/NeuralEnsemble/neuroConstruct/blob/master/INSTALL.md
 
 
 **If you use neuroConstruct in your research please reference:**
