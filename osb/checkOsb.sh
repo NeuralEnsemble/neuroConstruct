@@ -167,6 +167,7 @@ standardGHProject 'StochasticityShowcase' 'showcase'
 standardGHProject 'GPUShowcase' 'showcase'
 standardGHProject 'FPGAShowcase' 'showcase'
 standardGHProject 'SynapticIntegration' 'showcase'
+standardGHProject 'MouseLightShowcase' 'showcase'
 
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
@@ -222,6 +223,8 @@ standardGHProject 'VervaekeEtAl-GolgiCellNetwork' 'cerebellum/networks'
 standardGHProject 'Cerebellum3DDemo' 'cerebellum/networks'
 standardGHProject 'GranularLayerSolinasNieusDAngelo2010' 'cerebellum/networks'
 standardGHProject 'BillingsEtAl2014_GCL_Models' 'cerebellum/networks' 'epiasini'
+standardGHProject 'MF-GC-network-backprop-public' 'cerebellum/networks' 'SilverLabUCL'
+
 
 standardGHProject 'MainenEtAl_PyramidalCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'RothmanEtAl_KoleEtAl_PyrCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
