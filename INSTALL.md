@@ -8,7 +8,7 @@ To install neuroConstruct from source for any of these platforms you'll need:
 
 1) Get the latest binary (including precompiled jar file) release from https://github.com/NeuralEnsemble/neuroConstruct/releases
 
-2) Unzip the file (e.g. neuroConstruct_1.7.2.zip) to your C:\ (Windows) or home directory (Linux/Mac). Make sure the directory is named *neuroConstruct* not *neuroConstruct_1.7.2* etc.
+2) Unzip the file (e.g. **neuroConstruct_1.7.2.zip**) to your C:\ (Windows) or home directory (Linux/Mac). Make sure the directory is named **neuroConstruct** not **neuroConstruct_1.7.2** etc.
 
 3) Open a terminal (Start menu and type cmd in Windows; Terminal under Applications/Utilities in Mac; Linux your favourite terminal)
 
@@ -17,7 +17,14 @@ To install neuroConstruct from source for any of these platforms you'll need:
 cd C:\neuroConstruct
 nC.bat
 ```
+You may aso be able to run the application directly by double clicking the file nC (or nC.bat) in C:\neuroConstruct in the file explorer.
 
+On Mac or Linux:
+```
+cd ~/neuroConstruct
+bash nC.sh
+```
+ 
 
 ### Installation from source
 
