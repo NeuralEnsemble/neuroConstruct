@@ -3,6 +3,24 @@
 To install neuroConstruct from source for any of these platforms you'll need:
 
 - Java (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+
+### Installation using binary release
+
+1) Get the latest binary (including precompiled jar file) release from https://github.com/NeuralEnsemble/neuroConstruct/releases
+
+2) Unzip the file (e.g. neuroConstruct_1.7.2.zip) to your C:\ (Windows) or home directory (Linux/Mac). Make sure the directory is named *neuroConstruct* not *neuroConstruct_1.7.2* etc.
+
+3) Open a terminal (Start menu and type cmd in Windows; Terminal under Applications/Utilities in Mac; Linux your favourite terminal)
+
+4) Go to the neuroConstruct directory and run the nC script. On Windows:
+```
+cd C:\neuroConstruct
+nC.bat
+```
+
+
+### Installation from source
+
 - Ant (http://ant.apache.org/)
 - Git (http://git-scm.com/)
 - Subversion (http://subversion.apache.org/)
