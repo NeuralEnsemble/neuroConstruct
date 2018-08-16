@@ -1,13 +1,13 @@
-dist: precise
+dist: trusty
 sudo: false
 
 language: java
 
 jdk:
-  #- openjdk6  # Giving up on java6...
   - openjdk7
-  - oraclejdk7
+  - openjdk8
   - oraclejdk8
+ - oraclejdk9
 
 script: 
   - mkdir temp
