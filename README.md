@@ -26,8 +26,8 @@ More installation details can be found at https://github.com/NeuralEnsemble/neur
 
 **If you use neuroConstruct in your research please reference:**
 
-P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks
-of Neurons in 3D Space_, Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235.
+P. Gleeson, V. Steuber and R. A. Silver, [neuroConstruct: A Tool for Modeling Networks
+of Neurons in 3D Space](https://www.sciencedirect.com/science/article/pii/S0896627307002486?via%3Dihub), Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235.
 
 For more information contact info@neuroConstruct.org  
 
