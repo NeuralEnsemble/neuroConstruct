@@ -239,6 +239,10 @@ standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
 standardGHProject 'V1NetworkModels' 'cerebral_cortex/networks'
 
+standardGHProject 'del-Molino2017' 'cerebral_cortex/networks'
+standardGHProject 'WilsonCowan' 'cerebral_cortex/networks'
+standardGHProject 'MejiasEtAl2016' 'cerebral_cortex/networks'
+
 standardGHProject 'VERTEXShowcase' 'cerebral_cortex/networks'
 
 standardGHProject 'ACnet2' 'cerebral_cortex/networks'
