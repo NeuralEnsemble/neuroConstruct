@@ -168,7 +168,7 @@ standardGHProject 'GPUShowcase' 'showcase'
 standardGHProject 'FPGAShowcase' 'showcase'
 standardGHProject 'SynapticIntegration' 'showcase'
 standardGHProject 'MouseLightShowcase' 'showcase'
-
+standardGHProject 'NWBShowcase' 'showcase'
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
