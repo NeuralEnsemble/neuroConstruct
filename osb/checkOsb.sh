@@ -192,6 +192,7 @@ standardGHProject 'FergusonEtAl2014-CA1PyrCell' 'hippocampus/CA1_pyramidal_neuro
 standardGHProject 'PinskyRinzelModel' 'hippocampus/CA3_pyramidal_neuron'
 standardGHProject 'FergusonEtAl2013-PVFastFiringCell' 'hippocampus/interneurons'
 standardGHProject 'WangBuzsaki1996' 'hippocampus/interneurons'
+standardGHProject 'NorenbergEtAl2010_DGBasketCell' 'hippocampus/interneurons'
 
 
 
