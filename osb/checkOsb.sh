@@ -235,6 +235,8 @@ standardGHProject 'FarinellaEtAl_NMDAspikes' 'cerebral_cortex/neocortical_pyrami
 standardGHProject 'korngreen-pyramidal' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'SmithEtAl2013-L23DendriticSpikes' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'dLGNinterneuronHalnesEtAl2011' 'thalamus/lgn_interneuron'
+standardGHProject 'L23PyramidalCellTutorial' 'cerebral_cortex/neocortical_pyramidal_neuron'
+
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
