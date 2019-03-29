@@ -296,6 +296,7 @@ public class NewCellTypeDialog extends JDialog
                 }
                 else if (importer instanceof SWCMorphReader)
                 {
+                    importer = new SWCMorphReader(); // Create new object 
                     SWCMorphReader swcReader = (SWCMorphReader)importer;
 
                     SwcImportOptions dlg = new SwcImportOptions(new Frame(), "SWC/CVapp import options", true);
