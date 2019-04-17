@@ -2438,7 +2438,8 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                             }
                             else
                             {
-                                throw new NeuroMLException("neuroConstruct can only import PulseGenertors when all of the parameter values are specified in Physiological Units or SI Units");
+                                throw new NeuroMLException("neuroConstruct can only import PulseGenertors when all of the parameter values "
+                                    + "are specified in Physiological Units or SI Units. They are: "+delay_map+", "+duration_map+", "+amplitude_map);
                             }
 
                             Float currentPulseDelay
