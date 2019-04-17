@@ -181,6 +181,7 @@ public class NeuroML2CellReader {
             {
                 Segment parentSeg = segIdVsSegments.get(parent.getSegment());
                 seg.setParentSegment(parentSeg);
+                seg.setFractionAlongParent(parent.getFractionAlong());
                 
             }            
         }
