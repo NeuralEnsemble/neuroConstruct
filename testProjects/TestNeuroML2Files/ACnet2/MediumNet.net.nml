@@ -42,9 +42,7 @@ Network connection: SmallNet_pyr_bask contains 252 individual synaptic connectio
     <notes>A small scale network model with 60 cells based on Dave Beeman's Auditory Cortex model</notes>
 
         <population id="pyramidals_48" component="pyr_4_sym" type="populationList" size="48">
-           <annotation>
-                <property tag="color" value="0.796875 0.0 0.0"/>
-            </annotation>
+            <property tag="color" value="0.796875 0.0 0.0"/>
             <instance id="0">
                 <location x="64.2564" y="0.68375766" z="94.83054"/>
             </instance>
@@ -192,9 +190,7 @@ Network connection: SmallNet_pyr_bask contains 252 individual synaptic connectio
         </population>
 
         <population id="baskets_12" component="bask" type="populationList" size="12">
-           <annotation>
-                <property tag="color" value="0.0 0.19921875 0.59765625"/>
-            </annotation>
+            <property tag="color" value="0.0 0.19921875 0.59765625"/>
             <instance id="0">
                 <location x="372.5585" y="75.342545" z="459.21057"/>
             </instance>

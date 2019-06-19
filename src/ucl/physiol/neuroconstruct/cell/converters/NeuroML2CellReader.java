@@ -8,6 +8,7 @@ package ucl.physiol.neuroconstruct.cell.converters;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import org.neuroml.export.utils.Utils;
 import org.neuroml.model.BiophysicalProperties;
@@ -30,6 +31,7 @@ import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.ChannelMechanism;
 import ucl.physiol.neuroconstruct.cell.Section;
 import ucl.physiol.neuroconstruct.cell.Segment;
+import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLException;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.utils.GuiUtils;
@@ -50,7 +52,7 @@ public class NeuroML2CellReader {
     
     org.neuroml.model.Cell2CaPools nml2Cell2CaPools = null;
     
-    org.neuroml.model.Morphology NML2morphology = null;
+    org.neuroml.model.Morphology nml2morphology = null;
     
     private Cell cell = null;
     
@@ -93,7 +95,7 @@ public class NeuroML2CellReader {
            if (nml2Cell.getNotes()!=null)
               cell.setCellDescription(nml2Cell.getNotes());
            
-           NML2morphology= nml2Cell.getMorphology();
+           nml2morphology= nml2Cell.getMorphology();
         }
         
         if (nml2Cell2CaPools != null)
@@ -101,17 +103,16 @@ public class NeuroML2CellReader {
             if (nml2Cell2CaPools.getNotes()!=null)
                cell.setCellDescription(nml2Cell2CaPools.getNotes());
            
-            NML2morphology= nml2Cell2CaPools.getMorphology();
+            nml2morphology= nml2Cell2CaPools.getMorphology();
         }
         
         HashMap<Integer, Segment> segIdVsSegments = new HashMap<Integer, Segment>();
         HashMap<String, Section> secNameVsSections = new HashMap<String, Section>();
         Vector<Segment> allSegments = new Vector<Segment>();     
-        for (org.neuroml.model.Segment nml2Segment: NML2morphology.getSegment())
+        for (org.neuroml.model.Segment nml2Segment: nml2morphology.getSegment())
         {
             logger.logComment("Adding Segment: "+ nml2Segment.getId());
             Point3DWithDiam dist = nml2Segment.getDistal();
-                    
                     
             Segment nCsegment = new Segment();
             nCsegment.setSegmentId(nml2Segment.getId());
@@ -128,38 +129,61 @@ public class NeuroML2CellReader {
             
             allSegments.add(nCsegment);
             
-                    
         }
         cell.setAllSegments(allSegments);
+        HashMap<String, List<Include>> segGrpIdVsIncludes = new HashMap<String, List<Include>>(); 
         
-        for (SegmentGroup segGroup: NML2morphology.getSegmentGroup())
+        // What did I start this for..?
+        for (SegmentGroup segGroup : nml2morphology.getSegmentGroup())
         {
             String grpName = segGroup.getId();
-                    
-            if (segGroup.getMember().size()>0 && segGroup.getInclude().isEmpty()) 
+
+            if (segGroup.getMember().size() > 0 && segGroup.getInclude().isEmpty())
             {
                 Section sec = new Section(grpName);
                 secNameVsSections.put(grpName, sec);
-                for (Member memb: segGroup.getMember()) {
+                for (Member memb : segGroup.getMember())
+                {
                     Segment seg = segIdVsSegments.get(memb.getSegment());
                     seg.setSection(sec);
                 }
             }
-            else if (segGroup.getInclude().size()>0 && segGroup.getMember().isEmpty()) 
+            else if (segGroup.getInclude().size() > 0 && segGroup.getMember().isEmpty())
             {
-                        for (Include inc: segGroup.getInclude()) {
-                            Section sec = secNameVsSections.get(inc.getSegmentGroup());
+                segGrpIdVsIncludes.put(segGroup.getId(), segGroup.getInclude());
+                for (Include inc : segGroup.getInclude())
+                {
+                    //System.out.println("  secNameVsSections: " + secNameVsSections.keySet());
+                    if (secNameVsSections.containsKey(inc.getSegmentGroup()))
+                    {
+                        //System.out.println("    Adding as nrn sec");
+                        Section sec = secNameVsSections.get(inc.getSegmentGroup());
+                        sec.addToGroup(grpName);
+                    }
+                    else
+                    {
+                        List<Include> includes = segGrpIdVsIncludes.get(inc.getSegmentGroup());
+                        //System.out.println("  Adding as grp in grp: "+inc.getSegmentGroup());
+                        //System.out.println("  includes: "+includes);
+                        
+                        for (Include subInc : includes)
+                        {
+                            //System.out.println("    Adding subInc: "+subInc);
+                            Section sec = secNameVsSections.get(subInc.getSegmentGroup());
                             sec.addToGroup(grpName);
                         }
+                    }
+
+                }
             }
-            else 
+            else
             {
                 GuiUtils.showErrorMessage(logger, infoOnnCCellSupport, null, null);
             }
         }
-                
+
         // To set section start points
-       for (org.neuroml.model.Segment nml2Segment: NML2morphology.getSegment())
+       for (org.neuroml.model.Segment nml2Segment: nml2morphology.getSegment())
        {
             logger.logComment("Checking Segment: "+ nml2Segment.getId());
             SegmentParent parent = nml2Segment.getParent();
@@ -181,6 +205,7 @@ public class NeuroML2CellReader {
             {
                 Segment parentSeg = segIdVsSegments.get(parent.getSegment());
                 seg.setParentSegment(parentSeg);
+                seg.setFractionAlongParent(parent.getFractionAlong());
                 
             }            
         }
@@ -360,6 +385,7 @@ public class NeuroML2CellReader {
             
             f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/generatedNeuroML2/Granule_98.cell.nml");
             f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/generatedNeuroML2/bask.cell.nml");
+            f = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/generatedNeuroML2/pyr_4_sym.cell.nml");
                 
             logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
             
@@ -367,20 +393,20 @@ public class NeuroML2CellReader {
 
             NeuroMLDocument neuroml = neuromlConverter.urlToNeuroML(f.toURI().toURL());
 
-            logger.logComment("Reading in NeuroML2: "+ neuroml.getId(), true);
+            logger.logComment("Reading in NeuroML2 with id: "+ neuroml.getId(), true);
             
             for (org.neuroml.model.Cell NML2Cell: neuroml.getCell())
             {
-                NeuroML2CellReader cellReader= new NeuroML2CellReader(NML2Cell,NML2Cell.getId());
+                NeuroML2CellReader cellReader = new NeuroML2CellReader(NML2Cell,NML2Cell.getId());
                          
                 cellReader.parse();
-                
-                
+                System.out.println("Cell: "+CellTopologyHelper.printDetails(cellReader.cell, null));
             }
 
         }
         catch (Exception e)
         {
+            System.out.println("Error...");
             e.printStackTrace();
             System.exit(0);
         }

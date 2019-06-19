@@ -37,13 +37,10 @@ import org.neuroml.model.IonChannel;
 import org.neuroml.model.Network;
 import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.util.NeuroMLConverter;
-import ucl.physiol.neuroconstruct.cell.compartmentalisation.OriginalCompartmentalisation;
 import ucl.physiol.neuroconstruct.project.NoProjectLoadedException;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.ProjectManager;
-import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import ucl.physiol.neuroconstruct.test.MainTest;
-import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 public class NeuroML2ReaderTest
 {
@@ -138,7 +135,7 @@ public class NeuroML2ReaderTest
         loadNML2File(new File("testProjects/TestNeuroML2Files/ACnet2/TwoCell.net.nml"));
         
     }
-/*
+
     @Test
     public void testACNet2() throws NeuroMLException, InterruptedException, NoProjectLoadedException, IOException, org.neuroml.model.util.NeuroMLException
     {
@@ -150,7 +147,7 @@ public class NeuroML2ReaderTest
     {
         loadNML2File(new File("testProjects/TestNeuroML2Files/ACnet2/pyr_4_sym.cell.nml"));
         
-    }*/
+    }/**/
     
     
     public static void main(String[] args)
