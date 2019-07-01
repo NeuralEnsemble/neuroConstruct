@@ -8,7 +8,7 @@ jdk:
   - openjdk8
   - oraclejdk8
   - oraclejdk9
-  - oraclejdk11
+  # - oraclejdk11 # Broken on Travis??
 
 script: 
   - mkdir temp
