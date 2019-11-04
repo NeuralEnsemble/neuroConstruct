@@ -171,6 +171,7 @@ standardGHProject 'MouseLightShowcase' 'showcase'
 standardGHProject 'NWBShowcase' 'showcase'
 standardGHProject 'ConnectivityShowcase' 'showcase'
 standardGHProject 'TheVirtualBrainShowcase' 'showcase'
+standardGHProject 'PsyNeuLinkShowcase' 'showcase'
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
