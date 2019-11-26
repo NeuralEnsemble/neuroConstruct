@@ -24,7 +24,7 @@
   
   <tab id="Examples" label="Examples" dir="samples" indexfile="index.html"/>
   
-  <tab id="Models" label="Models" dir="models" indexfile="index.html"/>
+  <!--<tab id="Models" label="Models" dir="models" indexfile="index.html"/>-->
 
   <tab id="Documentation" label="Documentation" dir="docs" indexfile="index.html"/><!---->
 

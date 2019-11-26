@@ -17,10 +17,10 @@
   <projects label="Examples"  href="samples/index.html" tab="Example projects" >
     <projects label="Examples" href="#" description="Downloadable neuroConstruct example projects"/>
   </projects>
-  
+  <!--
   <projects label="Models"  href="models/index.html" tab="Detailed models" >
     <projects label="Models" href="#" description="Downloadable neuroConstruct detailed models"/>
-  </projects>
+  </projects>-->
   
   
 <!---->

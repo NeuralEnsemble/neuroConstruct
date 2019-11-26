@@ -105,7 +105,7 @@ Note that an example below <strong>Ex1_CreateNetworkML.py</strong> carries out a
 
 <p>
     There is an example of a Python script for generating F-I (firing frequency versus injected current) plots for 2 realistic cell models in the neuroConstruct project
-    <a href="../models/index.html#GranCellLayer"><strong>GranCellLayer</strong></a>. The script <strong>GranGolgiF_I.py</strong> generates the plots and can be found in
+    GranCellLayer. The script <strong>GranGolgiF_I.py</strong> generates the plots and can be found in
     the <strong>pythonScripts</strong> directory of the project, and the <strong>GenerateF_ICurve.py</strong> script can be reused for generating F_I plots in other projects.
 </p>
 <p>&nbsp;</p>

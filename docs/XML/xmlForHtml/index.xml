@@ -55,7 +55,7 @@
 
         <p>A morphologically detailed CA1 pyramidal
         cell model and a number of cells from the Traub et al. 2005 thalamocortical
-        network model are available <a href="models/index.html">here</a> for download in NeuroML format or as complete neuroConstruct
+        network model are available <a href="http://www.opensourcebrain.org/projects/thalamocortical">here</a> for download in NeuroML format or as complete neuroConstruct
         projects for execution on a number of simulation platforms.
         These models are also included with the latest version of neuroConstruct.</p>
 
@@ -66,7 +66,7 @@
         Synaptic depression enables neuronal gain control. Nature 2009</strong>) has used neuroConstruct to investigate
         a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and
         inhibitory synaptic input to look at the effects of short term plasticity on gain control (
-        <a  href="models/index.html#RothmanEtAl_KoleEtAl_PyrCell-N10162">Download neuroConstruct project</a>). </p>
+        <a  href="http://www.opensourcebrain.org/projects/rothmanetalkoleetalpyrcell">see project on Open Source Brain</a>). </p>
 
 
 
