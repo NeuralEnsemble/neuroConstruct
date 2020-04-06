@@ -66,3 +66,4 @@ docs/api
 /testProjects/TestNeuroML2Files/ACnet2/temp/*
 /dist
 /neuroConstruct_1.7.2.zip
+/tests.log
