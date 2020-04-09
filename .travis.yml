@@ -23,7 +23,6 @@ script:
   
   # Test building project with nC.sh
   - ./nC.sh -make
-  - ./nC.sh -v
   
   # Rebuild & perform a number of tests with ant
   - ant testcore

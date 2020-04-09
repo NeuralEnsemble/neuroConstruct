@@ -41,6 +41,7 @@ import org.python.util.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.cell.converters.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
 
 /**
  * Starts the main neuroConstruct application
@@ -247,7 +248,9 @@ public class MainApplication
     private static void printVersionDetails()
     {
         System.out.println("\nneuroConstruct, version: " +
-                                   GeneralProperties.getVersionNumber() + "\n");
+                                   GeneralProperties.getVersionNumber());
+        System.out.println("  Uses NeuroML2: v" +
+                                   NeuroMLConstants.NeuroMLVersion.getLatestVersion() + "\n");
     }
 
 
