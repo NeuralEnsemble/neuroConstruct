@@ -1,15 +1,14 @@
-dist: trusty
-sudo: false
+dist: xenial
 
 language: java
 
 jdk:
-  - openjdk7
+  - oraclejdk11
+  
   - openjdk8
-  - oraclejdk8
-  - oraclejdk9
-  # - oraclejdk11 # Broken on Travis??
-
+  - openjdk10 
+  - openjdk11
+  
 script: 
   - mkdir temp
   
