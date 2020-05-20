@@ -25,4 +25,7 @@ script:
   
   # Rebuild & perform a number of tests with ant
   - ant testcore
+  
+  # Print version info
+  - ./nC.sh -v
 
