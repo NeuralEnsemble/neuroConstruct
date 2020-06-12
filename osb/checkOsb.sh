@@ -241,6 +241,7 @@ standardGHProject 'SmithEtAl2013-L23DendriticSpikes' 'cerebral_cortex/neocortica
 standardGHProject 'dLGNinterneuronHalnesEtAl2011' 'thalamus/lgn_interneuron'
 standardGHProject 'L23PyramidalCellTutorial' 'cerebral_cortex/neocortical_pyramidal_neuron'
 standardGHProject 'EbnerEtAl2019' 'cerebral_cortex/neocortical_pyramidal_neuron'
+standardGHProject 'BahlEtAl2012_ReducedL5PyrCell' 'cerebral_cortex/neocortical_pyramidal_neuron'
 
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
@@ -250,6 +251,7 @@ standardGHProject 'V1NetworkModels' 'cerebral_cortex/networks'
 standardGHProject 'del-Molino2017' 'cerebral_cortex/networks'
 standardGHProject 'WilsonCowan' 'cerebral_cortex/networks'
 standardGHProject 'MejiasEtAl2016' 'cerebral_cortex/networks'
+standardGHProject 'JoglekarEtAl18' 'cerebral_cortex/networks'
 
 standardGHProject 'VERTEXShowcase' 'cerebral_cortex/networks'
 
