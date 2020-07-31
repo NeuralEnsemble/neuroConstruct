@@ -79,13 +79,14 @@ public class ExampleProjects
             targetDownloadDir.mkdir();
             
         
-        if (sourceProjDir.getName().indexOf("examples")>=0)
+        if (sourceProjDir.getName().indexOf("models")<0)
         {
             title.addContent("neuroConstruct example projects");
         
-            intro.addContent( "Downloadable neuroConstruct example projects. These <strong>illustrate the core " +
-            "functionality of neuroConstruct</strong>, as opposed to providing electrophysiologically accurate " +
-            "models. Projects based on published conductance based models can be found <a href=\"../models/index.html\">here</a>");
+            intro.addContent( "Downloadable neuroConstruct example projects. These illustrate the core " +
+            "functionality of neuroConstruct, as opposed to providing electrophysiologically accurate " +
+            "models.\n<br/><br/><strong>Note: all of these examples are included with the <a href=\"../download/index.html\">standard neuroConstruct release</a>!</strong>"
+            +"\n<br/><br/>Find more neuroConstruct projects containing biophysically detailed neuronal cell and network models on <strong><a href=\"http://www.opensourcebrain.org/docs#Using_neuroConstruct_Based_Projects\">Open Source Brain</a></strong>. <img alt=\"Open Source Brain\" width=\"50\" src=\"http://www.neuroml.org/images/OSBLogo.png\"/>");
         }
         if (sourceProjDir.getName().indexOf("models")>=0)
         {

@@ -6,6 +6,19 @@
         <title>Installing and running neuroConstruct</title>
     </header>
     <body>
+        <section>
+            <title>Installation via GitHub</title>
+            
+	  <p>The source code for the application, as well as instructions for installation can be found: <a href="https://github.com/NeuralEnsemble/neuroConstruct/blob/master/INSTALL.md" >on GitHub</a>.</p>
+
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;&nbsp;<b>NOTE: The instructions below are <u>out of date</u>, but may be useful for reference/troubleshooting.</b></p>
+
+        <p>&nbsp;</p>
+        </section>
         
         <section>
             <title>Requirements</title>
@@ -50,7 +63,7 @@
 
             <ol>
 
-            <li>Download the windows installer from the <a href="http://www.neuroconstruct.org/nCinfo/form.php">neuroConstruct download page</a>.
+            <li>Download the windows installer from the <a href="../download/index.html">neuroConstruct download page</a>.
             Note: this is <em><strong>not currently recommended for Vista, Windows 7 or 64bit Windows machines</strong></em>. It's better to use the zip file below instead.</li>
 
 
@@ -78,7 +91,7 @@
             <p>&nbsp;&nbsp;<strong>Zip file install</strong></p>
 
             <ol>
-                <li>Download <strong>neuroConstruct_1.x.x.zip</strong> from the <a href="http://www.neuroconstruct.org/nCinfo/form.php">download page</a>.
+                <li>Download <strong>neuroConstruct_1.x.x.zip</strong> from the <a href="../download/index.html">download page</a>.
                 This contains a directory tree from <strong>neuroConstruct_1.x.x</strong>, containing the main jar file and directories with the examples, documentation, etc.</li>
 
                 <li>Unzip this to a convenient location e.g. to <strong>C:\neuroConstruct_1.x.x</strong>.</li>
@@ -122,7 +135,7 @@
 
             <ol>
 
-            <li>Download the Linux installer from the <a href="http://www.neuroconstruct.org/nCinfo/form.php">neuroConstruct download page</a>.
+            <li>Download the Linux installer from the <a href="../download/index.html">neuroConstruct download page</a>.
             Note: this is <em><strong>not currently recommended for 64bit Linux machines</strong></em>. It's better to use the zip file below instead.</li>
 
 
@@ -148,7 +161,7 @@
             <p>&nbsp;&nbsp;<strong>Zip file install</strong></p>
 
             <ol>
-                <li>Download <strong>neuroConstruct_1.x.x.zip</strong> from the <a href="http://www.neuroconstruct.org/nCinfo/form.php">download page</a>.
+                <li>Download <strong>neuroConstruct_1.x.x.zip</strong> from the <a href="../download/index.html">download page</a>.
                 This contains a directory tree from <strong>neuroConstruct_1.x.x</strong>, containing the main jar file and directories with the examples, documentation, etc.</li>
 
                 <li>Unzip this to a convenient location e.g. to <strong>/home/username/neuroConstruct_1.x.x</strong>.</li>
@@ -188,7 +201,7 @@
 
             <ol>
 
-            <li>Download the Mac installer from the <a href="http://www.neuroconstruct.org/nCinfo/form.php">neuroConstruct download page</a>.
+            <li>Download the Mac installer from the <a href="../download/index.html">neuroConstruct download page</a>.
             Note: this is <em><strong>not currently recommended for 64bit Mac machines</strong></em>. It's better to use the zip file below instead.</li>
 
 
@@ -214,7 +227,7 @@
             <p>&nbsp;&nbsp;<strong>Zip file install</strong></p>
 
             <ol>
-                <li>Download <strong>neuroConstruct_1.x.x.zip</strong> from the <a href="http://www.neuroconstruct.org/nCinfo/form.php">download page</a>.
+                <li>Download <strong>neuroConstruct_1.x.x.zip</strong> from the <a href="../download/index.html">download page</a>.
                 This contains a directory tree from <strong>neuroConstruct_1.x.x</strong>, containing the main jar file and directories with the examples, documentation, etc.</li>
 
                 <li>Unzip this to a convenient location e.g. to <strong>/home/username/neuroConstruct_1.x.x</strong>.</li>
