@@ -173,6 +173,7 @@ standardGHProject 'NWBShowcase' 'showcase'
 standardGHProject 'ConnectivityShowcase' 'showcase'
 standardGHProject 'TheVirtualBrainShowcase' 'showcase'
 standardGHProject 'PsyNeuLinkShowcase' 'showcase'
+standardGHProject 'SinusoidalVoltageProtocols' 'showcase'
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
@@ -252,6 +253,7 @@ standardGHProject 'del-Molino2017' 'cerebral_cortex/networks'
 standardGHProject 'WilsonCowan' 'cerebral_cortex/networks'
 standardGHProject 'MejiasEtAl2016' 'cerebral_cortex/networks'
 standardGHProject 'JoglekarEtAl18' 'cerebral_cortex/networks'
+standardGHProject 'DemirtasEtAl19' 'cerebral_cortex/networks'
 
 standardGHProject 'VERTEXShowcase' 'cerebral_cortex/networks'
 
