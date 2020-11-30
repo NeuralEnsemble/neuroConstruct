@@ -3151,11 +3151,11 @@ public class CellTopologyHelper
         float minPhysiologicalMembPot = -100;  // mV, limit to warn about
         float maxPhysiologicalMembPot = 100;   // mV, limit to warn about
 
-        float minPhysiologicalSpecCap = 2e-10f;   // μF μm-2, limit to warn about
-        float maxPhysiologicalSpecCap = 3e-8f;  // μF μm-2, limit to warn about
+        float minPhysiologicalSpecCap = 2e-10f;   // uF um-2, limit to warn about
+        float maxPhysiologicalSpecCap = 3e-8f;  // uF um-2, limit to warn about
 
-        float minPhysiologicalSpecAxRes = 100f;  //  kohm μm , limit to warn about
-        float maxPhysiologicalSpecAxRes = 3000f; //  kohm μm , limit to warn about
+        float minPhysiologicalSpecAxRes = 100f;  //  kohm um , limit to warn about
+        float maxPhysiologicalSpecAxRes = 3000f; //  kohm um , limit to warn about
 
 
         float minPhysiologicalPassCondDens = 1e-10f; //  mS um-2 , limit to warn about
@@ -3203,15 +3203,15 @@ public class CellTopologyHelper
             {
                 if (spAxRes<minPhysiologicalSpecAxRes)
                 {
-                    warningReport.append("Warning: specific axial resistance: "+spAxRes+" kohm μm on group(s) "+specAxResVsGroups.get(spAxRes)
+                    warningReport.append("Warning: specific axial resistance: "+spAxRes+" kohm um on group(s) "+specAxResVsGroups.get(spAxRes)
                             +" exceeds lower bound of physiological specific axial resistance: "
-                        +minPhysiologicalSpecAxRes+" kohm μm");
+                        +minPhysiologicalSpecAxRes+" kohm um");
                 }
                 if (spAxRes>maxPhysiologicalSpecAxRes)
                 {
-                    warningReport.append("Warning: specific axial resistance: "+spAxRes+" kohm μm on group(s) "+specAxResVsGroups.get(spAxRes)
+                    warningReport.append("Warning: specific axial resistance: "+spAxRes+" kohm um on group(s) "+specAxResVsGroups.get(spAxRes)
                             +" exceeds upper bound of physiological specific axial resistance: "
-                        +maxPhysiologicalSpecAxRes+" kohm μm");
+                        +maxPhysiologicalSpecAxRes+" kohm um");
                 }
             }
         }
