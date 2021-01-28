@@ -1,13 +1,13 @@
 <!--
 
      This is the neuroConstruct build file for use with Ant (http://ant.apache.org/)
-     
+
      Running "ant runlast" will run neuroConstruct and load the last project
 
      Type ant -p to view all possible build targets
-     
+
      NOTE: nC.bat/nC.sh can also be used to build (nC.bat -make OR ./nC.sh -make) run the application
-     
+
 -->
 
 <project name="neuroConstruct" default="jar" basedir=".">
@@ -22,9 +22,9 @@
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
 
-  
+
   <target name="init">
-  
+
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
     <property name="version" value="1.7.2"/>
@@ -107,7 +107,7 @@
     <property name="main.test.class" value="ucl.physiol.neuroconstruct.test.MainTest"/>
     <property name="main.testmodels.class" value="ucl.physiol.neuroconstruct.test.ModelTest"/>
     <property name="main.testmodpy.class" value="ucl.physiol.neuroconstruct.test.PythonTest"/>
-    
+
     <property name="main.testhdf5.class" value="ucl.physiol.neuroconstruct.neuron.NeuronFileManagerTest"/>
 
 
@@ -119,7 +119,7 @@
     <property name="jneuroml.dir" value="./jNeuroMLJar"/>
 
     <available file="./NeuroML2" type="dir" property="libneuroml.dir.exists"/>
-    
+
     <property name="neuroml2.libs" value="lib/neuroml2"/>
     <property name="jneuroml.libs" value="${jneuroml.dir}"/>
 
@@ -163,7 +163,7 @@
       <pathelement location="${neuroconstruct-core}"/>
 
     </path>
-    
+
     <echo>Initialised neuroConstruct project to build jar: ${jar.file}</echo>
 
   </target>
@@ -212,7 +212,7 @@
   <!-- Prepares the build directory                                        -->
   <!-- =================================================================== -->
 
-    
+
   <target name="prepare" depends="init">
     <mkdir dir="${build.dest}"/>
   </target>
@@ -230,8 +230,8 @@
            debug="${debug}"
            optimize="${optimize}"
            compiler="modern"
-           source="1.6"
-           target="1.6"
+           source="1.8"
+           target="1.8"
            includeantruntime="false">
       <classpath refid="compile.class.path"/>
       <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
@@ -330,7 +330,7 @@
     <delete dir="${dist.dir}"/>
     <delete file="${jar.file}"/>
   </target>
-  
+
   <!-- =================================================================== -->
   <!-- Clean documentation                                                       -->
   <!-- =================================================================== -->
@@ -413,7 +413,7 @@
         <classpath refid="run.class.path"/>
     </java>
   </target>
-  
+
   <!-- =================================================================== -->
   <!-- Run tests on saving HDF5 in NEURON simulations and reloading        -->
   <!-- =================================================================== -->
@@ -657,7 +657,7 @@
   <target name="helpdocs" depends="glossary"
           description="Generates the documentation for the help viewer inside neuroConstruct. Makes a simpler version of the docs on the website, using the same base XML">
     <mkdir dir="${helpdocs.dir}"/>
-      
+
     <java classname="${xml.transform.class}" fork="true"  failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
@@ -696,18 +696,18 @@
   <!-- =================================================================== -->
   <!-- Generates installers through install4j                              -->
   <!-- =================================================================== -->
-  
-       
+
+
   <target name="install4j" description="Generates installers through install4j. Note: install4j needs to be installed for this">
-  
-  
+
+
   <taskdef name="install4j"
        classname="com.install4j.Install4JTask"
        classpath="../JavaStuff/install4j5/bin/ant.jar"/>
-       
+
     <install4j projectfile="install.install4j"/>
   </target>
-  
+
   <target name="binaries" depends="dist, install4j" description="Cleans, makes distribtion, generates installers">
   </target>
 
@@ -718,7 +718,7 @@
   <!-- =================================================================== -->
 
   <target name="dist" depends="clean, cleandocs, cleannml, cleangen, website,helpdocs" description="Creates a zip file with directory structure, jar but no source">
- 
+
       <property name="temp_ver.dir" value="${dist.dir}/${name}_${version}"/>
 
       <delete dir="${temp_ver.dir}"/>
@@ -796,8 +796,8 @@
       <delete dir="${temp_ver.dir}/NeuroML2/docs"/>
       <delete dir="${temp_ver.dir}/NeuroML2/exportImportUtils/SBML/sbmlTestSuite"/>
       <delete dir="${temp_ver.dir}/NeuroML2/examples/inprogress/ab"/>
-      
-      
+
+
       <mkdir dir="${temp_ver.dir}/jNeuroMLJar"/>
       <copy todir="${temp_ver.dir}/jNeuroMLJar">
         <fileset dir="jNeuroMLJar">
@@ -836,8 +836,8 @@
               <include name="README"/>
         </fileset>
       </copy>
-      
-      
+
+
       <mkdir dir="${temp_ver.dir}/src"/>
       <copy todir="${temp_ver.dir}/src">
         <fileset dir="src">
@@ -853,8 +853,8 @@
               <include name="README"/>
         </fileset>
       </copy>
-      
-      
+
+
       <mkdir dir="${temp_ver.dir}/testProjects"/>
       <copy todir="${temp_ver.dir}/testProjects">
           <fileset dir="testProjects">
