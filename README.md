@@ -31,7 +31,7 @@ of Neurons in 3D Space](https://www.sciencedirect.com/science/article/pii/S08966
 
 For more information contact info@neuroConstruct.org  
 
-[![Build Status](https://travis-ci.org/NeuralEnsemble/neuroConstruct.png?branch=master)](https://travis-ci.org/NeuralEnsemble/neuroConstruct)
+[![Build Status](https://travis-ci.com/NeuralEnsemble/neuroConstruct.png?branch=master)](https://travis-ci.com/NeuralEnsemble/neuroConstruct)
 
 
 
