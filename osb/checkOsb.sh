@@ -73,14 +73,14 @@ standardGHProject()
         if [ ! -d $parent ]; then
             mkdir $parent
             echo "Making new directory: " $parent
-            
+
         fi
         mkdir $2
         echo "Making new directory: " $2
-        
+
     fi
     tgtDir=$startDir/$2/$1
-    
+
 
     if [ ! -d $tgtDir ]; then
         echo "Cloning to: "$tgtDir
@@ -155,8 +155,8 @@ standardGHProject 'NeuroMorpho' 'showcase'
 standardGHProject 'NSGPortalShowcase' 'showcase'
 standardGHProject 'NIFShowcase' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
-standardGHProject 'NEURONShowcase' 'showcase' 
-standardGHProject 'NESTShowcase' 'showcase' 
+standardGHProject 'NEURONShowcase' 'showcase'
+standardGHProject 'NESTShowcase' 'showcase'
 standardGHProject 'PyNNShowcase' 'showcase'
 standardGHProject 'NetPyNEShowcase' 'showcase'
 standardGHProject 'SBMLShowcase' 'showcase'
@@ -174,6 +174,9 @@ standardGHProject 'ConnectivityShowcase' 'showcase'
 standardGHProject 'TheVirtualBrainShowcase' 'showcase'
 standardGHProject 'PsyNeuLinkShowcase' 'showcase'
 standardGHProject 'SinusoidalVoltageProtocols' 'showcase'
+standardGHProject 'ONNXShowcase' 'showcase'
+standardGHProject 'ArborShowcase' 'showcase'
+
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
@@ -266,8 +269,6 @@ standardGHProject 'PotjansDiesmann2014' 'cerebral_cortex/networks'
 standardGHProject 'SadehEtAl2017-InhibitionStabilizedNetworks' 'cerebral_cortex/networks'
 standardGHProject 'MultiscaleISN' 'cerebral_cortex/networks'
 standardGHProject 'M1NetworkModel' 'cerebral_cortex/networks'
+standardGHProject 'HNN' 'cerebral_cortex/networks'
 
 cd $startDir
-
-
-
