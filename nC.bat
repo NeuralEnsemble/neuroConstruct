@@ -1,9 +1,9 @@
 @echo off
 
-REM    
+REM
 REM   neuroConstruct run script for Windows
-REM 
- 
+REM
+
 
 
 REM ##########################################################################
@@ -13,15 +13,15 @@ REM Use quotes if there is a space in the directory name, e.g.
 REM set NC_HOME="C:\Program Files\neuroConstruct_X.X.X"
 set NC_HOME=C:\neuroConstruct
 
-REM   Use an altered value in the line below to run the application with extra 
-REM   memory; type java -X for more details. Choosing a max java heap size slightly less 
-REM   than half your total physical memory is best. 
-REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***  
-set NC_MAX_MEMORY=500M 
+REM   Use an altered value in the line below to run the application with extra
+REM   memory; type java -X for more details. Choosing a max java heap size slightly less
+REM   than half your total physical memory is best.
+REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***
+set NC_MAX_MEMORY=500M
 
-set NC_VERSION=1.7.2
+set NC_VERSION=1.7.3
 
-set JNEUROML_VERSION=0.10.3
+set JNEUROML_VERSION=0.11.0
 
 REM -----------------------------
 REM   Should no longer be changed. **Very old version** of lems/nml libs...
@@ -41,7 +41,7 @@ if not exist %NC_HOME% goto WARN_UPDATE_PATHS
 
 REM Determine 32bit or 64bit architecture for JDK
 set JDK_ARCH=32
- 
+
 
 if /I %PROCESSOR_ARCHITECTURE% == AMD64  (
     echo Assuming using a 64bit JDK, processor architecture: %PROCESSOR_ARCHITECTURE%
@@ -78,14 +78,14 @@ if "%1"=="-make" (
 	@echo on
 	javac  -sourcepath src -d classes -classpath %CLASSPATH%  %NC_HOME%/src/ucl/physiol/neuroconstruct/gui/MainApplication.java
 	@echo off
-	copy %NC_HOME%\src\ucl\physiol\neuroconstruct\gui\* %NC_HOME%\classes\ucl\physiol\neuroconstruct\gui  
+	copy %NC_HOME%\src\ucl\physiol\neuroconstruct\gui\* %NC_HOME%\classes\ucl\physiol\neuroconstruct\gui
   jar -cf neuroConstruct_%NC_VERSION%.jar -C classes .
   echo Have created neuroConstruct_%NC_VERSION%.jar
 	goto END
 )
 
 
-REM   Note: the -Dsun.java2d.noddraw=true has been added to solve problems with excessive 
+REM   Note: the -Dsun.java2d.noddraw=true has been added to solve problems with excessive
 REM   flickering of the Swing components when showing 3D on some Windows systems
 @echo on
 java -Xmx%NC_MAX_MEMORY%  -Dsun.java2d.noddraw=true -cp %CLASSPATH% -Djava.library.path=%JAVA_LIBRARY_PATH% ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5

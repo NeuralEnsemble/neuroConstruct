@@ -1,7 +1,7 @@
 #!/bin/bash
-#    
+#
 #     neuroConstruct script for Linux/Mac
-# 
+#
 
 
 ########################################################################################
@@ -21,7 +21,7 @@ export NC_MAX_MEMORY=450M
 # Current version of neuroConstruct
 export NC_VERSION=1.7.2
 
-export JNEUROML_VERSION=0.10.3
+export JNEUROML_VERSION=0.11.0
 
 #########
 # These are for **very old versions** of NML2/LEMS libraries...

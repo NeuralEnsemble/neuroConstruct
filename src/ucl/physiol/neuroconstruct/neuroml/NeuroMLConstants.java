@@ -1,18 +1,18 @@
 /**
  *  neuroConstruct
  *  Software for developing large scale 3D networks of biologically realistic neurons
- * 
+ *
  *  Copyright (c) 2009 Padraig Gleeson
  *  UCL Department of Neuroscience, Physiology and Pharmacology
  *
  *  Development of this software was made possible with funding from the
  *  Medical Research Council and the Wellcome Trust
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -33,7 +33,7 @@ package ucl.physiol.neuroconstruct.neuroml;
  * NeuroML constants. Defines tags needed in NeuroML files...
  *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 public class NeuroMLConstants
@@ -69,7 +69,7 @@ public class NeuroMLConstants
             @Override
             public String toString()
             {
-                return "Full Cell v2.0";
+                return "Full Cell v"+getLatestVersion();
             }
         }
     };
@@ -156,11 +156,19 @@ public class NeuroMLConstants
             {
                 return "2.1";
             }
+        },
+        NEUROML_VERSION_2_2
+        {
+            @Override
+            public String toString()
+            {
+                return "2.2";
+            }
         };
-        
+
         public static NeuroMLVersion getLatestVersion()
         {
-            return NEUROML_VERSION_2_1;
+            return NEUROML_VERSION_2_2;
         }
 
         public boolean isVersion2()
@@ -177,7 +185,7 @@ public class NeuroMLConstants
         {
             return this.equals(getLatestVersion());
         }
-        
+
         public boolean isVersion2betaOrLater()
         {
             return !this.equals(NEUROML_VERSION_1) && !this.equals(NEUROML_VERSION_2_ALPHA);
@@ -201,7 +209,7 @@ public class NeuroMLConstants
     public static String DEFAULT_SCHEMA_LOCATION = "http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd";
 
     public static String NEUROML_ID_V2 = "id";
-    
+
     public static String NEUROML_COMP_TYPE_ATTR = "type";
 
     /**
@@ -232,7 +240,7 @@ public class NeuroMLConstants
     public static String NEUROML2_ABST_CELL = "baseCell";
     public static String NEUROML2_ABST_CELL_MEMB_POT = "baseCellMembPot";
     public static String NEUROML2_ABST_CELL_MEMB_POT_CAP = "baseCellMembPotCap";
-    
+
     public static String NEUROML2_ABST_CELL_MEMB_POT_CAP__C = "C";
 
 
@@ -244,20 +252,20 @@ public class NeuroMLConstants
     public static String NEUROML2_PYNN_EIF_COND_EXP = "EIF_cond_exp_isfa_ista";
     public static String NEUROML2_PYNN_EIF_CURR_ALPHA = "EIF_cond_alpha_isfa_ista";
     public static String NEUROML2_PYNN_HH_COND_EXP = "HH_cond_exp";
-    
+
     public static String NEUROML2_NEUROLEX_ID = "neuroLexId";
-    
+
     public static String NEUROML2_NEUROLEX_SOMA_GROUP = "GO:0043025";
     public static String NEUROML2_NEUROLEX_DENDRITE_GROUP = "GO:0030425";
     public static String NEUROML2_NEUROLEX_AXON_GROUP = "GO:0030424";
-    
+
     /*
-    * This is an initial attempt to tag a subset of a cell's segment groups as 
+    * This is an initial attempt to tag a subset of a cell's segment groups as
     * the non overlapping groups which correspond to the "cables" of MorphML
     */
     public static String NEUROML2_NEUROLEX_UNBRANCHED_NONOVERLAPPING_SEG_GROUP = "sao864921383";
-    
 
-    
+
+
 
 }
