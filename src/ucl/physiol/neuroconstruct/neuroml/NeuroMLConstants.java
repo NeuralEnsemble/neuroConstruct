@@ -69,7 +69,7 @@ public class NeuroMLConstants
             @Override
             public String toString()
             {
-                return "Full Cell v"+getLatestVersion();
+                return "Full Cell v"+NeuroMLVersion.getLatestVersion();
             }
         }
     };
