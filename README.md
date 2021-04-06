@@ -1,23 +1,24 @@
 neuroConstruct
 ==============
 
-This is neuroConstruct, software for developing 3D networks for 
+This is neuroConstruct, software for developing 3D networks for
 biologically realistic neuronal simulations.    
 
 More information can be found at: http://www.neuroConstruct.org
 
 The application can be run via the desktop/Start Menu links if the automatic
-installers have been used (http://www.neuroconstruct.org/download), or in a 
-terminal with 
-    
-    nC.bat (Windows) 
-or 
+installers have been used (http://www.neuroconstruct.org/download), or in a
+terminal with
 
     ./nC.sh (Linux/Mac)
 
-after Java has been installed. 
+or
 
-If you have Apache ant installed, you can run the application with: 
+nC.bat (Windows)
+
+after Java has been installed.
+
+If you have Apache ant installed, you can run the application with:
 
     ant run
 
@@ -32,7 +33,3 @@ of Neurons in 3D Space](https://www.sciencedirect.com/science/article/pii/S08966
 For more information contact info@neuroConstruct.org  
 
 [![Build Status](https://travis-ci.com/NeuralEnsemble/neuroConstruct.png?branch=master)](https://travis-ci.com/NeuralEnsemble/neuroConstruct)
-
-
-
-
