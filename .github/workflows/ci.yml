@@ -1,0 +1,42 @@
+
+name: Java CI with Ant
+
+on:
+  push:
+    branches:  [ master, development ]
+  pull_request:
+    branches:  [ master, development ]
+
+jobs:
+  build_and_test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '8', '11', '13', '15' ]
+
+    name: Test on Java ${{ matrix.Java }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{ matrix.Java }}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.Java }}
+        distribution: 'adopt'
+    - name: Set up env
+      run: |
+        mkdir temp
+        ./updatenC.sh # Pull other repos, e.g. NeuroML v1 examples from SourceForge
+        # Get one OSB project required for running tests
+        mkdir osb/cerebellum
+        mkdir osb/cerebellum/cerebellar_granule_cell
+        git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
+    - name: Test building project with nC.sh
+      run: |
+        ./nC.sh -make
+    - name: Rebuild & perform a number of tests with ant
+      run: |
+        ant testcore
+    - name: Print the version info
+      run: |
+        ./nC.sh -v

@@ -1,6 +1,8 @@
 neuroConstruct
 ==============
 
+[![Java CI with Ant](https://github.com/NeuralEnsemble/neuroConstruct/actions/workflows/ci.yml/badge.svg)](https://github.com/NeuralEnsemble/neuroConstruct/actions/workflows/ci.yml)
+
 This is neuroConstruct, software for developing 3D networks for
 biologically realistic neuronal simulations.    
 
