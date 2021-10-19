@@ -176,6 +176,8 @@ standardGHProject 'PsyNeuLinkShowcase' 'showcase'
 standardGHProject 'SinusoidalVoltageProtocols' 'showcase'
 standardGHProject 'ONNXShowcase' 'showcase'
 standardGHProject 'ArborShowcase' 'showcase'
+standardGHProject 'EDENShowcase' 'showcase'
+standardGHProject 'BindsNETShowcase' 'showcase'
 
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
