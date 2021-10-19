@@ -26,10 +26,11 @@ jobs:
     - name: Set up env
       run: |
         mkdir temp
-
         ./updatenC.sh # Pull other repos, e.g. NeuroML v1 examples from SourceForge
-
         # Get one OSB project required for running tests
-        - mkdir osb/cerebellum
-        - mkdir osb/cerebellum/cerebellar_granule_cell
-        - git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
+        mkdir osb/cerebellum
+        mkdir osb/cerebellum/cerebellar_granule_cell
+        git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
+    - name: Test building project with nC.sh
+      run: |
+        ./nC.sh -make
