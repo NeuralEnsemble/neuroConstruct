@@ -34,3 +34,9 @@ jobs:
     - name: Test building project with nC.sh
       run: |
         ./nC.sh -make
+    - name: Rebuild & perform a number of tests with ant
+      run: |
+        ant testcore
+    - name: Print version info
+      run: |
+        ./nC.sh -v
