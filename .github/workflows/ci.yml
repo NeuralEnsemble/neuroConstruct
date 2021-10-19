@@ -37,6 +37,6 @@ jobs:
     - name: Rebuild & perform a number of tests with ant
       run: |
         ant testcore
-    - name: Print version info
+    - name: Print the version info
       run: |
         ./nC.sh -v
