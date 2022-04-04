@@ -33,5 +33,3 @@ P. Gleeson, V. Steuber and R. A. Silver, [neuroConstruct: A Tool for Modeling Ne
 of Neurons in 3D Space](https://www.sciencedirect.com/science/article/pii/S0896627307002486?via%3Dihub), Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235.
 
 For more information contact info@neuroConstruct.org  
-
-[![Build Status](https://travis-ci.com/NeuralEnsemble/neuroConstruct.png?branch=master)](https://travis-ci.com/NeuralEnsemble/neuroConstruct)
