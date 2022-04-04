@@ -1,7 +1,7 @@
 #!/bin/bash
-#    
-#  As neuroConstruct requires files from the NeuroML repository as well as from its own 
-#  Subversion repository, use the following script to keep all of the necessary code up 
+#
+#  As neuroConstruct requires files from the NeuroML repository as well as from its own
+#  Subversion repository, use the following script to keep all of the necessary code up
 #  to date. Note this script may change as the location of the repositories change
 
 
@@ -66,7 +66,7 @@ fi
 
 if [ ! -d osb/showcase/neuroConstructShowcase ]; then
     cd osb/showcase
-    git clone git://github.com/OpenSourceBrain/neuroConstructShowcase.git
+    git clone https://github.com/OpenSourceBrain/neuroConstructShowcase.git
     cd -
 fi
 
@@ -75,6 +75,3 @@ echo "Updating the neuroConstruct showcase examples..."
 cd osb/showcase/neuroConstructShowcase
 git pull
 cd -
-
-
-
