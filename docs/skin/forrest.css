@@ -1,0 +1,193 @@
+
+
+/* ==================== aural ============================ */
+
+@media aural {
+  h1, h2, h3, h4, h5, h6 { voice-family: paul, male; stress: 20; richness: 90 }
+  h1 { pitch: x-low; pitch-range: 90 }
+  h2 { pitch: x-low; pitch-range: 80 }
+  h3 { pitch: low; pitch-range: 70 }
+  h4 { pitch: medium; pitch-range: 60 }
+  h5 { pitch: medium; pitch-range: 50 }
+  h6 { pitch: medium; pitch-range: 40 }
+  li, dt, dd { pitch: medium; richness: 60 }
+  dt { stress: 80 }
+  pre, code, tt { pitch: medium; pitch-range: 0; stress: 0; richness: 80 }
+  em { pitch: medium; pitch-range: 60; stress: 60; richness: 50 }
+  strong { pitch: medium; pitch-range: 60; stress: 90; richness: 90 }
+  dfn { pitch: high; pitch-range: 60; stress: 60 }
+  s, strike { richness: 0 }
+  i { pitch: medium; pitch-range: 60; stress: 60; richness: 50 }
+  b { pitch: medium; pitch-range: 60; stress: 90; richness: 90 }
+  u { richness: 0 }
+  
+  :link { voice-family: harry, male }
+  :visited { voice-family: betty, female }
+  :active { voice-family: betty, female; pitch-range: 80; pitch: x-high }
+}
+  
+a.external  {
+  padding: 0 20px 0px 0px;
+	display:inline;
+  background-repeat: no-repeat;
+	background-position: center right;
+	background-image: url(images/external-link.gif);
+}
+  
+#banner, #banner td, #toptabs { background-color: #FFFFFF;}
+#toptabs td { border-left: 1px solid #FFFFFF;}
+#toptabs th { border-left: 1px solid #FFFFFF;}
+#banner { border-top: 1px solid #ffffff;}
+
+.tabs th  {
+    background-color: #a5b6c6;
+    border-right: 1px solid #737f8a;
+	color: #000000;}
+.tabs th a:link{
+	color: #000000;}
+.tabs th a:visited {
+	color: #000000;}
+.tabs th a:hover {
+	color: #000000 !important; }
+#mytools .label, #projecttools .label, #admintools .label, #communitytools .label {
+	background-color: #a5b6c6;}
+#mytools, #projecttools, #admintools, #communitytools {
+	background-color: #a5b6c6;
+	border-right: 1px solid #737f8a;
+	border-bottom: 1px solid #737f8a;
+}
+.tabs {	border-bottom: 6px #a5b6c6 solid; }
+.tabs td {
+   background-color: #F7F7F7;
+   color: #000000;}
+.tabs td a:link{
+	color: #000000;}
+.tabs td a:visited {
+	color: #000000;}
+.tabs td a:hover {
+	color: #000000 !important;}
+    
+#breadcrumbs a:link{
+	color: #000000;}
+#breadcrumbs a:visited {
+	color: #000000;}
+
+#breadcrumbs { color: #000000;}
+#breadcrumbs {background-color: #a5b6c6;
+              border-top: 1px solid #ebffff;}
+#main        {border-top: 1px solid #737f8a;}
+#breadcrumbs a:link{
+	color: #000000;}
+#breadcrumbs a:visited {
+	color: #000000;}
+#breadcrumbs a:hover {
+	color: #000000 !important;}
+
+.app h3 {
+    background-color: #a5b6c6;
+	background-image: url('images/rc-t-l-10-1body-2heading-3heading.png');
+}
+    
+.app h4 {
+    background-color: #CFDCED;
+	background-image: url('images/rc-t-l-10-1body-2subheading-3subheading.png');
+}
+    
+#topmodule    { background-color: #CFDCED;
+                border-top: 1px solid #ffffff;
+	            border-bottom: 1px solid #909aa5;
+                color: #000000;}
+#topmodule #issueid {
+	border-right: 1px solid #909aa5;
+}
+#topmodule a:link{
+	color: #000000;}
+#topmodule a:visited {
+	color: #000000;}
+#topmodule a:hover {
+	color: #000000 !important; }
+
+.toolgroup .label {	background: #a5b6c6;
+                    border-bottom: 1px solid #737f8a;
+	                border-right: 1px solid #737f8a;
+	                color: #000000;
+} 
+#mytools .body, #projecttools .body, #admintools .body, #communitytools .body {
+	background-color: #F7F7F7;
+	border-right: 1px solid  #ffffff;
+	border-bottom: 1px solid  #ffffff;
+	border-top: 1px solid  #acacac;
+	border-left: 1px solid  #acacac;
+    }
+#mytools .body a:link, #projecttools .body a:link, #admintools .body a:link, #communitytools .body a:link{
+	color: #000000;}
+#mytools .body a:visited, #projecttools .body a:visited, #admintools .body a:visited, #communitytools .body a:visited{
+	color: #000000;}
+#mytools .body a:hover, #projecttools .body a:hover, #admintools .body a:hover, #communitytools .body a:hover{
+	color: #000000 !important;}
+
+.toolgroup { background: #F7F7F7;}
+.toolgroup .body {
+	border-right: 1px solid #acacac;;
+	border-bottom: 1px solid #acacac;;
+}
+
+body         { background-color: #ffffff;}
+a:link, #navcolumn a:visited, .app a:visited, .tasknav a:visited {
+	color: #0F3660;
+}
+a:link.selfref, a:visited.selfref {
+	color: #009999 !important;
+	text-decoration: none;
+}
+a:active, a:hover, #leftcol a:active, #leftcol a:hover {
+	color: #000066 !important;
+}
+
+body .grid td {
+	border-top: 1px solid #a5b6c6;
+	border-left: 1px solid #a5b6c6;}
+.app th {
+	background-color: #a5b6c6;}
+body .grid td {
+	background-color: #ffffff;
+} 
+.highlight        { background-color: #ffff00;} 
+.warningmessage {border-color: #cc6600;} 
+.infomessage {  border-color: #006699;} 
+.errormessage{  border-color: #990000;} 
+.code, code, pre        { border-color: #a5b6c6;} 
+#footer      { background-color: #CFDCED;} /* extra-css */
+    
+    p.quote {
+      margin-left: 2em;
+      padding: .5em;
+      font-family: monospace;
+    }
+
+    code {
+      font-style: italic;
+      font-weight: bold;
+      font-family: monospace;
+    }
+
+    code.exec {
+      font-weight: bold;
+      font-family: monospace;
+    }
+
+    table.noborder {
+      border: none
+    }
+  
+
+#toptabs td{
+	background-image: url('images/rc-t-l-10-1header-2tab-unselected-3tab-unselected.png');
+
+
+}
+
+#toptabs th {
+	background-image: url('images/rc-t-l-10-1header-2tab-selected-3tab-selected.png');
+}
+

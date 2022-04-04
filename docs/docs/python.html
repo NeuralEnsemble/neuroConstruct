@@ -1,0 +1,440 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="tigris">
+<style type="text/css">@import "../skin/tigris.css";@import "../skin/quirks.css";@import "../skin/inst.css";</style>
+<link media="print" href="../skin/print.css" type="text/css" rel="stylesheet">
+<link href="../skin/forrest.css" type="text/css" rel="stylesheet">
+<link rel="shortcut icon" href="../images/favicon.ico">
+<script type="text/javascript" src="../skin/tigris.js"></script><script src="../skin/menu.js" language="javascript" type="text/javascript"></script>
+<title>Support for Python in neuroConstruct</title>
+<meta content="text/css" http-equiv="Content-style-type">
+</head>
+<body class="composite" onload="focus()">
+<div id="banner">
+<table width="100%" cellpadding="8" cellspacing="0" border="0">
+<tr>
+<td align="left"></td><td align="center">
+<div>
+<a href="http://www.neuroConstruct.org"><img class="logoImage" alt="neuroConstruct" src="../images/logoMain.png"></a>
+</div>
+</td><td valign="top" align="right">
+<div class="right" align="right" id="login">
+<form target="_blank" action="http://www.google.com/search" method="get">
+<select name="as_sitesearch"><option value="">Search...</option><option value="http://www.neuroConstruct.org">The neuroConstruct site</option><option value="">The web</option></select> for
+		      <input size="15" name="as_q" id="query" type="text"><input name="Search" value="Go" type="submit">
+</form>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="toptabs" class="tabs">
+<table border="0" cellspacing="0" cellpadding="4">
+<tr>
+<td><a class="selected" href="../index.html">Introduction</a></td><td><a class="selected" href="../samples/index.html">Examples</a></td><td><a class="selected" href="../docs/index.html">Documentation</a></td><td><a class="selected" href="../download/index.html">Download</a></td><td><a class="selected" href="../links/index.html">Links</a></td><td><a class="selected" href="../contact/index.html">Contact</a></td>
+</tr>
+</table>
+</div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="breadcrumbs">
+<tr>
+<td></td><td>
+<div align="right">
+<script type="text/javascript" language="JavaScript"><!--
+                 document.write("Published: " + document.lastModified);
+                 //  --></script>
+</div>
+</td>
+</tr>
+</table>
+<table id="main" width="100%" cellpadding="4" cellspacing="0" border="0">
+<tr valign="top">
+<td width="20%" id="leftcol">
+<div id="navcolumn">
+<div class="toolgroup" id="projecttools">
+<div class="label">
+<strong>Section</strong>
+</div>
+<div class="menu">
+<div class="body">
+<div>
+<a href="">Home</a>
+    
+<div>
+<a href="../index.html">Introduction</a>
+</div>
+  
+</div>
+<div>
+<a href="../samples/index.html">Examples</a>
+    
+<div>
+<a href="../samples/index.html#">Examples</a>
+</div>
+  
+</div>
+<div>
+<a href="">Documentation</a>
+    
+<div>
+<a href="../docs/index.html">Home</a>
+</div>
+    
+<div>
+<a href="../docs/docMenu.html">Contents</a>
+</div>
+    
+<div>
+<a href="../docs/install.html">Installation</a>
+</div>
+    
+<div>
+<a href="../docs/tutorials/index.html">Tutorials</a>
+</div>
+    
+<div>
+<a href="../docs/Glossary_gen.html">Glossary</a>
+</div>
+  
+</div>
+<div>
+<a href="../download/index.html">Download</a>
+    
+<div>
+<a href="../download/index.html#">Download code</a>
+</div>
+  
+</div>
+<div>
+<a href="">Links</a>
+    
+<div>
+<a href="../links/index.html">Useful links</a>
+</div>
+    
+<div>
+<a href="../links/publications.html">Publications</a>
+</div>
+    
+<div>
+<a href="../links/training.html">Courses</a>
+</div>
+  
+</div>
+<div>
+<a href="../contact/index.html">Contact</a>
+    
+<div>
+<a href="../contact/index.html#">Contact us</a>
+</div>
+  
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="strut">&nbsp;</div>
+</td><td>
+<div class="content">
+<div align="right" id="topmodule">
+<table width="100%" cellpadding="3" cellspacing="0" border="0">
+<tr>
+<td class="tasknav"><a href="http://www.neuroConstruct.org">neuroConstruct</a><script src="../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script></td><td class="tasknav" id="issueid">
+<div align="right"></div>
+</td>
+</tr>
+</table>
+</div>
+<div id="bodycol">
+<div id="apphead">
+<h2>
+<em>Support for Python in neuroConstruct</em>
+</h2>
+</div>
+<div class="app" id="projecthome">
+<ul class="minitoc">
+<li>
+<a href="#Scripting+interface+to+neuroConstruct">Scripting interface to neuroConstruct</a>
+</li>
+<li>
+<a href="#Python+scripts+for+NeuroML+support">Python scripts for NeuroML support</a>
+</li>
+<li>
+<a href="#Python+usage+in+native+NEURON+simulations">Python usage in native NEURON simulations</a>
+</li>
+</ul>
+      
+
+
+
+
+<a name="Scripting+interface+to+neuroConstruct"></a>
+<div class="h3">
+<h3>Scripting interface to neuroConstruct</h3>
+      
+
+
+<p>While a graphical user interface (GUI) is useful for constructing cell and network models visually, tuning a model
+will normally require running of large numbers of simulations, differing only in small details, and comparing the results. This can
+be achieved through the GUI of neuroConstruct, but it is a time consuming process to load projects, adjust a value in a text field,
+run a simulation, open the simulation results and repeat for several iterations.</p>
+
+
+<p>The scripting interface for neuroConstruct allows <a href="Glossary_gen.html#Project">projects</a> to be accessed (either through
+the command line interface or more usually by a script file), the model elements of the project edited, simulations in any of the
+supported simulators to be generated and executed, and simulation results analysed.</p>
+
+
+<p>The scripting interface is based on <a href="http://www.jython.org/">Jython</a>. Jython is an implementation of Python purely in Java; the
+more widely used version, and the reference implementation, is "CPython". Jython allows access using a Python based syntax to Java classes in external packages.
+This has been used to make it possible to call methods in the Java classes of neuroConstruct from Python scripts.
+</p>
+
+
+<p>The standard release of neuroConstruct comes bundled with Jython, and an instance of the Jython script interpreter (with access to the classes in the neuroConstruct
+jar file) can be run using <strong>nC.bat -python</strong> (Windows) or <strong>./nC.sh -python</strong> (Linux/Mac). The scripts below give some examples of the usage of
+the neuroConstruct scripting interface (these are present in the <strong>pythonnC</strong> directory under the main installation folder of neuroConstruct).</p>
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex1_Simple.py"><strong>Ex1_Simple.py</strong></a>
+</p>
+
+
+<p>This simple example shows a neuroConstruct project being loaded and its status checked. Note the line:</p>
+
+
+<p style="margin-left:60px;font:bold 12px sans-serif">from ucl.physiol.neuroconstruct.project import ProjectManager</p>
+
+
+<p>which imports the Java class ProjectManager. The methods available on this can be seen in the Java API for <a href="http://www.neuroconstruct.org/api-latest/api/index.html?ucl/physiol/neuroconstruct/project/ProjectManager.html">ProjectManager</a>
+</p>
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex2_SaveProject.py"><strong>Ex2_SaveProject.py</strong></a>
+</p>
+
+
+<p>This example demonstrates changing a property of the neuroConstruct project (in this case the amplitude of one of the current clamp inputs) and saving the project.
+If the lines</p>
+
+
+<p style="margin-left:60px;font:bold 12px sans-serif">myProject.markProjectAsEdited()</p>
+
+<p style="margin-left:60px;font:bold 12px sans-serif">myProject.saveProject()</p>
+
+
+<p>are called, the project will be saved, otherwise the edits to the cells, connections, etc. will be lost once the script exits.</p>
+
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex3_ManualCreate.py"><strong>Ex3_ManualCreate.py</strong></a>
+</p>
+
+
+<p>Locations of individual cells in Cell Groups and network connections are usually generated by specifying the packing patterns and connection conditions
+through the GUI. There are a limited number of options allowed here. For complete flexibility the Python interface can be used to specify the exact (x, y, z)
+postion of all cells in a Cell Group, and the indiviual connections between cells in a network connection. The example above demonstrates this. Cell positions are
+added directly to the <a href="http://www.neuroconstruct.org/api-latest/api/index.html?ucl/physiol/neuroconstruct/project/GeneratedCellPositions.html">GeneratedCellPositions</a> object.
+In a similar manner network connections and electrical input can be added. This is opposed to using the doGenerate() function of
+<a href="http://www.neuroconstruct.org/api-latest/api/index.html?ucl/physiol/neuroconstruct/project/ProjectManager.html">ProjectManager</a> which
+would use the templates for Cell Groups, etc. as set through the GUI (see <strong>Ex5_MultiSimGenerate.py</strong>), Any code (e.g. NEURON simulation scripts) which is
+generated after "manually" adding the positions/conections will use this custom network structure.</p>
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex4_SaveNetworkML.py"><strong>Ex4_SaveNetworkML.py</strong></a>
+</p>
+
+
+<p>This script is similar to the previous one, in that it manually creates cell positions and connections. This script saves the network structure to a NetworkML file though.
+This can be useful for generating a custom network structure via a script, and afterwards loading the NetworkML in through the GUI for visualisation and possible use in simulations.
+Note that an example below <strong>Ex1_CreateNetworkML.py</strong> carries out a similar task, but does not use neuroConstruct specific methods (and so can be used on CPython).</p>
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex5_MultiSimGenerate.py"><strong>Ex5_MultiSimGenerate.py</strong></a>
+</p>
+
+<p>
+    This script generates a number of simulations in NEURON, each with a small parameter change, and runs a maximum of 4 simulations simultaneously (this number can
+    be modified to reflect the max number of local processors to use). The script can be customised to make any change in the cells/network structure between simulations.
+    The simulations can be replayed through the GUI, or alternatively loaded and analysed in the same script.
+</p>
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex6_LoadCells.py"><strong>Ex6_LoadCells.py</strong></a>
+</p>
+
+<p>
+    This script uses the <a href="http://www.neuroconstruct.org/api-latest/api/index.html?ucl/physiol/neuroconstruct/cell/converters/MorphMLConverter.html">MorphMLConverter</a>
+    class to load a cell structure from a NeuroML morphology file and include it in a neuroConstruct project. The project can then be saved and the neuroConstruct GUI opened (by
+    uncommenting the lines at the end of the file). This illustrates how the scripting interface could be used to handle/import large data set outside of the GUI. Other converters for
+    various morphology types are available in the package <a href="http://www.neuroconstruct.org/api-latest/api/ucl/physiol/neuroconstruct/cell/converters/package-summary.html">ucl.physiol.neuroconstruct.cell.converters</a>
+
+</p>
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex7_ExtractNeuroML.py"><strong>Ex7_ExtractNeuroML.py</strong></a>
+</p>
+
+<p>
+    This example opens a neuroConstruct project, and saves cells in NeuroML format. It accesses the utility method <strong>saveAllCellsInNeuroML(...)</strong>
+	in class <a href="http://www.neuroconstruct.org/api-latest/api/index.html?ucl/physiol/neuroconstruct/cell/converters/MorphMLConverter.html">MorphMLConverter</a>.
+</p>
+
+
+<p>&nbsp;</p>
+
+
+<p>&nbsp;<strong>Example of Python scripts in use</strong>
+</p>
+
+
+<p>
+    There is an example of a Python script for generating F-I (firing frequency versus injected current) plots for 2 realistic cell models in the neuroConstruct project
+    GranCellLayer. The script <strong>GranGolgiF_I.py</strong> generates the plots and can be found in
+    the <strong>pythonScripts</strong> directory of the project, and the <strong>GenerateF_ICurve.py</strong> script can be reused for generating F_I plots in other projects.
+</p>
+
+<p>&nbsp;</p>
+
+
+</div>
+
+
+
+
+
+
+<a name="Python+scripts+for+NeuroML+support"></a>
+<div class="h3">
+<h3>Python scripts for NeuroML support</h3>
+      
+
+
+<p>A number of Python scripts for dealing with NeuroML files can be found in the <strong>pythonNeuroML/Examples</strong> directory under the main installation folder of neuroConstruct. These
+utlilse the utility files under the <strong>pythonNeuroML/NeuroMLUtils</strong> directory.
+</p>
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex1_CreateNetworkML.py"><strong>Ex1_CreateNetworkML.py</strong></a>
+</p>
+
+
+<p>This file can be used to create a NetworkML file in valid XML or HDF5 format. Note it does not use the neuroConstruct Java
+classes, and so can be used with CPython, Jython, or the nC.xxx -python scripts.
+</p>
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex2_ReadNetworkML_XML.py"><strong>Ex2_ReadNetworkML_XML.py</strong></a>
+</p>
+
+<p>&nbsp;<a href="python/Ex3_ReadNetworkML_HDF5.py"><strong>Ex3_ReadNetworkML_HDF5.py</strong></a>
+</p>
+
+
+<p>These files can be used to read in the contents of NetworkML files. One version is provided for XML based files, another for HDF5 based files
+(note, <a href="http://www.pytables.org">PyTables</a> needs to be installed before this example can be run).
+</p>
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;<a href="python/Ex4_SimplePyNN.py"><strong>Ex4_SimplePyNN.py</strong></a>
+</p>
+
+<p>&nbsp;<a href="python/Ex5_NetworkMLPyNN.py"><strong>Ex5_NetworkMLPyNN.py</strong></a>
+</p>
+
+
+<p>These examples illustrate some basic interaction with <a href="http://neuralensemble.org/PyNN">PyNN</a>, which is a Python package
+for network creation on multiple simulators. <strong>Ex4_SimplePyNN.py</strong>
+is a simple example which cane be used to test the correct local installation of PyNN and one of the supporting simulators. 
+<strong>Ex5_NetworkMLPyNN.py</strong>
+uses many of the same classes as <strong>Ex2_ReadNetworkML_XML.py</strong> to parse a NetworkML file,
+and call the appropriate functions in the PyNN API to create the network contained in the NetworkML file. Both of these can be run using the command
+<strong>python Ex***.py sim</strong>, with <strong>sim</strong> replaced by the name of the PyNN compliant simulator.</p>
+
+
+<p>These examples use the utility classes under the <strong>pythonNeuroML/PyNNUtils</strong> directory. These files are also used by neuroConstuct in the
+PyNN example project: <a href="../samples/index.html#Ex8_PyNNDemo"><strong>Ex8_PyNNDemo</strong></a>
+</p>
+
+
+
+
+<p>&nbsp;</p>
+
+</div>
+
+
+
+<a name="Python+usage+in+native+NEURON+simulations"></a>
+<div class="h3">
+<h3>Python usage in native NEURON simulations</h3>
+      
+
+      
+<p>There is an option at the <strong>Export -&gt; NEURON -&gt; Generate code</strong> tab to create Python/XML/hoc or Python/HDF5 simulations,
+      as opposed to "pure" hoc (and mod) NEURON scripts. These use a similar method to <strong>Ex2_ReadNetworkML_XML.py</strong> and <strong>Ex5_NetworkMLPyNN.py</strong>
+      above, using utility files in <strong>pythonNeuroML/NeuroMLUtils</strong> and <strong>pythonNeuroML/NEURONUtils</strong> to parse XML/HDF5 based NetworkML and
+      call the appropriate NEURON methods to create cells/connections.</p>
+      
+<p>This functionality is still in development, and requires NEURON to be compiled with Python, and for HDF5, for <a href="http://www.pytables.org">PyTables</a> to
+      be correctly installed.</p>
+
+      
+</div>
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+  
+</div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<div id="footer">
+<table cellpadding="4" cellspacing="0" border="0">
+<tr>
+<td>
+          Copyright &copy; 2022 UCL
+      All rights reserved.
+            <br>
+<script type="text/javascript" language="JavaScript"><!--
+              document.write(" - "+"Last Published: " + document.lastModified);
+              //  --></script></td><td nowrap class="footerLogos"></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

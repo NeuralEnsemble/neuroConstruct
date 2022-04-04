@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="tigris">
+<style type="text/css">@import "../skin/tigris.css";@import "../skin/quirks.css";@import "../skin/inst.css";</style>
+<link media="print" href="../skin/print.css" type="text/css" rel="stylesheet">
+<link href="../skin/forrest.css" type="text/css" rel="stylesheet">
+<link rel="shortcut icon" href="../images/favicon.ico">
+<script type="text/javascript" src="../skin/tigris.js"></script><script src="../skin/menu.js" language="javascript" type="text/javascript"></script>
+<title>Cell Mechanisms</title>
+<meta content="text/css" http-equiv="Content-style-type">
+</head>
+<body class="composite" onload="focus()">
+<div id="banner">
+<table width="100%" cellpadding="8" cellspacing="0" border="0">
+<tr>
+<td align="left"></td><td align="center">
+<div>
+<a href="http://www.neuroConstruct.org"><img class="logoImage" alt="neuroConstruct" src="../images/logoMain.png"></a>
+</div>
+</td><td valign="top" align="right">
+<div class="right" align="right" id="login">
+<form target="_blank" action="http://www.google.com/search" method="get">
+<select name="as_sitesearch"><option value="">Search...</option><option value="http://www.neuroConstruct.org">The neuroConstruct site</option><option value="">The web</option></select> for
+		      <input size="15" name="as_q" id="query" type="text"><input name="Search" value="Go" type="submit">
+</form>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="toptabs" class="tabs">
+<table border="0" cellspacing="0" cellpadding="4">
+<tr>
+<td><a class="selected" href="../index.html">Introduction</a></td><td><a class="selected" href="../samples/index.html">Examples</a></td><td><a class="selected" href="../docs/index.html">Documentation</a></td><td><a class="selected" href="../download/index.html">Download</a></td><td><a class="selected" href="../links/index.html">Links</a></td><td><a class="selected" href="../contact/index.html">Contact</a></td>
+</tr>
+</table>
+</div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="breadcrumbs">
+<tr>
+<td></td><td>
+<div align="right">
+<script type="text/javascript" language="JavaScript"><!--
+                 document.write("Published: " + document.lastModified);
+                 //  --></script>
+</div>
+</td>
+</tr>
+</table>
+<table id="main" width="100%" cellpadding="4" cellspacing="0" border="0">
+<tr valign="top">
+<td width="20%" id="leftcol">
+<div id="navcolumn">
+<div class="toolgroup" id="projecttools">
+<div class="label">
+<strong>Section</strong>
+</div>
+<div class="menu">
+<div class="body">
+<div>
+<a href="">Home</a>
+    
+<div>
+<a href="../index.html">Introduction</a>
+</div>
+  
+</div>
+<div>
+<a href="../samples/index.html">Examples</a>
+    
+<div>
+<a href="../samples/index.html#">Examples</a>
+</div>
+  
+</div>
+<div>
+<a href="">Documentation</a>
+    
+<div>
+<a href="../docs/index.html">Home</a>
+</div>
+    
+<div>
+<a href="../docs/docMenu.html">Contents</a>
+</div>
+    
+<div>
+<a href="../docs/install.html">Installation</a>
+</div>
+    
+<div>
+<a href="../docs/tutorials/index.html">Tutorials</a>
+</div>
+    
+<div>
+<a href="../docs/Glossary_gen.html">Glossary</a>
+</div>
+  
+</div>
+<div>
+<a href="../download/index.html">Download</a>
+    
+<div>
+<a href="../download/index.html#">Download code</a>
+</div>
+  
+</div>
+<div>
+<a href="">Links</a>
+    
+<div>
+<a href="../links/index.html">Useful links</a>
+</div>
+    
+<div>
+<a href="../links/publications.html">Publications</a>
+</div>
+    
+<div>
+<a href="../links/training.html">Courses</a>
+</div>
+  
+</div>
+<div>
+<a href="../contact/index.html">Contact</a>
+    
+<div>
+<a href="../contact/index.html#">Contact us</a>
+</div>
+  
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="strut">&nbsp;</div>
+</td><td>
+<div class="content">
+<div align="right" id="topmodule">
+<table width="100%" cellpadding="3" cellspacing="0" border="0">
+<tr>
+<td class="tasknav"><a href="http://www.neuroConstruct.org">neuroConstruct</a><script src="../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script></td><td class="tasknav" id="issueid">
+<div align="right"></div>
+</td>
+</tr>
+</table>
+</div>
+<div id="bodycol">
+<div id="apphead">
+<h2>
+<em>Cell Mechanisms</em>
+</h2>
+</div>
+<div class="app" id="projecthome">
+<ul class="minitoc">
+<li>
+<a href="#Introduction">Introduction</a>
+</li>
+<li>
+<a href="#Mapping+to+simulation+environments">Mapping to simulation environments</a>
+</li>
+<li>
+<a href="#Placing+Cell+Mechanism+on+Cells">Placing Cell Mechanism on Cells</a>
+</li>
+<li>
+<a href="#Copying+Cell+Mechanism+between+projects">Copying Cell Mechanism between projects</a>
+</li>
+</ul>
+
+
+        
+<a name="Introduction"></a>
+<div class="h3">
+<h3>Introduction</h3>
+      
+
+      
+<p>A Cell Mechanism (previously referred to as Cell Process), as used in neuroConstruct is an abstraction of an electrophysiological mechanism present on a cell.</p>
+
+
+<p>The three main types are <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a>,
+    <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> and <a href="Glossary_gen.html#Ion Concentration">Ion Concentration</a> 
+    (although 2 more: Point process and Gap junction are being added). 
+    The Cell Mechanisms available in a neuroConstruct <a href="Glossary_gen.html#Project">project</a> are
+    listed under tab <strong>Cell Mechanism</strong>. New Cell Mechanisms can be added, and the existing ones edited/deleted here.</p>
+
+
+<p>There are two ways to create Cell Proceses in neuroConstruct:</p>
+
+
+<ol>
+    
+<li>
+<strong>ChannelML based Cell Mechanism: </strong>The parameters of the Cell Mechanism are stored in a <a href="Glossary_gen.html#ChannelML">ChannelML</a> file</li>
+    
+<li>
+<strong>File based Cell Mechanism: </strong>The core of the Cell Mechanism is contained in files written in the native language of simulators (e.g. <a href="Glossary_gen.html#NMODL">NMODL</a>)</li>
+
+</ol>
+
+
+    
+<p>The <strong>Abstracted Cell Mechanism</strong> was an older approach to implementing simulator independent Cell Mechanisms without XML. It is no longer in use.</p>
+
+
+<p>Each Cell Mechanism will have:
+</p>
+
+<ul>
+    
+<li>A unique Mechanism Instance Name by which the Mechanism Model coupled with a specific Parameter Set is known</li>
+    
+<li>A Mechanism Type: currently either a <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a>, <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> or an <a href="Glossary_gen.html#Ion Concentration">Ion Concentration</a>
+</li>
+    
+<li>A Mechanism Model: the conceptual model behind the Cell Mechanism. A Synaptic Mechanism could be modelled as a Double or 
+        Single Exponential Synapse, for example. ChannelML based Cell Mechanisms have Mechanism Model: Template based ChannelML file</li>
+    
+<li>A Description, which is a short text description of the Cell Mechanism</li>
+        
+<li>A Parameter Set for the variables in the model (e.g. a Double Exponential Synapse will have
+    rise/decay time of conductance, etc.) In <a href="Glossary_gen.html#ChannelML">ChannelML</a> based Cell Mechanisms these 
+    are contained in an <a href="Glossary_gen.html#XML">XML file</a>
+</li>
+        
+<li>Templates containing the mapping to the scripting language of one or more simulation environments (e.g. NEURON, GENESIS)
+    for which implementations of the Cell Mechanism are available.</li>
+
+</ul>
+
+</div>
+
+        
+<a name="Mapping+to+simulation+environments"></a>
+<div class="h3">
+<h3>Mapping to simulation environments</h3>
+      
+
+      
+<p>How neuroConstruct creates the native script codes implementing the Cell Mechanisms (mod files/GENESIS scripts) is as follows:</p>
+
+
+<p>When the files for a simulation environment (e.g. NEURON) need to be generated, neuroConstruct first checks which
+    Cell Mechanisms are included on each of the Cell Types in the network (see below). If there is not an implementation
+    of that Cell Mechanism for the simulation environment (i.e. a template of the scripting code is present) an error will be thrown.</p>
+
+
+<p>In the case of a <a href="Glossary_gen.html#File based Cell Mechanisms">File based Cell Mechanisms</a>, the core of the script
+    implementing the Cell Mechanism is already present, e.g. an almost complete mod file is specified for a mapping to NEURON. All that
+    needs to be replaced in the file is the Cell Mechanism name and a maximum conductance (density), as outlined <a href="importneuron.html">here</a>.
+These parameters are inserted into the file, a complete native script is generated (and, if needed, compiled) and so the
+Cell Mechanism can be used by other files which define the cells.</p>
+
+
+<p>For a <a href="Glossary_gen.html#ChannelML">ChannelML</a> based Cell Mechanism all of the important parameters are present in the XML file.
+The mappings to native scripts takes place by transforming the XML using an <a href="http://www.w3schools.com/xsl/xsl_languages.asp">XSL (EXtensible Stylesheet Language)</a> document.
+XSL allows easy transformation of an XML file into another format, basically restructuring the information present in the file.
+XSL documents are present for each simulation environment, which take the values in the ChannelML file (e.g. maximum conductance density)
+and place them in the correct location in partially written native script files. Examples of valid ChannelML files and mappings to simulators can be found
+<a href="http://morphml.org:8080/NeuroMLValidator/">here</a>, or opening a ChannelML based Cell Mechanism in neuroConstruct
+will allow inspection of the XML, editing of the parameters, validation of the file and preview of the mapping to NEURON or GENESIS</p>
+
+
+
+</div>
+
+        
+<a name="Placing+Cell+Mechanism+on+Cells"></a>
+<div class="h3">
+<h3>Placing Cell Mechanism on Cells</h3>
+      
+
+
+<p>Cell Mechanism need to be placed on cells before the native script files are generated.</p>
+
+
+<p>Inclusion of Synaptic Mechanism on cells is outlined in the <a href="tutorials/tutorial3.html">Network Connections</a> tutorial.</p>
+
+
+<p>To place Channel Mechanisms on cells, go to the tab <strong>Visualisation</strong>, select the cell
+name in the drop down box and press <strong>View</strong>.</p>
+
+
+<p>Note that Channel Mechanisms, like Synaptic Connection Locations, are associated with <a href="Glossary_gen.html#Section Group">
+        Section Groups</a> as opposed to sections. Therefore the Groups of Sections which have similar channel densities should be 
+    constructed first by selecting <strong>Groups</strong> in the bottom right drop down box. Click <strong>Edit Groups</strong>, 
+    or for a simple cell, use the existing Groups. Now select <strong>Cell density mechanisms</strong> in the drop down box, and 
+    click <strong>Edit Density Mechanisms</strong>. In the drop down box of the dialog, all the Cell Mechanism of Mechanism Type: 
+    Channel Mechanism will be listed (if there are none, go to tab <strong>Cell Mechanisms</strong>, click <strong>Add ChennelML 
+        from Template</strong> and add at least a Leak conductance). Select one of these and for each Group with this Channel 
+    Mechanism add it to the list. The Max Conductance Density of the channel needs to be specified. NOTE: This overwrites the 
+    Max Conductance Density as specified in the Parameter Set/ChannelML file. All other parameter values remain the same.</p>
+
+
+
+<p>Once a number of channels are added, the densities can be seen back in the <strong>Visualisation</strong> view.
+For a Channel Mechanism with different densities on different Groups, a shaded colour between the maximum and minimum is shown.</p>
+
+
+</div>
+
+        
+<a name="Copying+Cell+Mechanism+between+projects"></a>
+<div class="h3">
+<h3>Copying Cell Mechanism between projects</h3>
+      
+
+
+<p>To copy a Cell Mechanism present in one <a href="Glossary_gen.html#Project">project</a> to another, go to the directory 
+    <strong>cellMechanisms</strong> in the project's home directory, and copy the folder named after the cell mechanism into the 
+<strong>cellMechanisms</strong> directory of the target project. That project should now have the cell mechanism listed under the 
+tab <strong>Cell Mechanisms</strong>. Note: make sure there was not already a mechanism with that name before pasting. Also,
+problems may be caused if the project is under version control (CVS or Subversion); remove any CVS or .svn directories from the 
+pasted directory.</p>
+
+
+</div>
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+  
+</div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<div id="footer">
+<table cellpadding="4" cellspacing="0" border="0">
+<tr>
+<td>
+          Copyright &copy; 2022 UCL
+      All rights reserved.
+            <br>
+<script type="text/javascript" language="JavaScript"><!--
+              document.write(" - "+"Last Published: " + document.lastModified);
+              //  --></script></td><td nowrap class="footerLogos"></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

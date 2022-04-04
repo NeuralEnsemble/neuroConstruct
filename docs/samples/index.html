@@ -1,0 +1,725 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="tigris">
+<style type="text/css">@import "../skin/tigris.css";@import "../skin/quirks.css";@import "../skin/inst.css";</style>
+<link media="print" href="../skin/print.css" type="text/css" rel="stylesheet">
+<link href="../skin/forrest.css" type="text/css" rel="stylesheet">
+<link rel="shortcut icon" href="../images/favicon.ico">
+<script type="text/javascript" src="../skin/tigris.js"></script><script src="../skin/menu.js" language="javascript" type="text/javascript"></script>
+<title>neuroConstruct example projects</title>
+<meta content="text/css" http-equiv="Content-style-type">
+</head>
+<body class="composite" onload="focus()">
+<div id="banner">
+<table width="100%" cellpadding="8" cellspacing="0" border="0">
+<tr>
+<td align="left"></td><td align="center">
+<div>
+<a href="http://www.neuroConstruct.org"><img class="logoImage" alt="neuroConstruct" src="../images/logoMain.png"></a>
+</div>
+</td><td valign="top" align="right">
+<div class="right" align="right" id="login">
+<form target="_blank" action="http://www.google.com/search" method="get">
+<select name="as_sitesearch"><option value="">Search...</option><option value="http://www.neuroConstruct.org">The neuroConstruct site</option><option value="">The web</option></select> for
+		      <input size="15" name="as_q" id="query" type="text"><input name="Search" value="Go" type="submit">
+</form>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="toptabs" class="tabs">
+<table border="0" cellspacing="0" cellpadding="4">
+<tr>
+<td><a class="selected" href="../index.html">Introduction</a></td><td><a class="selected" href="../samples/index.html">Examples</a></td><td><a class="selected" href="../docs/index.html">Documentation</a></td><td><a class="selected" href="../download/index.html">Download</a></td><td><a class="selected" href="../links/index.html">Links</a></td><td><a class="selected" href="../contact/index.html">Contact</a></td>
+</tr>
+</table>
+</div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="breadcrumbs">
+<tr>
+<td></td><td>
+<div align="right">
+<script type="text/javascript" language="JavaScript"><!--
+                 document.write("Published: " + document.lastModified);
+                 //  --></script>
+</div>
+</td>
+</tr>
+</table>
+<table id="main" width="100%" cellpadding="4" cellspacing="0" border="0">
+<tr valign="top">
+<td width="20%" id="leftcol">
+<div id="navcolumn">
+<div class="toolgroup" id="projecttools">
+<div class="label">
+<strong>Section</strong>
+</div>
+<div class="menu">
+<div class="body">
+<div>
+<a href="../samples/index.html">Examples</a>
+    
+<div>
+<a href="../samples/index.html#">Examples</a>
+</div>
+  
+</div>
+</div>
+</div>
+</div>
+<div class="toolgroup" id="admfun">
+<div class="label">
+<strong>Credits</strong>
+</div>
+<div class="body">
+<table>
+<tr>
+<td></td><td class="logos" height="5" colspan="4"><a href="http://www.wellcome.ac.uk/"><img border="0" title="Funding for this work was received from the Wellcome Trust" alt="Funding for this work was received from the Wellcome Trust - logo" src="../images/wct.png"></a></td>
+</tr>
+<tr>
+<td></td><td class="logos" height="5" colspan="4"><a href="http://www.mrc.ac.uk/"><img border="0" title="Funding for this work was received from the Medical Research Council" alt="Funding for this work was received from the Medical Research Council - logo" src="../images/mrcsmall.png"></a></td>
+</tr>
+<tr>
+<td></td><td class="logos" height="5" colspan="4"><a href="http://www.eusynapse.mpg.de/"><img border="0" title="Some of thei work took place as part of the EUSynapse Project" alt="Some of thei work took place as part of the EUSynapse Project - logo" src="../images/eusynapse.png"></a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="strut">&nbsp;</div>
+</td><td>
+<div class="content">
+<div align="right" id="topmodule">
+<table width="100%" cellpadding="3" cellspacing="0" border="0">
+<tr>
+<td class="tasknav"><a href="http://www.neuroConstruct.org">neuroConstruct</a><script src="../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script></td><td class="tasknav" id="issueid">
+<div align="right"></div>
+</td>
+</tr>
+</table>
+</div>
+<div id="bodycol">
+<div id="apphead">
+<h2>
+<em>neuroConstruct example projects</em>
+</h2>
+</div>
+<div class="app" id="projecthome">
+<ul class="minitoc">
+<li>
+<a href="#Ex10_NeuroML2-N10025">Ex10_NeuroML2</a>
+</li>
+<li>
+<a href="#Ex1_Simple-N10066">Ex1_Simple</a>
+</li>
+<li>
+<a href="#Ex2_Packing-N100B9">Ex2_Packing</a>
+</li>
+<li>
+<a href="#Ex3_Morphology-N1010C">Ex3_Morphology</a>
+</li>
+<li>
+<a href="#Ex4_HHcell-N10153">Ex4_HHcell</a>
+</li>
+<li>
+<a href="#Ex5_Networks-N101A6">Ex5_Networks</a>
+</li>
+<li>
+<a href="#Ex6_CerebellumDemo-N101F9">Ex6_CerebellumDemo</a>
+</li>
+<li>
+<a href="#Ex7_PSICSDemo-N1024C">Ex7_PSICSDemo</a>
+</li>
+<li>
+<a href="#Ex8_PyNNDemo-N102A3">Ex8_PyNNDemo</a>
+</li>
+<li>
+<a href="#Ex9_Synapses-N102E4">Ex9_Synapses</a>
+</li>
+</ul>
+        
+<p>Downloadable neuroConstruct example projects. These illustrate the core functionality of neuroConstruct, as opposed to providing electrophysiologically accurate models.
+<br>
+<br>
+<strong>Note: all of these examples are included with the <a href="../download/index.html">standard neuroConstruct release</a>!</strong>
+
+<br>
+<br>Find more neuroConstruct projects containing biophysically detailed neuronal cell and network models on <strong><a href="http://www.opensourcebrain.org/docs#Using_neuroConstruct_Based_Projects">Open Source Brain</a></strong>. <img alt="Open Source Brain" src="http://www.neuroml.org/images/OSBLogo.png" width="50"></p>
+        
+<a name="Ex10_NeuroML2-N10025"></a>
+<div class="h3">
+<h3>Ex10_NeuroML2</h3>
+            
+            
+<a name="Ex10_NeuroML2" id="Ex10_NeuroML2"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex10_NeuroML2</strong>
+</p>
+                        
+<p>A test of a number of cell/channel models which can be mapped to LEMS/NeuroML version 2.0</p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex10_NeuroML2.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex10_NeuroML2_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex1_Simple-N10066"></a>
+<div class="h3">
+<h3>Ex1_Simple</h3>
+            
+            
+<a name="Ex1_Simple" id="Ex1_Simple"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex1_Simple/large.png">
+                                <img alt="Screenshot of Ex1_Simple" src="images/Ex1_Simple/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex1_Simple</strong>
+</p>
+                        
+<p>Simple example with a single passive electrical cell positioned randomly in a 3D volume. Used to test that neuroConstruct is correctly installed.</p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex1_Simple.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex1_Simple_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex2_Packing-N100B9"></a>
+<div class="h3">
+<h3>Ex2_Packing</h3>
+            
+            
+<a name="Ex2_Packing" id="Ex2_Packing"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex2_Packing/large.png">
+                                <img alt="Screenshot of Ex2_Packing" src="images/Ex2_Packing/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex2_Packing</strong>
+</p>
+                        
+<p>Example illustrating packing of cells in 3D Regions. Various packing patterns are shown. Note that these are just intended to demonstrate the capabilities of the packing functionality, rather than recreate a biologically realistic network. 
+  
+Just click Generate -&gt; Generate Cell Positions and Connections, followed by Visualisations -&gt; View, with Latest Generated Positions selected in the drop down box.  </p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex2_Packing.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex2_Packing_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex3_Morphology-N1010C"></a>
+<div class="h3">
+<h3>Ex3_Morphology</h3>
+            
+            
+<a name="Ex3_Morphology" id="Ex3_Morphology"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex3_Morphology/large.png">
+                                <img alt="Screenshot of Ex3_Morphology" src="images/Ex3_Morphology/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex3_Morphology</strong>
+</p>
+                        
+<p>This example demonstrates importation of a number of cell morphology files in different formats, including the Purkinje Cell Model of Erik De Schutter and Jim Bower.</p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex3_Morphology.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex4_HHcell-N10153"></a>
+<div class="h3">
+<h3>Ex4_HHcell</h3>
+            
+            
+<a name="Ex4_HHcell" id="Ex4_HHcell"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex4_HHcell/large.png">
+                                <img alt="Screenshot of Ex4_HHcell" src="images/Ex4_HHcell/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex4_HHcell</strong>
+</p>
+                        
+<p>A simple example to test the interaction of neuroConstruct with NEURON/GENESIS using a simple network of 2 cells with Hodgkin Huxley conductances.    </p>
+                        
+<p>Project last modified: Thursday October 13, 2016</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex4_HHcell.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex4_HHcell_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex5_Networks-N101A6"></a>
+<div class="h3">
+<h3>Ex5_Networks</h3>
+            
+            
+<a name="Ex5_Networks" id="Ex5_Networks"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex5_Networks/large.png">
+                                <img alt="Screenshot of Ex5_Networks" src="images/Ex5_Networks/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex5_Networks</strong>
+</p>
+                        
+<p>This example illustrates some of the types of network connections possible between groups of cells. A number of Simulation Configurations are included, which show the different algorithms for searching for postsynaptic connections, effects due to action potential propagation delay, and non uniformity of connection probability. </p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex5_Networks.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex5_Networks_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex6_CerebellumDemo-N101F9"></a>
+<div class="h3">
+<h3>Ex6_CerebellumDemo</h3>
+            
+            
+<a name="Ex6_CerebellumDemo" id="Ex6_CerebellumDemo"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex6_CerebellumDemo/large.png">
+                                <img alt="Screenshot of Ex6_CerebellumDemo" src="images/Ex6_CerebellumDemo/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex6_CerebellumDemo</strong>
+</p>
+                        
+<p>Example of a section of the cerebellar cortex containing some of the main cell types.  NOTE: this is NOT AN ELECTROPHYSIOLOGICALLY DETAILED CEREBELLUM MODEL and is only intended to reproduce some basic anatomical details of cerebellar connectivity to illustrate neuroConstruct's functionality; none of the cells have realistic sets of ion channels. </p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex6_CerebellumDemo.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex6_CerebellumDemo_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex7_PSICSDemo-N1024C"></a>
+<div class="h3">
+<h3>Ex7_PSICSDemo</h3>
+            
+            
+<a name="Ex7_PSICSDemo" id="Ex7_PSICSDemo"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex7_PSICSDemo/large.png">
+                                <img alt="Screenshot of Ex7_PSICSDemo" src="images/Ex7_PSICSDemo/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex7_PSICSDemo</strong>
+</p>
+                        
+<p>A simple project used to test the mapping of ChannelML to the PSICS simulator (<a href="http://www.psics.org">http://www.psics.org</a>). Currently a simple cell with HH Na and K channels can be mapped to PSICS, NEURON and GENESIS producing the comparable traces on each. Note that the current neuroConstruct mapping to PSICS uses deterministic channels as opposed to stochastic channels which are a key feature of PSICS.</p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex7_PSICSDemo.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex7_PSICSDemo_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex8_PyNNDemo-N102A3"></a>
+<div class="h3">
+<h3>Ex8_PyNNDemo</h3>
+            
+            
+<a name="Ex8_PyNNDemo" id="Ex8_PyNNDemo"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex8_PyNNDemo</strong>
+</p>
+                        
+<p>Project for testing generation of code for PyNN compatible simulators. Generate the chosen Simulation Configuration, go to tab Export -&gt; PyNN, and generate for one of the supported simulators. </p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex8_PyNNDemo.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex8_PyNNDemo_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="Ex9_Synapses-N102E4"></a>
+<div class="h3">
+<h3>Ex9_Synapses</h3>
+            
+            
+<a name="Ex9_Synapses" id="Ex9_Synapses"></a>            
+<div class="h4">
+<table class="grid" width="100%" cellpadding="3" cellspacing="2" border="1">
+                
+<tr>
+                    
+<td colspan="1" rowspan="1" width="120">
+                        
+<p>
+                            
+<a href="images/Ex9_Synapses/large.png">
+                                <img alt="Screenshot of Ex9_Synapses" src="images/Ex9_Synapses/small.png" title="Click to enlarge">                            </a>
+                        
+</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1">
+                        
+<p>Project name: <strong>Ex9_Synapses</strong>
+</p>
+                        
+<p>Example project containing networks of cells connected by different types of synapses, including electrical connections at gap junctions. These networks are aimed at multicompartmental cell network simulators like NEURON, GENESIS and MOOSE. There are more examples of synapse models in Ex8_PyNNDemo. </p>
+                        
+<p>Project last modified: Friday November 13, 2015</p>
+                    
+</td>
+                    <td colspan="1" rowspan="1" width="150">
+                        
+<p>Downloads<a href="#downloadInfo">*</a>:</p>
+                        
+<p>
+                            
+<a href="downloads/Ex9_Synapses.ncx.zip" title="Download full project for loading into neuroConstruct">neuroConstruct project</a>
+                        
+</p>
+                        
+<p>
+                            
+<a href="downloads/Ex9_Synapses_NeuroML.zip">
+                                <img alt="Download core project elements in NeuroML format" src="../images/NeuroMLSmall.png" title="Download core project elements in NeuroML format">                            </a>
+                        
+</p>
+                    
+</td>
+                
+</tr>
+            
+</table>
+</div>
+        
+</div>
+        
+<a name="downloadInfo"></a>
+<p id="downloadInfo">&nbsp;* Note: neuroConstruct project downloads (most of which are included with the standard software distribution) can be loaded directly into neuroConstruct to generate cell and network scripts for NEURON, GENESIS, etc., but NeuroML downloads just consist of the core elements of the project (morphologies, channels, etc.) which have been exported in NeuroML format. The latter can be useful for testing NeuroML compliant applications. If no NeuroML download link is present, this usually indicates that the model is mainly implemented using channel/synapse mechanisms in a simulator's native language (e.g. mod files) which have not fully been converted to ChannelML yet.</p>
+        
+<a name=""></a>        
+<p></p>        
+<p>&nbsp;</p>
+    
+</div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<div id="footer">
+<table cellpadding="4" cellspacing="0" border="0">
+<tr>
+<td>
+          Copyright &copy; 2022 UCL
+      All rights reserved.
+            <br>
+<script type="text/javascript" language="JavaScript"><!--
+              document.write(" - "+"Last Published: " + document.lastModified);
+              //  --></script></td><td nowrap class="footerLogos"></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

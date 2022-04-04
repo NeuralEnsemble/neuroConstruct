@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="tigris">
+<style type="text/css">@import "../skin/tigris.css";@import "../skin/quirks.css";@import "../skin/inst.css";</style>
+<link media="print" href="../skin/print.css" type="text/css" rel="stylesheet">
+<link href="../skin/forrest.css" type="text/css" rel="stylesheet">
+<link rel="shortcut icon" href="../images/favicon.ico">
+<script type="text/javascript" src="../skin/tigris.js"></script><script src="../skin/menu.js" language="javascript" type="text/javascript"></script>
+<title>Interacting with native simulators on various platforms</title>
+<meta content="text/css" http-equiv="Content-style-type">
+</head>
+<body class="composite" onload="focus()">
+<div id="banner">
+<table width="100%" cellpadding="8" cellspacing="0" border="0">
+<tr>
+<td align="left"></td><td align="center">
+<div>
+<a href="http://www.neuroConstruct.org"><img class="logoImage" alt="neuroConstruct" src="../images/logoMain.png"></a>
+</div>
+</td><td valign="top" align="right">
+<div class="right" align="right" id="login">
+<form target="_blank" action="http://www.google.com/search" method="get">
+<select name="as_sitesearch"><option value="">Search...</option><option value="http://www.neuroConstruct.org">The neuroConstruct site</option><option value="">The web</option></select> for
+		      <input size="15" name="as_q" id="query" type="text"><input name="Search" value="Go" type="submit">
+</form>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="toptabs" class="tabs">
+<table border="0" cellspacing="0" cellpadding="4">
+<tr>
+<td><a class="selected" href="../index.html">Introduction</a></td><td><a class="selected" href="../samples/index.html">Examples</a></td><td><a class="selected" href="../docs/index.html">Documentation</a></td><td><a class="selected" href="../download/index.html">Download</a></td><td><a class="selected" href="../links/index.html">Links</a></td><td><a class="selected" href="../contact/index.html">Contact</a></td>
+</tr>
+</table>
+</div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="breadcrumbs">
+<tr>
+<td></td><td>
+<div align="right">
+<script type="text/javascript" language="JavaScript"><!--
+                 document.write("Published: " + document.lastModified);
+                 //  --></script>
+</div>
+</td>
+</tr>
+</table>
+<table id="main" width="100%" cellpadding="4" cellspacing="0" border="0">
+<tr valign="top">
+<td width="20%" id="leftcol">
+<div id="navcolumn">
+<div class="toolgroup" id="projecttools">
+<div class="label">
+<strong>Section</strong>
+</div>
+<div class="menu">
+<div class="body">
+<div>
+<a href="">Home</a>
+    
+<div>
+<a href="../index.html">Introduction</a>
+</div>
+  
+</div>
+<div>
+<a href="../samples/index.html">Examples</a>
+    
+<div>
+<a href="../samples/index.html#">Examples</a>
+</div>
+  
+</div>
+<div>
+<a href="">Documentation</a>
+    
+<div>
+<a href="../docs/index.html">Home</a>
+</div>
+    
+<div>
+<a href="../docs/docMenu.html">Contents</a>
+</div>
+    
+<div>
+<a href="../docs/install.html">Installation</a>
+</div>
+    
+<div>
+<a href="../docs/tutorials/index.html">Tutorials</a>
+</div>
+    
+<div>
+<a href="../docs/Glossary_gen.html">Glossary</a>
+</div>
+  
+</div>
+<div>
+<a href="../download/index.html">Download</a>
+    
+<div>
+<a href="../download/index.html#">Download code</a>
+</div>
+  
+</div>
+<div>
+<a href="">Links</a>
+    
+<div>
+<a href="../links/index.html">Useful links</a>
+</div>
+    
+<div>
+<a href="../links/publications.html">Publications</a>
+</div>
+    
+<div>
+<a href="../links/training.html">Courses</a>
+</div>
+  
+</div>
+<div>
+<a href="../contact/index.html">Contact</a>
+    
+<div>
+<a href="../contact/index.html#">Contact us</a>
+</div>
+  
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="strut">&nbsp;</div>
+</td><td>
+<div class="content">
+<div align="right" id="topmodule">
+<table width="100%" cellpadding="3" cellspacing="0" border="0">
+<tr>
+<td class="tasknav"><a href="http://www.neuroConstruct.org">neuroConstruct</a><script src="../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script></td><td class="tasknav" id="issueid">
+<div align="right"></div>
+</td>
+</tr>
+</table>
+</div>
+<div id="bodycol">
+<div id="apphead">
+<h2>
+<em>Interacting with native simulators on various platforms</em>
+</h2>
+</div>
+<div class="app" id="projecthome">
+<ul class="minitoc">
+<li>
+<a href="#General+points">General points</a>
+</li>
+<li>
+<a href="#Linux">Linux</a>
+</li>
+<li>
+<a href="#Windows">Windows</a>
+</li>
+<li>
+<a href="#Mac">Mac</a>
+</li>
+</ul>
+
+  
+<p>Outlined here are some points regarding how neuroConstruct deals with the native simulators on
+  various operating systems</p>
+
+
+    
+<a name="General+points"></a>
+<div class="h3">
+<h3>General points</h3>
+      
+
+
+<p>neuroConstruct is written in <a href="http://java.sun.com/">Java</a> and so can be used on any platform with a Java Virtual Machine
+    together with an implementation of Java3D.</p>
+
+<p>In general, NEURON and/or GENESIS should be present on the same machine as neuroConstruct. The scripts for the target platform 
+    are generated based on the network created by neuroConstruct, and these are set running in separate processes via the 
+    Java <strong>Runtime.exec()</strong> command.</p>
+
+<p></p>
+
+
+
+</div>
+
+
+<a name="Linux"></a>
+<div class="h3">
+<h3>Linux</h3>
+  
+
+  
+<p>&nbsp;&nbsp;<strong>NEURON</strong>
+</p>
+
+  
+<p>NEURON hoc and mod files are generated from the network model in neuroConstruct. First, the mod files are compiled using
+  <strong>nrnivmodl</strong>. This executable is found using the value for the NEURON home directory in <strong>Settings -&gt; 
+      General Properties</strong>.
+  </p>
+  
+<p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>nrngui</strong>. Note that 
+      this is   executed in a console window (by prefixing the command with <strong>gnome-terminal -x</strong> (Gnome desktop) or 
+      <strong>konsole</strong> (KDE), also set via <strong>Settings -&gt; General Properties</strong>)</p>
+
+  
+<p>&nbsp;&nbsp;<strong>GENESIS</strong>
+</p>
+  
+<p>GENESIS script is generated from the network model and the main file can be run straight away. The <strong>genesis</strong> command,
+  together with the name of the main file are executed via <strong>Runtime.exec()</strong>, therefore the location of this executable
+  should be in the PATH variable. The command is executed in a new console window as above.</p>
+
+
+
+</div>
+
+
+
+<a name="Windows"></a>
+<div class="h3">
+<h3>Windows</h3>
+  
+
+  
+<p>&nbsp;&nbsp;<strong>NEURON</strong>
+</p>
+
+  
+<p>NEURON hoc and mod files are generated from the network model in neuroConstruct. First, the mod files are compiled using a command of the form
+  <strong>C:\nrn60\bin\rxvt.exe -e C:\nrn60\bin\sh C:\nrn60\lib\mknrndll.sh C:\nrn60</strong>. The <strong>C:\nrn60</strong> is found using the 
+          value for the NEURON home directory in <strong>Settings -&gt; General Properties</strong>.
+  </p>
+  
+<p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>neuron.exe</strong>.</p>
+
+  
+<p>&nbsp;&nbsp;<strong>GENESIS</strong>
+</p>
+  
+<p>GENESIS was for many years not available on Windows. A <a href="http://www.genesis-sim.org/GENESIS/genesis-cygwin/">port</a> has 
+      recently been created, which while slower than under Linux, can be used to test generated GENESIS code under Windows. The 
+      following assumes Cygwin has been installed at <strong>C:\cygwin</strong> and GENESIS installed at <strong>/usr/local/genesis</strong> i.e.
+  <strong>C:\cygwin\usr\local\genesis</strong>.</p>
+  
+<p>
+  GENESIS script is generated from the network model and the main file can be run straight away without further compilation.
+  The file <strong>{NEUROCONSTRUCT_HOME}/templates/genesisUtils/startxwin2.bat</strong> is used to launch the genesis executable. 
+  This is a slightly modified version
+  of the <strong>startxwin.bat</strong> supplied with Cygwin for running an XTerm. This mechanism is a bit flaky (e.g. it doesn't 
+  like NEURON running under Cygwin at the same time). Please report any problems/solutions to bugs - at - neuroConstruct.org</p>
+
+
+</div>
+
+
+
+<a name="Mac"></a>
+<div class="h3">
+<h3>Mac</h3>
+  
+
+
+<p>neuroConstruct and its 3D visualisation capability has been successfully tested on the Mac, but the interaction with simulation platforms needs more testing.
+	NEURON interaction is fine if the Developer Tools (XCode) are installed. Basic GENESIS interaction has been tried successfully too. </p>
+
+<p>If you are interested in helping test the application on this platform, please <a href="../contact/index.html">get in touch</a>
+</p>
+
+</div>
+
+
+
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+  
+</div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<div id="footer">
+<table cellpadding="4" cellspacing="0" border="0">
+<tr>
+<td>
+          Copyright &copy; 2022 UCL
+      All rights reserved.
+            <br>
+<script type="text/javascript" language="JavaScript"><!--
+              document.write(" - "+"Last Published: " + document.lastModified);
+              //  --></script></td><td nowrap class="footerLogos"></td>
+</tr>
+</table>
+</div>
+</body>
+</html>
