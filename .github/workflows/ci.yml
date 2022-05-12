@@ -10,7 +10,7 @@ on:
 jobs:
   build_and_test:
 
-    runs-on: ${{ matrix.runs-on }}    
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
@@ -25,29 +25,30 @@ jobs:
       with:
         java-version: ${{ matrix.Java }}
         distribution: 'adopt'
-        
+
     - name: Set up env
       run: |
         mkdir temp
-        ./updatenC.sh # Pull other repos, e.g. NeuroML v1 examples from SourceForge
         # Get one OSB project required for running tests
         mkdir osb/cerebellum
         mkdir osb/cerebellum/cerebellar_granule_cell
         git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
-        
+
     - name: Build project and run tests (non Win)
       if: ${{ matrix.runs-on != 'windows-latest' }}
       run: |
+        ./updatenC.sh # Pull other repos, e.g. NeuroML v1 examples from SourceForge
         # make
         ./nC.sh -make
         # Rebuild & perform a number of tests with ant
         ant testcore
         # Print the version info
-        ./nC.sh -v        
+        ./nC.sh -v
         
     - name: Build project and run tests (Win)
       if: ${{ matrix.runs-on == 'windows-latest' }}
       run: |
+        ./updatenC.bat # Pull other repos, e.g. NeuroML v1 examples from SourceForge
         # make
         ./nC.bat -make
         # Rebuild & perform a number of tests with ant
