@@ -33,6 +33,8 @@ jobs:
         mkdir osb/cerebellum
         mkdir osb/cerebellum/cerebellar_granule_cell
         git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
+        echo Set up additional folders...
+        ls 
 
     - name: Build project and run tests (non Win)
       if: ${{ matrix.runs-on != 'windows-latest' }}
