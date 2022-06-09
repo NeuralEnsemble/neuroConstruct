@@ -60,7 +60,7 @@ if not exist %OSB_SHOWCASE_DIR% (
 if not exist %NC_SHOWCASE_DIR% (
 	echo Cloning neuroConstruct showcase examples into %NC_SHOWCASE_DIR%
     cd %OSB_SHOWCASE_DIR%
-    git clone git@github.com:OpenSourceBrain/neuroConstructShowcase.git
+    git clone https://github.com/OpenSourceBrain/neuroConstructShowcase.git
 	cd ..\..
 )
 
