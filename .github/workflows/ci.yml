@@ -58,3 +58,4 @@ jobs:
         ant testcore
         # Print the version info
         ./nC.bat -v
+      shell: bash
