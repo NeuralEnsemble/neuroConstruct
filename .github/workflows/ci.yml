@@ -51,6 +51,7 @@ jobs:
       if: ${{ matrix.runs-on == 'windows-latest' }}
       run: |
         ./updatenC.bat # Pull other repos, e.g. NeuroML v1 examples from SourceForge
+        echo "Everything pulled..."
         # make
         ./nC.bat -make
         # Rebuild & perform a number of tests with ant
