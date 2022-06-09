@@ -178,6 +178,7 @@ standardGHProject 'ONNXShowcase' 'showcase'
 standardGHProject 'ArborShowcase' 'showcase'
 standardGHProject 'EDENShowcase' 'showcase'
 standardGHProject 'BindsNETShowcase' 'showcase'
+standardGHProject 'OSBv2_Showcase' 'showcase'
 
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
