@@ -26,7 +26,7 @@ public class SimulationDataTest
 
 
     @Before
-    public void setUp() 
+    public void setUp()
     {
         System.out.println("---------------   setUp() SimulationDataTest");
     }
@@ -36,6 +36,16 @@ public class SimulationDataTest
     public void testTextHDF5Load() throws IOException, SimulationDataException
     {
         System.out.println("---  testTextHDF5Load...");
+
+        if (GeneralUtils.is64bitPlatform() && GeneralUtils.isWindowsBasedPlatform())
+        {
+            if (System.getProperty("os.arch").contains("64"))
+            {
+                System.out.println("****  Not testing NetworkML HDF5 functionality.  ****");
+                System.out.println("****  64bit JDK on 64bit Windows machine: No dlls!!  ****");
+                return;
+            }
+        }
 
         ArrayList<File> files = new ArrayList<File>();
 
