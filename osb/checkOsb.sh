@@ -179,6 +179,7 @@ standardGHProject 'ArborShowcase' 'showcase'
 standardGHProject 'EDENShowcase' 'showcase'
 standardGHProject 'BindsNETShowcase' 'showcase'
 standardGHProject 'OSBv2_Showcase' 'showcase'
+standardGHProject 'SpineShowcase' 'showcase'
 
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
