@@ -180,7 +180,7 @@ standardGHProject 'EDENShowcase' 'showcase'
 standardGHProject 'BindsNETShowcase' 'showcase'
 standardGHProject 'OSBv2_Showcase' 'showcase'
 standardGHProject 'SpineShowcase' 'showcase'
-
+standardGHProject 'DANDIArchiveShowcase' 'showcase'
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
