@@ -7,7 +7,7 @@
   </header>
   <body>
       <p>&nbsp;</p>
-      <a  href="http://code.google.com/p/openworm/wiki/neuroConstructCElegans">
+      <a  href="http://www.openworm.org">
           <figure src="images/openworm.png" alt="The OpenWorm project is using neuroConstruct to develop detailed models of the C. elegans nervous system." ></figure>
       </a>
 
@@ -36,9 +36,16 @@
 
         <title>Latest News</title>
 
-        <p>The latest version of neuroConstruct (<strong>v1.7.2</strong>) is available
+        <p>The latest version of neuroConstruct (<strong>v1.7.4</strong>) is available
         <a href="https://github.com/NeuralEnsemble/neuroConstruct/blob/master/INSTALL.md">here</a>.
-        The source code has been released under GPL.</p>
+        The source code has been released under GPL.</p>  
+        
+        <p>A paper describing version 1 of the Open Source Brain platform has been published: 
+        <strong>Open Source Brain: a collaborative resource for visualizing, analyzing, simulating and developing standardized models
+            of neurons and circuits. Gleeson P, Cantarelli M, Marin B, Quintana A, Earnshaw M, et al. (2019)  Neuron 103 
+            (3):395–411</strong>. Many of the neuroConstruct standard example models are included in that paper. 
+        Click <a href="https://www.opensourcebrain.org/search_custom_field?f%5B%5D=43&amp;op%5B43%5D=%7E&amp;v%5B43%5D%5B%5D=neuroConstruct">here</a> 
+        to see all OSB models which include neuroConstruct projects. </p>
 
         <p>A paper describing the latest stable version of NeuroML has been
         published: <strong>NeuroML: A Language for Describing Data Driven Models of Neurons and
