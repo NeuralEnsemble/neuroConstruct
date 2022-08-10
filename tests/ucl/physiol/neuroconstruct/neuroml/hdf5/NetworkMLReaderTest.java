@@ -94,7 +94,7 @@ public class NetworkMLReaderTest
         
         if (GeneralUtils.isMacBasedPlatform())
         {
-                System.out.println("****  Not testing NetworkML HDF5 functionality on Mac  ****");
+                System.out.println("****  Not testing HDF5 functionality on Mac - library support issue  ****");
                 return;
         }
         if (GeneralUtils.is64bitPlatform() && GeneralUtils.isWindowsBasedPlatform())
