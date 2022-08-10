@@ -92,6 +92,11 @@ public class NetworkMLReaderTest
     {
         System.out.println("---  testSavingLoadingNetworkMLHDF5");
         
+        if (GeneralUtils.isMacBasedPlatform())
+        {
+                System.out.println("****  Not testing HDF5 functionality on Mac - library support issue  ****");
+                return;
+        }
         if (GeneralUtils.is64bitPlatform() && GeneralUtils.isWindowsBasedPlatform())
         {
             if (System.getProperty("os.arch").contains("64"))

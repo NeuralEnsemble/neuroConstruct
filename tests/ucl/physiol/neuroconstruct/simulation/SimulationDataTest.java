@@ -37,6 +37,11 @@ public class SimulationDataTest
     {
         System.out.println("---  testTextHDF5Load...");
 
+        if (GeneralUtils.isMacBasedPlatform())
+        {
+                System.out.println("****  Not testing HDF5 functionality on Mac - library support issue  ****");
+                return;
+        }
         if (GeneralUtils.is64bitPlatform() && GeneralUtils.isWindowsBasedPlatform())
         {
             if (System.getProperty("os.arch").contains("64"))
