@@ -50,7 +50,7 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = "ucl.physiol.neuroconstruct.cell";
 
-    private static final String versionNumber = "1.7.1";
+    private static final String versionNumber = "1.7.4";
 
     //private static final String latestNeuroMLVersionNumber = "1.8.1";
 
@@ -106,11 +106,11 @@ public class GeneralProperties
 
         GeneralProperties.loadFromSettingsFile();
 
-        if (userSettings.getNeuronHome() == null || userSettings.getNeuronHome().trim().length() == 0) 
+        if (userSettings.getNeuronHome() == null || userSettings.getNeuronHome().trim().length() == 0)
         {
             userSettings.setNeuronHome(null);
-            
-            if (GeneralUtils.isWindowsBasedPlatform()) 
+
+            if (GeneralUtils.isWindowsBasedPlatform())
             {
                 String[] options = new String[]{"nrn75", "nrn74", "nrn73", "nrn72", "nrn71", "nrn70", "nrn61", "nrn60"};
                 for (String s : options) {
@@ -733,7 +733,7 @@ public class GeneralProperties
     {
         return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd");
     }
-    
+
     /**
      * Gets the NeuroML v2beta schema
      *
@@ -742,7 +742,7 @@ public class GeneralProperties
     {
         return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta.xsd");
     }
-    
+
     /**
      * Gets the NeuroML v2beta1 schema
      *
@@ -797,13 +797,13 @@ public class GeneralProperties
         return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
                 +"/Level2/ChannelML_"+getNeuroMLVersionString()+"_HTML.xsl");
     }
-    
+
     //// added to test creation of NeuroML2 channel summary
-    
+
     public static File getNeuroML2ReadableXSL()
     {
         return new File("templates/xmlTemplates/NeuroML2/v2.0/CellMechanisms/"+"NeuroML2Test.xsl");
-        
+
     }
 
 
