@@ -5322,7 +5322,12 @@ public class NeuronFileManager
                         {
                             String[] options =
                             {
-                                GeneralUtils.DIR_64BIT,GeneralUtils.DIR_I386, GeneralUtils.DIR_I686,GeneralUtils.DIR_POWERPC, GeneralUtils.DIR_UMAC
+                                GeneralUtils.DIR_64BIT,
+                                GeneralUtils.DIR_I386, 
+                                GeneralUtils.DIR_I686,
+                                GeneralUtils.DIR_POWERPC, 
+                                GeneralUtils.DIR_UMAC, 
+                                GeneralUtils.DIR_ARM64
                             };
 
                             for (String o : options)

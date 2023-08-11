@@ -311,6 +311,7 @@ public class ProjectManager implements GenerationReport
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I386) ||
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_64BIT) ||
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_UMAC) ||
+                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_ARM64) ||
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_POWERPC)))
                 {
                     File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());

@@ -185,6 +185,7 @@ standardGHProject 'DANDIArchiveShowcase' 'showcase'
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
 standardGHProject 'hodgkin_huxley_tutorial' 'generic' 'openworm'
+standardGHProject 'HindmarshRose1984' 'generic'
 
 standardGHProject 'CSAShowcase' 'showcase'
 standardGHProject 'neuroConstructShowcase' 'showcase'
