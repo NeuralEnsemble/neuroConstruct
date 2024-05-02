@@ -15,7 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         java: [ '8', '11', '16', '17', '19', '21' ]
-        runs-on: [ubuntu-latest, windows-latest, macos-latest ]
+        runs-on: [ubuntu-latest, windows-latest, macos-latest, macos-12 ]
+        exclude:
+          - runs-on: macos-latest
+            java: "8"
+          - runs-on: macos-latest
+            java: "16"
 
     name: Test on Java ${{ matrix.Java }} on ${{ matrix.runs-on }}
     steps:
@@ -25,6 +30,12 @@ jobs:
       with:
         java-version: ${{ matrix.Java }}
         distribution: 'adopt'
+
+
+    - name: Install SVN on macos-latest
+      if: ${{ matrix.runs-on == 'macos-latest' }}
+      run: |
+        brew install subversion
 
     - name: Set up env
       run: |
