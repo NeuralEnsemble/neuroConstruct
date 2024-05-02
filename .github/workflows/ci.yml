@@ -19,9 +19,9 @@ jobs:
 
     name: Test on Java ${{ matrix.Java }} on ${{ matrix.runs-on }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK ${{ matrix.Java }}
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.Java }}
         distribution: 'adopt'
