@@ -181,6 +181,8 @@ standardGHProject 'BindsNETShowcase' 'showcase'
 standardGHProject 'OSBv2_Showcase' 'showcase'
 standardGHProject 'SpineShowcase' 'showcase'
 standardGHProject 'DANDIArchiveShowcase' 'showcase'
+standardGHProject 'BioSimulationsShowcase' 'showcase'
+standardGHProject 'XPPShowcase' 'showcase'
 
 
 standardGHProject 'FitzHugh-Nagumo' 'generic'
@@ -192,7 +194,8 @@ standardGHProject 'neuroConstructShowcase' 'showcase'
 standardGHProject 'osb_vfb_showcase' 'showcase' 'jefferis'
 standardGHProject 'ghk-nernst' 'showcase'
 
-standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
+# standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm' # replaced by c302, so not updated...
+standardGHProject 'c302' 'invertebrate/celegans' 'openworm' 
 standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
 standardGHProject 'JohnsonMailler_MuscleModel' 'invertebrate/celegans' 'openworm'
