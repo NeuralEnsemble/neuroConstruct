@@ -12,7 +12,7 @@
                 <property name="project.dir">..</property>
                 <property name="ant.script">${project.dir}/build.xml</property>
                 <property name="nC.version">1.7.6</property>
-                <property name="jneuroml.version">0.13.2</property>
+                <property name="jneuroml.version">0.13.3</property>
             </properties>
             <folders>
                 <source-folder>
