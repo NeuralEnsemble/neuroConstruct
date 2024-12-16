@@ -32,8 +32,8 @@ jobs:
         distribution: 'adopt'
 
 
-    - name: Install SVN on macos-latest
-      if: ${{ matrix.runs-on == 'macos-latest' }}
+    - name: Install SVN on macos
+      if: ${{ matrix.runs-on == 'macos-latest' || matrix.runs-on == 'macos-latest' }}
       run: |
         brew install subversion
 
