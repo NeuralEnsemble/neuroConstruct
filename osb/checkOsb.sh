@@ -200,6 +200,7 @@ standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
 standardGHProject 'JohnsonMailler_MuscleModel' 'invertebrate/celegans' 'openworm'
 standardGHProject 'NicolettiEtAl2019_NeuronModels' 'invertebrate/celegans' 'openworm'
+standardGHProject 'NicolettiEtAl2024_MN_IN' 'invertebrate/celegans' 'openworm'
 
 standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
 standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
