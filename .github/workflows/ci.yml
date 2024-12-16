@@ -33,7 +33,7 @@ jobs:
 
 
     - name: Install SVN on macos
-      if: ${{ matrix.runs-on == 'macos-latest' || matrix.runs-on == 'macos-latest' }}
+      if: ${{ matrix.runs-on == 'macos-latest' || matrix.runs-on == 'macos-13' }}
       run: |
         brew install subversion
 
