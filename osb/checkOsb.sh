@@ -197,6 +197,7 @@ standardGHProject 'ghk-nernst' 'showcase'
 # standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm' # replaced by c302, so not updated...
 standardGHProject 'c302' 'invertebrate/celegans' 'openworm' 
 standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
+standardGHProject 'CE_locomotion' 'invertebrate/celegans' 'openworm' 
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
 standardGHProject 'JohnsonMailler_MuscleModel' 'invertebrate/celegans' 'openworm'
 standardGHProject 'NicolettiEtAl2019_NeuronModels' 'invertebrate/celegans' 'openworm'
