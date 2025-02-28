@@ -32,10 +32,14 @@ jobs:
         distribution: 'adopt'
 
 
-    - name: Install SVN on macos
-      if: ${{ matrix.runs-on == 'macos-latest' || matrix.runs-on == 'macos-13' }}
+    - name: Install dependencies (macOS)
+      if: ${{ contains(matrix.runs-on, 'macos') }}
       run: |
         brew install subversion
+
+    - name: Install dependencies (Ubuntu)
+      if: ${{ contains(matrix.runs-on, 'ubuntu') }}
+      run: sudo apt-get install -y subversion
 
     - name: Set up env
       run: |
