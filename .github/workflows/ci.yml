@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         java: [ '8', '11', '16', '17', '19', '21' ]
-        runs-on: [ubuntu-latest, windows-latest, macos-latest, macos-13 ]
+        runs-on: [ubuntu-latest, windows-2022, macos-latest ]
         exclude:
           - runs-on: macos-latest
             java: "8"
