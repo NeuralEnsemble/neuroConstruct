@@ -51,6 +51,16 @@ jobs:
         echo Set up additional folders...
         ls
 
+    
+    - name: Test subversion on windows
+      if: ${{ contains(matrix.runs-on, 'windows') }}
+      shell: pwsh
+      run: |
+          choco install svn
+          echo "C:\Program Files (x86)\Subversion\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          refreshenv
+          svn --version
+
     - name: Build project and run tests (non Win)
       if: ${{ matrix.runs-on != 'windows-latest' }}
       run: |
