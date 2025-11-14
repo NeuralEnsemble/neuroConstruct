@@ -62,7 +62,7 @@ jobs:
           svn --version
 
     - name: Build project and run tests (non Win)
-      if: ${{ matrix.runs-on != 'windows-latest' }}
+      if: ${{ !contains(matrix.runs-on, 'windows') }}
       run: |
         ./updatenC.sh # Pull other repos, e.g. NeuroML v1 examples from SourceForge
         # make
@@ -73,7 +73,7 @@ jobs:
         ./nC.sh -v
 
     - name: Build project and run tests (Win)
-      if: ${{ matrix.runs-on == 'windows-latest' }}
+      if: ${{ contains(matrix.runs-on, 'windows') }}
       run: |
         ./updatenC.bat # Pull other repos, e.g. NeuroML v1 examples from SourceForge
         echo "Everything pulled..."
