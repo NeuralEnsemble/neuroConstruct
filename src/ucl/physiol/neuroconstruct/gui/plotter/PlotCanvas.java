@@ -132,7 +132,7 @@ public class PlotCanvas extends Canvas
         this.plotFrame = plotFrame;
 
         doubleFormatterFull.applyLocalizedPattern("0.0000");
-        doubleFormatterFull.setGroupingSize(1000);
+        //doubleFormatterFull.setGroupingSize(1000);
 
         //doubleFormatterShort.applyLocalizedPattern("0.00#");
         //doubleFormatterFull.setGroupingSize(1000);
